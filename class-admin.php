@@ -29,8 +29,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 			add_action( 'burst_show_message', array( $this, 'show_message' ) );
 
 
-			add_action('admin_init',array( $this, 'process_variant_submit' ) );
+			add_action('admin_init',array( $this, 'create_variant' ) );
             add_action('add_meta_boxes', array( $this, 'add_variant' ));
+
 
 		}
 
@@ -43,48 +44,52 @@ if ( ! class_exists( "burst_admin" ) ) {
 		{
 			if (!current_user_can('edit_posts')) return;
 
-			add_meta_box('cmplz_edit_meta_box', __('AB testings', 'complianz-gdpr'), 'cdb_show_proposal_metabox', null, 'side', 'high', array(
+			add_meta_box('cmplz_edit_meta_box', __('AB testings', 'complianz-gdpr'), array($this, 'show_proposal_metabox'), null, 'side', 'high', array(
 				//'__block_editor_compatible_meta_box' => true,
 			));
-
 		}
 
 
-		public function show_proposal_metabox(){
-			if (!current_user_can('edit_posts')) return;
-			global $post;
-			//check if this post has a proposal waiting or is a proposal
-			if(get_post_meta($post->ID, 'cdb_has_proposal', true)){
-				?>
-                <form>
-                    <input type="hidden" name="view_proposal_id" value="<?php echo $post->ID?>">
-                    <input type="submit" class="button-primary" value="publish proposal">
-                </form>
-				<?php
-			}
+		/**
+		 *
+		 * click "create" button
+		 * copy post to "variant" status
+		 *
+		 *
+		 *
+		 */
 
-			//check if this post IS a proposal that can be published
-			if(get_post_meta($post->ID, 'cdb_is_proposal_for', true)){
-				?>
-                <form>
-                    <input type="hidden" name="publish_proposal_id" value="<?php echo $post->ID?>">
-                    <input type="submit" class="button-primary" value="publish proposal">
-                </form>
-				<?php
-			}
+		public function show_proposal_metabox(){
+
+		    if (!current_user_can('edit_posts')) return;
+
+			global $post;
+			//get posts with status variant with burst_variant_parent = this post id
+			//check if this post has a proposal waiting or is a proposal
+			?>
+            <form method="POST">
+                <?php wp_nonce_field('burst_create_variant')?>
+                <input type="hidden" name="burst_create_variant_id" value="<?php echo $post->ID?>">
+                <input type="submit" class="button-primary" value="<?php _e("Create AB test", "burst")?>">
+            </form>
+			<?php
 		}
 
 
 		/**
 		 * Function for post duplication. Dups appear as drafts. User is redirected to the edit screen
 		 *
-		 * @param $post_id
+		 *
 		 */
-		public function duplicate_post_as_draft($post_id)
+		public function create_variant()
 		{
 			if (!current_user_can('edit_posts')) return;
 
+			if (!isset($_POST["burst_create_variant_id"]) || !isset($_POST['nonce']) || !wp_verify_nonce( $_POST['nonce'], 'burst_create_variant')) return;
+
 			global $wpdb;
+
+			$post_id = intval($_POST["burst_create_variant_id"]);
 
 			/*
 			 *  all the original post data then
@@ -111,7 +116,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 					'post_name' => $post->post_name,
 					'post_parent' => $post->post_parent,
 					'post_password' => $post->post_password,
-					'post_status' => 'draft',
+					'post_status' => 'variant',
 					'post_title' => $post->post_title,
 					'post_type' => $post->post_type,
 					'to_ping' => $post->to_ping,
@@ -121,7 +126,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 				/*
 				 * insert the post by wp_insert_post() function
 				 */
+
 				$new_post_id = wp_insert_post($args);
+				update_post_meta($new_post_id,'burst_variant_parent', $post_id );
 
 				/*
 				 * get all current post terms ad set them to the new post draft
@@ -205,7 +212,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 				: '.min';
 			wp_enqueue_script( 'burst-admin',
 				burst_url . "assets/js/admin$minified.js",
-				array( 'jquery', 'wp-color-picker' ), burst_version, true );
+				array( 'jquery' ), burst_version, true );
 
 			wp_localize_script(
 				'burst-admin',
@@ -255,15 +262,18 @@ if ( ! class_exists( "burst_admin" ) ) {
          *
 		 * @param bool $cache
 		 *
-		 * @return int
+		 * @return array
 		 */
 
 		public function get_warnings($cache = false) {
-		    return 1;
+		    return array('warning-one');
         }
 
 
-		// Register a custom menu page.
+		/**
+		 * Register admin page
+		 */
+
 		public function register_admin_page() {
 			if ( ! current_user_can('manage_options') ) {
 				return;
@@ -317,7 +327,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 		}
 
-
+		/**
+		 * Main settings page
+		 */
 
 		public function main_page() {
 			?>
@@ -342,9 +354,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 					<table class="form-table">
 						<?php
 						BURST::$field->get_fields( 'settings' );
-
 						BURST::$field->save_button();
-
 						?>
 
 					</table>

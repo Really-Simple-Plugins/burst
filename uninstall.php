@@ -10,8 +10,6 @@ if (isset($general_settings['clear_data_on_uninstall']) && $general_settings['cl
 
 	$options = array(
 		'burst_activation_time',
-
-
 	);
 
 
@@ -22,11 +20,7 @@ if (isset($general_settings['clear_data_on_uninstall']) && $general_settings['cl
 
 	global $wpdb;
 	$table_names = array(
-		$wpdb->prefix . 'burst_statistics',
-		$wpdb->prefix . 'burst_cookies',
-		$wpdb->prefix . 'burst_services',
-		$wpdb->prefix . 'burst_cookiebanners',
-		$wpdb->prefix . 'burst_dnsmpd',
+		//$wpdb->prefix . 'burst_statistics',
 	);
 
 	foreach($table_names as $table_name){

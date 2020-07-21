@@ -34,7 +34,7 @@ if ( ! function_exists( 'burst_activation_check' ) ) {
 	/**
 	 * Checks if the plugin can safely be activated, at least php 5.6 and wp 4.6
 	 *
-	 * @since 2.1.5
+	 * @since 1.0.0
 	 */
 	function burst_activation_check() {
 		if ( version_compare( PHP_VERSION, '5.6', '<' ) ) {
@@ -44,7 +44,7 @@ if ( ! function_exists( 'burst_activation_check' ) ) {
 		}
 
 		global $wp_version;
-		if ( version_compare( $wp_version, '4.6', '<' ) ) {
+		if ( version_compare( $wp_version, '5.0', '<' ) ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
 			wp_die( __( 'Burst cannot be activated. The plugin requires WordPress 4.6 or higher',
 				'burst' ) );
@@ -66,7 +66,6 @@ if ( ! class_exists( 'BURST' ) ) {
 			self::setup_constants();
 			self::includes();
 			self::hooks();
-
 			self::$ab_tester  = new burst_ab_tester();
 
 			if ( is_admin() ) {
