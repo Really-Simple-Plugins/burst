@@ -15,6 +15,10 @@ if ( ! class_exists( "burst_ab_tester" ) ) {
 			add_action( 'init', array($this, 'add_variant_post_status') );
 			add_filter( 'the_content', array($this, 'load_variant_content') );
 
+			add_action('admin_footer-post.php', array($this,'add_variant_status_add_in_post_page') );
+		    add_action('admin_footer-post-new.php', array($this,'add_variant_status_add_in_post_page') );
+		    add_action('admin_footer-edit.php', array($this,'add_variant_status_add_in_quick_edit') );
+
 			self::$_this = $this;
 		}
 
@@ -41,18 +45,29 @@ if ( ! class_exists( "burst_ab_tester" ) ) {
 		 */
 		public function load_variant_content($content){
 			global $post;
+			global $ab_testing_enabled;
 			//if ab enabled
+			$ab_testing_enabled = true;
+			if (!$ab_testing_enabled) return $content;
+			
 			//if has variant
 			//get content
-			$parent_post_id = $post->ID;
-			$variant_post_id = 1;
+			$post_id = $post->ID;
+			$burst_variant_child_id = get_post_meta($post_id, 'burst_variant_child', true);
+			if (!intval($burst_variant_child_id)) return;
+
 			$choice = rand(0,1);
 			if ($choice === 1) {
-				$content = get_the_content(null, false, $variant_post_id);
+				$content = get_the_content(null, false, $burst_variant_child_id);
+				error_log($content);
+
 				$content = do_shortcode($content);
-				update_post_meta($variant_post_id, 'burst_hits', get_post_meta($variant_post_id,'burst_hits')+1);
+				// update_post_meta($variant_post_id, 'burst_hits', get_post_meta($variant_post_id,'burst_hits')+1);
+				error_log('A');
+
 			} else {
-				update_post_meta($parent_post_id, 'burst_hits', get_post_meta($parent_post_id,'burst_hits')+1);
+				// update_post_meta($parent_post_id, 'burst_hits', get_post_meta($parent_post_id,'burst_hits')+1);
+				error_log('B');
 
 			}
 
@@ -73,6 +88,23 @@ if ( ! class_exists( "burst_ab_tester" ) ) {
 				'label_count'               => _n_noop( 'Unread <span class="count">(%s)</span>', 'Unread <span class="count">(%s)</span>' , 'burst'),
 			) );
 		}
+
+	 	function add_variant_status_add_in_quick_edit() {
+	        echo "	<script>
+				        jQuery(document).ready( function() {
+				            jQuery( 'select[name=\"_status\"]' ).append( '<option value=\"Variant\">Variant</option>' );      
+				        }); 
+			        </script>";
+	    }
+	    
+	    function add_variant_status_add_in_post_page() {
+	        echo "	<script>
+				        jQuery(document).ready( function() {        
+				            jQuery( 'select[name=\"post_status\"]' ).append( '<option value=\"Variant\">Variant</option>' );
+				        });
+			        </script>";
+	    }
+	   
 
 	}
 } //class closure

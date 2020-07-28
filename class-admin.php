@@ -44,7 +44,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 		{
 			if (!current_user_can('edit_posts')) return;
 
-			add_meta_box('cmplz_edit_meta_box', __('AB testings', 'complianz-gdpr'), array($this, 'show_proposal_metabox'), null, 'side', 'high', array(
+			add_meta_box('burst_edit_meta_box', __('Burst Split AB testing', 'burst'), array($this, 'show_proposal_metabox'), null, 'side', 'high', array(
 				//'__block_editor_compatible_meta_box' => true,
 			));
 		}
@@ -68,7 +68,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			//check if this post has a proposal waiting or is a proposal
 			?>
             <form method="POST">
-                <?php wp_nonce_field('burst_create_variant')?>
+                <?php wp_nonce_field('burst_create_variant', 'burst_create_variant_nonce' )?>
                 <input type="hidden" name="burst_create_variant_id" value="<?php echo $post->ID?>">
                 <input type="submit" class="button-primary" value="<?php _e("Create AB test", "burst")?>">
             </form>
@@ -85,7 +85,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 		{
 			if (!current_user_can('edit_posts')) return;
 
-			if (!isset($_POST["burst_create_variant_id"]) || !isset($_POST['nonce']) || !wp_verify_nonce( $_POST['nonce'], 'burst_create_variant')) return;
+			//if (!isset($_POST["burst_create_variant_id"]) && !isset($_POST['burst_create_variant_nonce']) && !wp_verify_nonce( $_POST['burst_create_variant_nonce'], 'burst_create_variant')) return;
+			if (!isset($_POST["burst_create_variant_id"])) return;
+
 
 			global $wpdb;
 
@@ -102,8 +104,10 @@ if ( ! class_exists( "burst_admin" ) ) {
 			/*
 			 * if post data exists, create the post duplicate
 			 */
-			if (isset($post) && $post != null) {
+			error_log('clicked');
 
+			if (isset($post) && $post != null) {
+				error_log('isset');
 				/*
 				 * new post data array
 				 */
@@ -116,7 +120,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 					'post_name' => $post->post_name,
 					'post_parent' => $post->post_parent,
 					'post_password' => $post->post_password,
-					'post_status' => 'variant',
 					'post_title' => $post->post_title,
 					'post_type' => $post->post_type,
 					'to_ping' => $post->to_ping,
@@ -128,7 +131,10 @@ if ( ! class_exists( "burst_admin" ) ) {
 				 */
 
 				$new_post_id = wp_insert_post($args);
-				update_post_meta($new_post_id,'burst_variant_parent', $post_id );
+				add_post_meta($new_post_id,'burst_variant_parent', $post_id );
+				add_post_meta($post_id,'burst_variant_child', $new_post_id );
+
+				error_log($new_post_id);
 
 				/*
 				 * get all current post terms ad set them to the new post draft
@@ -155,6 +161,12 @@ if ( ! class_exists( "burst_admin" ) ) {
 					$sql_query .= implode(" UNION ALL ", $sql_query_sel);
 					$wpdb->query($sql_query);
 				}
+			}
+			// redirect post=2&action=edit
+			$url = get_admin_url().'post.php?post='.$new_post_id.'&action=edit';
+			error_log($url);
+			if ( wp_redirect( $url ) ) {
+			    exit;
 			}
 		}
 
@@ -317,7 +329,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 				$submenu['burst'][] = array(
 						__( 'Upgrade to premium', 'burst' ),
 						'manage_options',
-						'https://wpburst.com/l/pricing'
+						'https://wpburst.com/pricing'
 				);
 				if ( isset( $submenu['burst'][$highest_index] ) ) {
 					if (! isset ($submenu['burst'][$highest_index][4])) $submenu['burst'][$highest_index][4] = '';
@@ -335,7 +347,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			?>
 			<div class="wrap" id="burst">
 				<div class="dashboard">
-
+					<h1>Burst</h1>
 				</div>
 			</div>
 			<?php
