@@ -29,8 +29,8 @@ if ( ! class_exists( "burst_admin" ) ) {
 			add_action( 'burst_show_message', array( $this, 'show_message' ) );
 
 
-			add_action('admin_init',array( $this, 'create_variant' ) );
-            add_action('add_meta_boxes', array( $this, 'add_variant' ));
+			add_action( 'admin_init',array( $this, 'create_variant_from_post' ) );
+            add_action( 'add_meta_boxes', array( $this, 'add_variant' ));
 
 
 		}
@@ -75,13 +75,24 @@ if ( ! class_exists( "burst_admin" ) ) {
 			<?php
 		}
 
+		/**
+		*
+		* Create AB test 
+		*
+		* @param $args
+		*
+		*/
+		public function create_ab_test($args = array()){
+			$ab_test = new BURST_AB_TEST();
+			$ab_test->add();
+		}
 
 		/**
 		 * Function for post duplication. Dups appear as drafts. User is redirected to the edit screen
 		 *
 		 *
 		 */
-		public function create_variant()
+		public function create_variant_from_post()
 		{
 			if (!current_user_can('edit_posts')) return;
 
@@ -161,6 +172,12 @@ if ( ! class_exists( "burst_admin" ) ) {
 					$sql_query .= implode(" UNION ALL ", $sql_query_sel);
 					$wpdb->query($sql_query);
 				}
+
+				/*
+				* create database entry
+				*/
+
+				create_ab_test();
 			}
 			// redirect post=2&action=edit
 			$url = get_admin_url().'post.php?post='.$new_post_id.'&action=edit';
@@ -183,7 +200,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 		}
 
-
 		/**
 		 * Do upgrade on update
 		 */
@@ -194,7 +210,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			//set a default region if this is an upgrade:
 			if ( $prev_version
-			     && version_compare( $prev_version, '2.0.1', '<' )
+			     && version_compare( $prev_version, '1.0.0', '<' )
 			) {
                 //upgrade
 			}

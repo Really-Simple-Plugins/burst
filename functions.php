@@ -12,3 +12,17 @@ if ( ! function_exists( 'burst_uses_google_analytics' ) ) {
 		return BURST::$cookie_admin->uses_google_analytics();
 	}
 }
+
+if ( ! function_exists( 'burst_user_can_manage' ) ) {
+	function burst_user_can_manage() {
+		if ( ! is_user_logged_in() ) {
+			return false;
+		}
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return false;
+		}
+
+		return true;
+	}
+}
+

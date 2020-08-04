@@ -3,7 +3,7 @@
  * Plugin Name: Burst
  * Plugin URI: https://www.wordpress.org/plugins/burst
  * Description: A/B testing tool
- * Version: 1.0.0
+ * Version: 1.0.3
  * Text Domain: burst
  * Domain Path: /languages
  * Author: Really Simple Plugins
@@ -46,7 +46,7 @@ if ( ! function_exists( 'burst_activation_check' ) ) {
 		global $wp_version;
 		if ( version_compare( $wp_version, '5.0', '<' ) ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
-			wp_die( __( 'Burst cannot be activated. The plugin requires WordPress 4.6 or higher',
+			wp_die( __( 'Burst cannot be activated. The plugin requires WordPress 5.0 or higher',
 				'burst' ) );
 		}
 	}
@@ -114,6 +114,7 @@ if ( ! class_exists( 'BURST' ) ) {
 
 			if ( is_admin() ) {
 				require_once( burst_path . 'class-admin.php' );
+				require_once( burst_path . 'class-database.php' ); //@Rogier is dit de goede plek? 
 			}
 
 			require_once( burst_path . 'class-review.php' );

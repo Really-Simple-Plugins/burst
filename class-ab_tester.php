@@ -106,5 +106,5 @@ if ( ! class_exists( "burst_ab_tester" ) ) {
 	    }
 	   
 
-	}
-} //class closure
+	} //class closure
+} //class_exists closure
