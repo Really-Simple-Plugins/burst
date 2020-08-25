@@ -72,11 +72,12 @@ if ( ! class_exists( "burst_ab_test" ) ) {
 		 */
 
 		private function add() {
+			error_log('added');
 			if ( ! current_user_can( 'manage_options' ) ) {
 				return false;
 			}
 			$array = array(
-				'title' => __( 'New AB test', 'burst' )
+				'title' => __( 'New AB test', 'burst' ),
 			);
 
 			global $wpdb;
@@ -86,8 +87,11 @@ if ( ! class_exists( "burst_ab_test" ) ) {
 				$array
 			);
 			$this->id = $wpdb->insert_id;
+			error_log('id van de added ding: ');
+			error_log($wpdb->insert_id);
 
 		}
+
 
 
 		public function process_form( $post ) {
@@ -271,6 +275,10 @@ if ( ! class_exists( "burst_ab_test" ) ) {
 				$this->add();
 			}
 
+			error_log('save()');
+			error_log('id:' );
+			error_log($this->id);
+
 			// $this->banner_version ++;
 
 			//register translations fields
@@ -316,25 +324,24 @@ if ( ! class_exists( "burst_ab_test" ) ) {
 //            if ($uses_tagmanager && $tm_fires_scripts) {
 //                $this->use_categories = 'visible';
 //            }
-
+			error_log( print_r( $this, true ) );
 			if ( ! is_array( $this->statistics ) ) {
 				$this->statistics = array();
 			}
 			$statistics   = serialize( $this->statistics );
 			$update_array = array(
-				'archived'            		=> intval( $this->banner_version ),
-				'title'                     => sanitize_text_field( $this->title ),
-				'variant_id'                => intval( $this->$variant_id ),
-				'control_id'                => intval( $this->$control_id ),
-				'test_running'              => boolval( $this->$test_running ),
-				'date_created'              => sanitize_text_field( $this->$date_created ),
-				'date_modified'             => sanitize_text_field( $this->$date_modified ),
-				'date_started'              => sanitize_text_field( $this->$date_started ),
-				'date_end'                	=> sanitize_text_field( $this->$date_end ),
-				'kpi'                		=> sanitize_text_field( $this->$kpi ),
-				'statistics'                => $this->$statistics,
+				'archived'            		=> intval( $this->archived ),
+				'title'                     => sanitize_text_field( $this->title ), //@Rogier Waarom zit hier geen dollarteken voor title? 
+				'variant_id'                => intval( $this->variant_id ),
+				'control_id'                => intval( $this->control_id ),
+				'test_running'              => boolval( $this->test_running ),
+				'date_created'              => sanitize_text_field( $this->date_created ),
+				'date_modified'             => sanitize_text_field( $this->date_modified ),
+				'date_started'              => sanitize_text_field( $this->date_started ),
+				'date_end'                	=> sanitize_text_field( $this->date_end ),
+				'kpi'                		=> sanitize_text_field( $this->kpi ),
+				'statistics'                => $this->statistics,
 			);
-
 			global $wpdb;
 			$updated = $wpdb->update( $wpdb->prefix . 'burst_ab_tests',
 				$update_array,
@@ -389,11 +396,6 @@ if ( ! class_exists( "burst_ab_test" ) ) {
 
 		public function archive() {
 			if ( ! current_user_can( 'manage_options' ) ) {
-				return;
-			}
-
-			//don't archive the last one
-			if ( count( burst_get_ab_tests() ) === 1 ) {
 				return;
 			}
       

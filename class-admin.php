@@ -64,27 +64,26 @@ if ( ! class_exists( "burst_admin" ) ) {
 		    if (!current_user_can('edit_posts')) return;
 
 			global $post;
-			//get posts with status variant with burst_variant_parent = this post id
-			//check if this post has a proposal waiting or is a proposal
-			?>
-            <form method="POST">
+			$ab_tests = burst_get_ab_tests_by('control_id', $post->ID) ? burst_get_ab_tests_by('control_id', $post->ID) : burst_get_ab_tests_by('variant_id', $post->ID);
+			if ($ab_tests) {
+				foreach ($ab_tests as $ab_test) {
+					$variant_id = $ab_test->variant_id;
+					$variant = get_post($variant_id);
+					$control_id = $ab_test->control_id;
+					$control = get_post($control_id);
+					echo  $control->post_title.'(control) vs '. $variant->post_title.'(variant)';
+				}
+
+			} else {
+				?>
+           		<form method="POST">
                 <?php wp_nonce_field('burst_create_variant', 'burst_create_variant_nonce' )?>
                 <input type="hidden" name="burst_create_variant_id" value="<?php echo $post->ID?>">
                 <input type="submit" class="button-primary" value="<?php _e("Create AB test", "burst")?>">
-            </form>
-			<?php
-		}
-
-		/**
-		*
-		* Create AB test 
-		*
-		* @param $args
-		*
-		*/
-		public function create_ab_test($args = array()){
-			$ab_test = new BURST_AB_TEST();
-			$ab_test->add();
+            	</form>
+				<?php
+			}
+			
 		}
 
 		/**
@@ -119,19 +118,30 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			if (isset($post) && $post != null) {
 				error_log('isset');
+
+				/*
+				 * create new slug
+				 */
+				if (isset($post->post_name)) { 
+					$slug = $post->post_name . '_' . __( "variation", 'burst' );
+				} else {
+					$slug = __( "variation", 'burst' );
+				}
+
 				/*
 				 * new post data array
 				 */
 				$args = array(
 					'comment_status' => $post->comment_status,
-					'ping_status' => $post->ping_status,
+					'ping_status' => 'variant',
 					'post_author' => $new_post_author,
 					'post_content' => $post->post_content,
 					'post_excerpt' => $post->post_excerpt,
-					'post_name' => $post->post_name,
+					'post_name' => $slug,
 					'post_parent' => $post->post_parent,
 					'post_password' => $post->post_password,
 					'post_title' => $post->post_title,
+					'post_slug' => $post->post_title,
 					'post_type' => $post->post_type,
 					'to_ping' => $post->to_ping,
 					'menu_order' => $post->menu_order
@@ -144,8 +154,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 				$new_post_id = wp_insert_post($args);
 				add_post_meta($new_post_id,'burst_variant_parent', $post_id );
 				add_post_meta($post_id,'burst_variant_child', $new_post_id );
-
-				error_log($new_post_id);
 
 				/*
 				 * get all current post terms ad set them to the new post draft
@@ -177,9 +185,18 @@ if ( ! class_exists( "burst_admin" ) ) {
 				* create database entry
 				*/
 
-				create_ab_test();
+				$ab_test = new BURST_AB_TEST();
+				$ab_test->archived = false;
+				$ab_test->title = $post_title;
+				$ab_test->control_id = $post_id;
+				$ab_test->variant_id = $new_post_id;
+				$ab_test->test_running = false;
+				$ab_test->date_created = date("Y-m-d h:i:sa");
+				$ab_test->save();
+				
+
 			}
-			// redirect post=2&action=edit
+			// redirect to duplicated post also known as the variant
 			$url = get_admin_url().'post.php?post='.$new_post_id.'&action=edit';
 			error_log($url);
 			if ( wp_redirect( $url ) ) {
@@ -275,12 +292,12 @@ if ( ! class_exists( "burst_admin" ) ) {
 			                . __( 'Support', 'burst' ) . '</a>';
 			array_unshift( $links, $faq_link );
 
-			if ( ! defined( 'burst_premium' ) ) {
-				$upgrade_link
-					= '<a style="color:#2DAAE1;font-weight:bold" target="_blank" href="https://wpburst.com/l/pricing">'
-					  . __( 'Upgrade to premium', 'burst' ) . '</a>';
-				array_unshift( $links, $upgrade_link );
-			}
+			// if ( ! defined( 'burst_premium' ) ) {
+			// 	$upgrade_link
+			// 		= '<a style="color:#2DAAE1;font-weight:bold" target="_blank" href="https://wpburst.com/l/pricing">'
+			// 		  . __( 'Upgrade to premium', 'burst' ) . '</a>';
+			// 	array_unshift( $links, $upgrade_link );
+			// }
 
 			return $links;
 		}
@@ -338,20 +355,20 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			do_action( 'burst_admin_menu' );
 
-			if ( defined( 'burst_free' ) && burst_free ) {
-				global $submenu;
-				$class                  = 'burst-submenu';
-				$highest_index = count($submenu['burst']);
-				$submenu['burst'][] = array(
-						__( 'Upgrade to premium', 'burst' ),
-						'manage_options',
-						'https://wpburst.com/pricing'
-				);
-				if ( isset( $submenu['burst'][$highest_index] ) ) {
-					if (! isset ($submenu['burst'][$highest_index][4])) $submenu['burst'][$highest_index][4] = '';
-					$submenu['burst'][$highest_index][4] .= ' ' . $class;
-				}
-			}
+			// if ( defined( 'burst_free' ) && burst_free ) {
+			// 	global $submenu;
+			// 	$class                  = 'burst-submenu';
+			// 	$highest_index = count($submenu['burst']);
+			// 	$submenu['burst'][] = array(
+			// 			__( 'Upgrade to premium', 'burst' ),
+			// 			'manage_options',
+			// 			'https://wpburst.com/pricing'
+			// 	);
+			// 	if ( isset( $submenu['burst'][$highest_index] ) ) {
+			// 		if (! isset ($submenu['burst'][$highest_index][4])) $submenu['burst'][$highest_index][4] = '';
+			// 		$submenu['burst'][$highest_index][4] .= ' ' . $class;
+			// 	}
+			// }
 
 		}
 

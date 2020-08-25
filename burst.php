@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Burst
+ * Plugin Name: Burst | A/B Split Testing
  * Plugin URI: https://www.wordpress.org/plugins/burst
  * Description: A/B testing tool
  * Version: 1.0.3

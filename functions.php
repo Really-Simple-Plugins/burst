@@ -26,3 +26,64 @@ if ( ! function_exists( 'burst_user_can_manage' ) ) {
 	}
 }
 
+if ( ! function_exists( 'burst_get_ab_tests' ) ) {
+
+	/**
+	 * Get array of banner objects
+	 *
+	 * @param array $args
+	 *
+	 * @return stdClass Object
+	 */
+
+	function burst_get_ab_tests( $args = array() ) {
+		$args = wp_parse_args( $args, array( 'status' => 'active' ) );
+		$sql  = '';
+		global $wpdb;
+		if ( $args['status'] === 'archived' ) {
+			$sql = 'AND cdb.archived = true';
+		}
+		if ( $args['status'] === 'active' ) {
+			$sql = 'AND cdb.archived = false';
+		}
+
+		if ( isset( $args['default'] ) && $args['default'] == true ) {
+			$sql = 'AND cdb.default = true LIMIT 1';
+		}
+		if ( isset( $args['default'] ) && $args['default'] === false ) {
+			$sql = 'AND cdb.default = false';
+		}
+		$ab_tests
+			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_ab_tests as cdb where 1=1 $sql" );
+
+	
+		foreach ($ab_tests as $ab_test) {
+			echo "<pre>";
+			error_log(print_r($ab_test));
+			echo "</pre>";
+			error_log(print_r($ab_test->variant_id));
+		}
+		return $ab_tests;
+	}
+}
+
+if ( ! function_exists( 'burst_get_ab_tests_by' ) ) {
+
+	/**
+	 * Get array of banner objects
+	 *
+	 * @param string     $field The field to retrieve the user with. id | ID | title | variant_id | control_id | date_created
+	 * @param int|string $value A value for $field. ID | title | date
+	 *	 *
+	 * @return stdClass Object
+	 */
+
+	function burst_get_ab_tests_by( $field, $value ) {
+		global $wpdb;
+
+		$ab_tests
+			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_ab_tests as cdb where {$field} = {$value}" );
+
+		return $ab_tests;
+	}
+}

@@ -59,9 +59,9 @@ if ( ! class_exists( "burst_ab_tester" ) ) {
 			$choice = rand(0,1);
 			if ($choice === 1) {
 				$content = get_the_content(null, false, $burst_variant_child_id);
-				error_log($content);
-
-				$content = do_shortcode($content);
+				
+				$content = apply_filters( 'the_content', $content );
+				$content = str_replace( ']]>', ']]&gt;', $content );
 				// update_post_meta($variant_post_id, 'burst_hits', get_post_meta($variant_post_id,'burst_hits')+1);
 				error_log('A');
 
