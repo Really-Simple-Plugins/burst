@@ -47,22 +47,9 @@ if ( ! function_exists( 'burst_get_ab_tests' ) ) {
 			$sql = 'AND cdb.archived = false';
 		}
 
-		if ( isset( $args['default'] ) && $args['default'] == true ) {
-			$sql = 'AND cdb.default = true LIMIT 1';
-		}
-		if ( isset( $args['default'] ) && $args['default'] === false ) {
-			$sql = 'AND cdb.default = false';
-		}
 		$ab_tests
 			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_ab_tests as cdb where 1=1 $sql" );
 
-	
-		foreach ($ab_tests as $ab_test) {
-			echo "<pre>";
-			error_log(print_r($ab_test));
-			echo "</pre>";
-			error_log(print_r($ab_test->variant_id));
-		}
 		return $ab_tests;
 	}
 }

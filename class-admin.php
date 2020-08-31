@@ -43,7 +43,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 		function add_variant($post_type)
 		{
 			if (!current_user_can('edit_posts')) return;
-
 			add_meta_box('burst_edit_meta_box', __('Burst Split AB testing', 'burst'), array($this, 'show_proposal_metabox'), null, 'side', 'high', array(
 				//'__block_editor_compatible_meta_box' => true,
 			));
@@ -71,7 +70,10 @@ if ( ! class_exists( "burst_admin" ) ) {
 					$variant = get_post($variant_id);
 					$control_id = $ab_test->control_id;
 					$control = get_post($control_id);
-					echo  $control->post_title.'(control) vs '. $variant->post_title.'(variant)';
+
+					$html = 
+					$html = $control->post_title.'(control) vs '. $variant->post_title.'(variant)';
+					echo $html;
 				}
 
 			} else {
@@ -193,6 +195,8 @@ if ( ! class_exists( "burst_admin" ) ) {
 				$ab_test->test_running = false;
 				$ab_test->date_created = date("Y-m-d h:i:sa");
 				$ab_test->save();
+
+				add_post_meta( $post_id,'contains_tests', true );
 				
 
 			}
@@ -353,6 +357,15 @@ if ( ! class_exists( "burst_admin" ) ) {
 				array( $this, 'main_page' )
 			);
 
+			add_submenu_page(
+				'burst',
+				__( 'AB tests', 'burst' ),
+				__( 'AB tests', 'burst' ),
+				'manage_options',
+				'burst-ab-tests',
+				array( $this, 'ab_tests_overview' )
+			);
+
 			do_action( 'burst_admin_menu' );
 
 			// if ( defined( 'burst_free' ) && burst_free ) {
@@ -381,9 +394,63 @@ if ( ! class_exists( "burst_admin" ) ) {
 			<div class="wrap" id="burst">
 				<div class="dashboard">
 					<h1>Burst</h1>
+					<div>Ab tests</div>
+
 				</div>
 			</div>
 			<?php
+		}
+
+		function ab_tests_overview() {
+
+			if ( ! burst_user_can_manage() ) {
+				return;
+			}
+
+			/*
+			 * Reset the statistics
+			 * */
+			if ( class_exists( 'burst_statistics' )
+			     && ( isset( $_GET['action'] )
+			          && $_GET['action'] == 'reset_statistics' )
+			) {
+				BURST::$statistics->init_statistics();
+			}
+
+			$id = false;
+			if ( isset( $_GET['id'] ) ) {
+				$id = intval( $_GET['id'] );
+			}
+
+			if ( $id || ( isset( $_GET['action'] ) && $_GET['action'] == 'new' ) ) {
+				include( dirname( __FILE__ ) . "/edit.php" );
+			} else {
+
+				include( dirname( __FILE__ ) . '/class-ab_tests-table.php' );
+
+				$ab_tests_table = new burst_ab_test_Table();
+				$ab_tests_table->prepare_items();
+
+				?>
+				<div class="wrap cookie-warning">
+					<h1><?php _e( "AB tests", 'burst' ) ?>
+						<?php //do_action( 'burst_after_cookiebanner_title' ); ?>
+					</h1>
+
+					<form id="burst-ab_test-filter" method="get"
+					      action="">
+
+						<?php
+						$ab_tests_table->search_box( __( 'Filter', 'burst' ),
+							'burst-ab_test' );
+						$ab_tests_table->display();
+						?>
+						<input type="hidden" name="page" value="burst-ab_test"/>
+					</form>
+					<?php //do_action( 'burst_after_cookiebanner_list' ); ?>
+				</div>
+				<?php
+			}
 		}
 
 

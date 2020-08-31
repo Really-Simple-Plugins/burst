@@ -141,15 +141,15 @@ if ( ! class_exists( "burst_ab_test" ) ) {
 				$ab_test         = $ab_tests[0];
 				$this->archived       = $ab_test->archived;
 				$this->title          = $ab_test->title;
-				$this->$variant_id = $ab_test->variant_id;
-				$this->$control_id = $ab_test->control_id;
-				$this->$test_running = $ab_test->test_running;
-				$this->$date_created = $ab_test->date_created;
-				$this->$date_modified = $ab_test->date_modified;
-				$this->$date_started = $ab_test->date_started;
-				$this->$date_end = $ab_test->date_end;
-				$this->$kpi = $ab_test->kpi;
-				$this->$statistics = $ab_test->statistics;
+				$this->variant_id = $ab_test->variant_id;
+				$this->control_id = $ab_test->control_id;
+				$this->test_running = $ab_test->test_running;
+				$this->date_created = $ab_test->date_created;
+				$this->date_modified = $ab_test->date_modified;
+				$this->date_started = $ab_test->date_started;
+				$this->date_end = $ab_test->date_end;
+				$this->kpi = $ab_test->kpi;
+				$this->statistics = $ab_test->statistics;
 
 
 
