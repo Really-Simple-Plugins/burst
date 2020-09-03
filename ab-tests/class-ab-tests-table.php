@@ -145,7 +145,7 @@ class burst_ab_test_Table extends WP_List_Table {
 
 		$actions = array(
 			'edit'   => '<a href="'
-			            . admin_url( 'admin.php?page=burst-ab-test&id='
+			            . admin_url( 'admin.php?page=burst-ab-tests&id='
 			                         . $item['ID'] ) . '&action=edit">' . __( 'Edit',
 					'burst' ) . '</a>',
 			'delete' => '<a class="burst-delete-ab_test" data-id="' . $item['ID']

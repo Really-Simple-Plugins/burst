@@ -423,10 +423,10 @@ if ( ! class_exists( "burst_admin" ) ) {
 			}
 
 			if ( $id || ( isset( $_GET['action'] ) && $_GET['action'] == 'new' ) ) {
-				include( dirname( __FILE__ ) . "/edit.php" );
+				include( dirname( __FILE__ ) . "/ab-tests/edit.php" );
 			} else {
 
-				include( dirname( __FILE__ ) . '/class-ab_tests-table.php' );
+				include( dirname( __FILE__ ) . '/ab-tests/class-ab-tests-table.php' );
 
 				$ab_tests_table = new burst_ab_test_Table();
 				$ab_tests_table->prepare_items();

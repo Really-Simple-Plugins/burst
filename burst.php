@@ -118,7 +118,8 @@ if ( ! class_exists( 'BURST' ) ) {
 			}
 
 			require_once( burst_path . 'class-review.php' );
-			require_once( burst_path . 'class-ab_tests.php' );
+			require_once( burst_path . 'ab-tests/class-ab-tests.php' );
+			require_once( burst_path . 'ab-tests/ab-tests.php' );
 		}
 
 		private function hooks() {
