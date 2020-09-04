@@ -61,16 +61,21 @@ if ( ! class_exists( 'BURST' ) ) {
 		public static $ab_tester;
 		public static $admin;
 		public static $review;
+		public static $field;
+		public static $config;
 
 		private function __construct() {
 			self::setup_constants();
 			self::includes();
 			self::hooks();
-			self::$ab_tester  = new burst_ab_tester();
+			self::$ab_tester  = new burst_ab_test();
+
+			self::$config = new burst_config();
 
 			if ( is_admin() ) {
 				self::$review          = new burst_review();
 				self::$admin           = new burst_admin();
+				self::$field 		   = new burst_field();
 			}
 
 		}
@@ -114,12 +119,15 @@ if ( ! class_exists( 'BURST' ) ) {
 
 			if ( is_admin() ) {
 				require_once( burst_path . 'class-admin.php' );
-				require_once( burst_path . 'class-database.php' ); //@Rogier is dit de goede plek? 
+				require_once( burst_path . 'class-database.php' );
+				require_once( burst_path . 'class-field.php');
 			}
 
 			require_once( burst_path . 'class-review.php' );
-			require_once( burst_path . 'ab-tests/class-ab-tests.php' );
-			require_once( burst_path . 'ab-tests/ab-tests.php' );
+			require_once( burst_path . 'ab-tests/class-ab-test.php' );
+			require_once( burst_path . 'ab-tests/ab-test.php' );
+
+			require_once( burst_path . 'config/class-config.php');
 		}
 
 		private function hooks() {

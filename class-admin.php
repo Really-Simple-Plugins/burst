@@ -344,7 +344,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 				'manage_options',
 				'burst',
 				array( $this, 'main_page' ),
-				burst_url . 'assets/images/menu-icon.png',
+				burst_url . 'assets/images/menu-icon.svg',
 				burst_MAIN_MENU_POSITION
 			);
 
@@ -426,7 +426,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 				include( dirname( __FILE__ ) . "/ab-tests/edit.php" );
 			} else {
 
-				include( dirname( __FILE__ ) . '/ab-tests/class-ab-tests-table.php' );
+				include( dirname( __FILE__ ) . '/ab-tests/class-ab-test-table.php' );
 
 				$ab_tests_table = new burst_ab_test_Table();
 				$ab_tests_table->prepare_items();
