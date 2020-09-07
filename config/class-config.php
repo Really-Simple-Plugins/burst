@@ -155,6 +155,7 @@ if ( ! class_exists( "burst_config" ) ) {
 
 			/* config files */
 			require_once( burst_path . '/ab-tests/settings.php' );
+			require_once( burst_path . '/config/general-settings.php' );
 			
 
 			if ( file_exists( burst_path . '/pro/config/' ) ) {

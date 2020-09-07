@@ -366,6 +366,15 @@ if ( ! class_exists( "burst_admin" ) ) {
 				array( $this, 'ab_tests_overview' )
 			);
 
+			add_submenu_page(
+				'burst',
+				__( 'Settings' ),
+				__( 'Settings' ),
+				'manage_options',
+				"burst-settings",
+				array( $this, 'settings' )
+			);
+
 			do_action( 'burst_admin_menu' );
 
 			// if ( defined( 'burst_free' ) && burst_free ) {
