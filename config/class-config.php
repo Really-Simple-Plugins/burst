@@ -279,20 +279,6 @@ if ( ! class_exists( "burst_config" ) ) {
 
 		public function init() {
 
-			$this->fields = apply_filters( 'burst_fields', $this->fields );
-			if ( ! is_admin() ) {
-				$regions = burst_get_regions(true);
-				foreach ( $regions as $region => $label ) {
-					if ( !isset( $this->pages[ $region ] ) ) continue;
-
-					foreach ( $this->pages[ $region ] as $type => $data ) {
-						$this->pages[ $region ][ $type ]['document_elements']
-							= apply_filters( 'burst_document_elements',
-							$this->pages[ $region ][ $type ]['document_elements'],
-							$region, $type, $this->fields() );
-					}
-				}
-			}
 		}
 
 
