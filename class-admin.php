@@ -259,6 +259,12 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			$minified = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? ''
 				: '.min';
+
+			wp_register_style( 'burst-admin',
+				trailingslashit( burst_url ) . "assets/css/admin$minified.css", "",
+				burst_version );
+			wp_enqueue_style( 'burst-admin' );
+
 			wp_enqueue_script( 'burst-admin',
 				burst_url . "assets/js/admin$minified.js",
 				array( 'jquery' ), burst_version, true );
@@ -399,15 +405,47 @@ if ( ! class_exists( "burst_admin" ) ) {
 		 */
 
 		public function main_page() {
-			?>
-			<div class="wrap" id="burst">
-				<div class="dashboard">
-					<h1>Burst</h1>
-					<div>Ab tests</div>
+			$grid_items =
+				array(
+					array(
+						'header' => __("Your progress", "burst"),
+						'body'  => 'progress',
+						'footer' => 'footer',
+						'class' => '',
+						'page' => 'dashboard',
+						'controls' => sprintf(__("Remaining tasks (%s)", "burst"), count( $this->get_warnings() )),
+					),
+					array(
+						'header' => __("Documents", "burst"),
+						'body'  => 'documents',
+						'footer' => 'footer',
+						'class' => 'small',
+						'page' => 'dashboard',
+						'controls' => __("Last update", "burst"),
+					),
 
-				</div>
-			</div>
-			<?php
+					array(
+						'header' => __("Tools", "burst"),
+						'body'  => 'tools',
+						'footer' => 'footer',
+						'class' => 'small',
+						'page' => 'dashboard',
+						'controls' => '',
+					),
+				);
+
+			//give each item the key as index
+			array_walk($grid_items, function(&$a, $b) { $a['index'] = $b; });
+
+			$grid_html = '';
+			foreach ($grid_items as $index => $grid_item) {
+				$grid_html .= burst_grid_element($grid_item);
+			}
+			$args = array(
+				'page' => 'dashboard',
+				'content' => burst_grid_container($grid_html),
+			);
+			echo burst_get_template('admin_wrap.php', $args );
 		}
 
 		function ab_tests_overview() {

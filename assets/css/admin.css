@@ -1,0 +1,15 @@
+#burst {
+  margin: 0 0 0 -20px;
+}
+#burst #burst-header {
+  padding: 20px;
+  background-color: #fff;
+}
+#burst #burst-header img {
+  margin-left: 15px;
+  width: 120px;
+}
+#burst #burst-content-area {
+  margin: 15px;
+}
+/*# sourceMappingURL=admin.css.map */

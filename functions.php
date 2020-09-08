@@ -194,6 +194,43 @@ if (!function_exists('burst_read_more')) {
 	}
 }
 
+if ( ! function_exists( 'burst_get_template' ) ) {
+	/**
+	 * Get a template based on filename, overridable in theme dir
+	 * @param $filename
+	 *
+	 * @return string
+	 */
+
+	function burst_get_template( $filename , $args = array() ) {
+
+		$file       = trailingslashit( burst_path ) . 'templates/' . $filename;
+		$theme_file = trailingslashit( get_stylesheet_directory() )
+		              . trailingslashit( basename( burst_path ) )
+		              . 'templates/' . $filename;
+
+		if ( file_exists( $theme_file ) ) {
+			$file = $theme_file;
+		}
+
+		if ( strpos( $file, '.php' ) !== false ) {
+			ob_start();
+			require $file;
+			$contents = ob_get_clean();
+		} else {
+			$contents = file_get_contents( $file );
+		}
+
+		if ( !empty($args) && is_array($args) ) {
+			foreach($args as $fieldname => $value ) {
+				$contents = str_replace( '{'.$fieldname.'}', $value, $contents );
+			}
+		}
+
+		return $contents;
+	}
+}
+
 if ( ! function_exists( 'burst_array_filter_multidimensional' ) ) {
 	function burst_array_filter_multidimensional(
 		$array, $filter_key, $filter_value

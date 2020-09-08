@@ -1,0 +1,102 @@
+@gridblock_height: 500px;
+@gridblock_width: 800px;
+@gridblock_width_small:400px;
+@grid_margin:10px;
+@grey-light:#cecece;
+@box_shadow_color: #dedede;
+
+.burst-grid {
+    position: relative;
+    .burst-grid {
+        width: @gridblock_width;
+        &.small {
+            width: @gridblock_width_small;
+        }
+        position: absolute;
+        height: @gridblock_height;
+        z-index: 1;
+
+        &.muuri-item-hidden {
+            z-index: 0;
+        }
+        &.muuri-item-releasing {
+            z-index: 2;
+        }
+        &.muuri-item-dragging {
+            z-index: 3;
+        }
+        .burst-grid-header {
+		  border-bottom: 1px solid @grey-light;
+		  .burst-grid-header-container {
+                margin:0 20px;
+                height:100%;
+            }
+            cursor: pointer;
+            padding: 0;
+            height:60px;
+            .burst-grid-title{
+                font-size: 20px;
+                padding: 20px 0;
+                font-weight: bold;
+                float: left;
+            }
+            .burst-grid-controls {
+                float: right;
+                margin-top: 20px;
+			  	color: #cecece;
+            }
+        }
+        .item-container {
+            background-color: #fff;
+            position: relative;
+            box-shadow: 1px 1px @box_shadow_color;
+            width: @gridblock_width - 2* @grid_margin;
+            height: @gridblock_height - 2 * @grid_margin;
+            .item-content {
+                clear:both;
+                margin:15px;
+                height: calc(100% - 100px);
+                padding-top: 15px;
+                padding-bottom:10px;
+            }
+
+        }
+        &.half-height {
+            .item-container {
+                height: @gridblock_height / 2;
+            }
+        }
+        &.small {
+            .item-container {
+                width: @gridblock_width_small - 2* @grid_margin;
+            }
+        }
+        &.no-border {
+            .item-container {
+                border: none;
+            }
+        }
+        &.no-background {
+            .item-container {
+                background-color: #F1F1F1;
+            }
+        }
+        &.muuri-item-dragging .item-content {
+        }
+        &.muuri-item-releasing .item-content {
+        }
+
+        &.muuri-item-placeholder {
+        }
+
+        &.muuri-item-placeholder .item-container {
+            border-style: dashed;
+            padding:0;
+        }
+    }
+    .upsell-grid-container {
+        .item-container {
+                box-shadow: none;
+        }
+    }
+}

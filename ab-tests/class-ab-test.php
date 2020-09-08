@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) or die( "you do not have acces to this page!" );
 
 add_action( 'plugins_loaded', 'burst_install_ab_tests_table', 10 );
 function burst_install_ab_tests_table() {
-	if ( get_option( 'burst_cbdb_version' ) !== burst_version ) {
+	if ( get_option( 'burst_abdb_version' ) !== burst_version ) {
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 		global $wpdb;
@@ -31,7 +31,7 @@ function burst_install_ab_tests_table() {
               PRIMARY KEY  (ID)
             ) $charset_collate;";
 		dbDelta( $sql );
-		update_option( 'burst_cbdb_version', burst_version );
+		update_option( 'burst_abdb_version', burst_version );
 
 	}
 }
