@@ -432,6 +432,22 @@ if ( ! class_exists( "burst_admin" ) ) {
 						'page' => 'dashboard',
 						'controls' => '',
 					),
+					array(
+	                    'header' => __("Tips & Tricks", "burst"),
+	                    'body' => 'tipstricks',
+	                    'footer' => 'footer',
+	                    'class' => 'half-height burst-tips-tricks',
+	                    'page' => 'dashboard',
+	                    'controls' => '',
+	                ),
+	                array(
+	                    'header' => __("Our Plugins", "burst"),
+	                    'body' => 'upsell-element',
+	                    'footer' => 'footer',
+	                    'class' => 'half-height no-border no-background upsell-grid-container upsell',
+	                    'page' => 'dashboard',
+	                    'controls' => '<div class="rsp-logo"><a href="https://really-simple-plugins.com/"><img src="'. trailingslashit(burst_url) .'assets/images/really-simple-plugins.png" /></a></div>',
+	                ),
 				);
 
 			//give each item the key as index
@@ -555,6 +571,74 @@ if ( ! class_exists( "burst_admin" ) ) {
 			return $success;
 		}
 
+		public function get_template($file, $path = burst_path, $args = array())
+        {
+
+            $file = trailingslashit($path) . 'templates/' . $file;
+            $theme_file = trailingslashit(get_stylesheet_directory()) . dirname(burst_path) . $file;
+
+            if (file_exists($theme_file)) {
+                $file = $theme_file;
+            }
+
+            if (isset($args['tooltip'])) {
+                $args['tooltip'] = BURST::$help->get_title_help_tip($args['tooltip']);
+            } else {
+	            $args['tooltip'] = '';
+            }
+
+            if (strpos($file, '.php') !== false) {
+                ob_start();
+                require $file;
+                $contents = ob_get_clean();
+            } else {
+                $contents = file_get_contents($file);
+            }
+
+	        if (isset($args['type']) && ($args['type'] === 'settings' || $args['type'] === 'license')) {
+		        $form_open =  '<form action="'.esc_url( add_query_arg(array('burst_redirect_to' => sanitize_title($args['type'])), admin_url( 'options.php' ))).'" method="post">';
+                $form_close = '</form>';
+		        $button = burst_save_button();
+		        $contents = str_replace('{content}', $form_open.'{content}'.$button.$form_close, $contents);
+
+	        }
+
+            foreach ($args as $key => $value ){
+                $contents = str_replace('{'.$key.'}', $value, $contents);
+            }
+
+
+
+	        return $contents;
+        }
+
+	    /**
+         * Get status link for plugin, depending on installed, or premium availability
+	     * @param $item
+	     *
+	     * @return string
+	     */
+
+        public function get_status_link($item){
+            if (is_multisite()){
+                $install_url = network_admin_url('plugin-install.php?s=');
+            } else {
+                $install_url = admin_url('plugin-install.php?s=');
+            }
+
+	        if (defined($item['constant_free']) && defined($item['constant_premium'])) {
+		        $status = __("Installed", "wp-search-insights");
+	        } elseif (defined($item['constant_free']) && !defined($item['constant_premium'])) {
+		        $link = $item['website'];
+		        $text = __('Upgrade to pro', 'wp-search-insights');
+		        $status = "<a href=$link>$text</a>";
+	        } else {
+		        $link = $install_url.$item['search']."&tab=search&type=term";
+		        $text = __('Install', 'wp-search-insights');
+		        $status = "<a href=$link>$text</a>";
+	        }
+	        return $status;
+        }
 
 	}
 } //class closure
