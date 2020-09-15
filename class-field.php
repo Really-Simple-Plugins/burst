@@ -547,9 +547,9 @@ if ( ! class_exists( "burst_field" ) ) {
 			$this->get_comment( $args );
 
 			if ( $args['table'] ) {
-				echo '</td><td>' . $this->get_help_tip( $args ) . '</td></tr>';
+				echo '</td></tr>';
 			} else {
-				echo '</div>' . $this->get_help_tip( $args ) . '</div>';
+				echo '</div></div>';
 			}
 		}
 
@@ -858,13 +858,13 @@ if ( ! class_exists( "burst_field" ) ) {
 								echo "required";
 							} ?>
 							type="radio"
-							id="<?php echo esc_html( $fieldname ) ?>"
+							id="<?php echo esc_html( $option_value ) ?>"
 							name="<?php echo esc_html( $fieldname ) ?>"
 							value="<?php echo esc_html( $option_value ); ?>" <?php if ( $value
 							                                                            == $option_value
 						)
 							echo "checked" ?>>
-						<label class="">
+						<label for="<?php echo esc_html( $option_value ) ?>" class="">
 							<?php echo esc_html( $option_label ); ?>
 						</label>
 						<div class="clear"></div>
@@ -1717,7 +1717,7 @@ if ( ! class_exists( "burst_field" ) ) {
 			$output = '';
 			if ( isset( $args['help'] ) ) {
 				$output
-					= '<a href="#" class="button burst-open-modal"><i class="fa fa-question"></i></a>';
+					= '<span data-text="'. wp_kses_post( $args['help'] ) .'" class="burst-tooltip"><img width="15px" src="'. trailingslashit(burst_url) .'assets/icons/question-circle-solid.svg"></span>';
 			}
 
 			return $output;
@@ -1741,6 +1741,7 @@ if ( ! class_exists( "burst_field" ) ) {
 					= '<div><div class="burst-help-modal "><span><i class="fa fa-times"></i></span>'
 					  . wp_kses_post( $args['help'] ) . '</div></div>';
 			}
+
 
 			return $output;
 		}

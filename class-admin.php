@@ -486,6 +486,8 @@ if ( ! class_exists( "burst_admin" ) ) {
 				$id = intval( $_GET['id'] );
 			}
 
+			ob_start();
+
 			if ( $id || ( isset( $_GET['action'] ) && $_GET['action'] == 'new' ) ) {
 				include( dirname( __FILE__ ) . "/ab-tests/edit.php" );
 			} else {
@@ -518,6 +520,13 @@ if ( ! class_exists( "burst_admin" ) ) {
 				</div>
 				<?php
 			}
+			$html = ob_get_clean();
+			
+			$args = array(
+				'page' => 'dashboard',
+				'content' => burst_grid_container($html),
+			);
+			echo burst_get_template('admin_wrap.php', $args );
 		}
 
 

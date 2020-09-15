@@ -10,37 +10,46 @@ function burst_add_ab_test_settings($fields){
 				'source'      => 'BURST_AB_TEST',
 				'step'        => 'general',
 				'type'        => 'text',
-				'label'       => __( "AB test title", 'burst' ),
-				'placeholder' => __( 'Descriptive title of the AB test' ),
-				'help'        => __( 'For internal use only', 'burst' ),
-				'cols'     => 12,
+				'label'       => __( "Descriptive name for your experiment", 'burst' ),
+				'placeholder' => __( 'For example: Red vs green buttons' ),
+				'help'        => __( 'This name is for internal use only. Try to give the experiment a clear name, so you can find this test again.', 'burst' ),
 			),
 
-			'test_running' => array(
+			'control_id' => array(
 				'source'             => 'BURST_AB_TEST',
 				'step'               => 'general',
-				'type'               => 'checkbox',
-				'label'              => __( "Test running",
+				'type'               => 'select',
+				'label'              => __( "Control",
 					'burst' ),
-				// 'help'               => __( 'When enabled, this is the cookie banner that is used for all visitors. Enabling it will disable this setting on the current default banner. Disabling it will enable randomly a different default banner.',
-				// 	'burst' ),
-
-				'default'            => false,
-				//setting this to true will set it always to true, as the get_cookie settings will see an empty value
-				//'callback_condition' => 'burst_ab_testing_enabled',
-
-				'cols'     => 12,
+				'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
+					'burst' ),
 			),
+
+			'variant_id' => array(
+				'source'             => 'BURST_AB_TEST',
+				'step'               => 'general',
+				'type'               => 'select',
+				'label'              => __( "Variant",
+					'burst' ),
+				'help'               => __( 'Select or make a variant page. The variant page is the page you want to test against your control page. The variant page should be an improvement compared to the control page. At least you should think it is an improvement. That is something you will find out by running the experiment.',
+					'burst' ),
+			),
+
 
 			'kpi' => array(
 				'source'      => 'BURST_AB_TEST',
-				'step'        => 'general',
-				'type'        => 'text',
+				'step'        => 'goals',
+				'type'        => 'radio',
+				'options' => array(
+					'sale'       => __( "Sale", 'burst' ),
+					'page-visit'  => __( "Page visit", 'burst' ),
+					'click-on-element'  => __( "Click on element", 'burst' ),
+					'click-through-rate'  => __( "Click through rate", 'burst' ),
+					'form-submission'  => __( "Form submission", 'burst' ),
+				),
 				'label'       => __( "Key Performance Indicator", 'burst' ),
 				'placeholder' => __( 'Descriptive title of the AB test' ),
 				'help'        => __( 'For internal use only', 'burst' ),
-				'condition' =>	array('test_running' => true),
-				'cols'     => 12,
 			),
 
 		);
