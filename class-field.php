@@ -1339,6 +1339,9 @@ if ( ! class_exists( "burst_field" ) ) {
 			return false;
 		}
 
+		/**
+		* 
+		*/
 		public
 		function get_fields(
 			$source, $step = false, $section = false, $get_by_fieldname = false
@@ -1346,7 +1349,7 @@ if ( ! class_exists( "burst_field" ) ) {
 
 			$fields = BURST::$config->fields( $source, $step, $section,
 				$get_by_fieldname );
-
+			error_log(print_r($fields, true));
 
 			$i = 0;
 			foreach ( $fields as $fieldname => $args ) {

@@ -27,7 +27,8 @@ function burst_add_ab_test_settings($fields){
 
 				'default'            => false,
 				//setting this to true will set it always to true, as the get_cookie settings will see an empty value
-				'callback_condition' => 'burst_ab_testing_enabled',
+				//'callback_condition' => 'burst_ab_testing_enabled',
+
 				'cols'     => 12,
 			),
 
@@ -38,6 +39,7 @@ function burst_add_ab_test_settings($fields){
 				'label'       => __( "Key Performance Indicator", 'burst' ),
 				'placeholder' => __( 'Descriptive title of the AB test' ),
 				'help'        => __( 'For internal use only', 'burst' ),
+				'condition' =>	array('test_running' => true),
 				'cols'     => 12,
 			),
 

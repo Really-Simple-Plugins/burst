@@ -2,7 +2,7 @@
 
 	<form id='burst-ab-test-settings' action="" method="post">
 
-		<h3><?php _e( "General", 'burst' ) ?></h3>
+		<h3><?php _e( "Your experiment", 'burst' ) ?></h3>
 		
 		<?php wp_nonce_field( 'burst_save_ab_test', 'burst_nonce' ); ?>
 

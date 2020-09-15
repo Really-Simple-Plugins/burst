@@ -27,7 +27,6 @@ function burst_install_ab_tests_table() {
             `date_end` timestamp NOT NULL,
             `kpi` text NOT NULL,
             `statistics` text NOT NULL,
-
               PRIMARY KEY  (ID)
             ) $charset_collate;";
 		dbDelta( $sql );
