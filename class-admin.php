@@ -30,7 +30,8 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 
 			add_action( 'admin_init',array( $this, 'create_variant_from_post' ) );
-            add_action( 'add_meta_boxes', array( $this, 'add_variant' ));
+			add_action ( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
+            add_action( 'add_meta_boxes', array( $this, 'add_variant' ) );
 
 
 		}
@@ -495,9 +496,12 @@ if ( ! class_exists( "burst_admin" ) ) {
 				$ab_tests_table->prepare_items();
 
 				?>
+
 				<div class="wrap cookie-warning">
 					<h1><?php _e( "AB tests", 'burst' ) ?>
 						<?php //do_action( 'burst_after_cookiebanner_title' ); ?>
+						<a href="<?php echo admin_url('admin.php?page=burst-ab-tests&action=new'); ?>"
+		                   class="page-title-action"><?php _e('Add AB test', 'burst') ?></a>
 					</h1>
 
 					<form id="burst-ab_test-filter" method="get"
@@ -537,6 +541,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			</div>
 			<?php
 		}
+
 
 
 		/**
@@ -612,6 +617,18 @@ if ( ! class_exists( "burst_admin" ) ) {
 	        return $contents;
         }
 
+        public function show_message() {
+			if ( ! empty( $this->error_message ) ) {
+				cmplz_notice( $this->error_message, 'warning' );
+				$this->error_message = "";
+			}
+
+			if ( ! empty( $this->success_message ) ) {
+				cmplz_notice( $this->success_message, 'success', true );
+				$this->success_message = "";
+			}
+		}
+
 	    /**
          * Get status link for plugin, depending on installed, or premium availability
 	     * @param $item
@@ -638,6 +655,22 @@ if ( ! class_exists( "burst_admin" ) ) {
 		        $status = "<a href=$link>$text</a>";
 	        }
 	        return $status;
+        }
+
+        public function hide_wordpress_and_other_plugin_notices(){
+        	/**
+        	* @todo Mag dit? Geen notices laten zien op onze pagina's. 
+        	*/
+        	if ( isset( $_GET['page'] ) && strpos($_GET['page'], 'burst') === 0 ) {
+				if(! current_user_can('update_core')){ return; }
+				add_filter('pre_option_update_core','__return_null');
+				add_filter('pre_site_transient_update_core','__return_null');
+				add_filter('pre_site_transient_update_plugins','__return_null');
+				add_filter('pre_site_transient_update_themes','__return_null');
+				add_filter('all_admin_notices','__return_null');
+				add_filter('admin_notices','__return_null');
+        	}
+
         }
 
 	}

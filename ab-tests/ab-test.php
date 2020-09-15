@@ -123,3 +123,37 @@ if ( ! class_exists( "burst_ab_test" ) ) {
 
 	} //class closure
 } //class_exists closure
+
+/**
+ * This function is hooked to the plugins_loaded, prio 10 hook, as otherwise there is some escaping we don't want.
+ *
+ * @todo fix the escaping
+ */
+add_action( 'plugins_loaded', 'burst_cookiebanner_form_submit', 20 );
+function burst_cookiebanner_form_submit() {
+	if ( ! burst_user_can_manage() ) {
+		return;
+	}
+
+	if ( ! isset( $_GET['id'] ) && ! isset( $_POST['burst_add_new'] ) ) {
+		return;
+	}
+
+	if ( ! isset( $_POST['burst_nonce'] ) ) {
+		return;
+	}
+
+	if ( isset( $_POST['burst_add_new'] ) ) {
+		$banner = new BURST_AB_TEST();
+	} else {
+		$id     = intval( $_GET['id'] );
+		$banner = new BURST_AB_TEST( $id );
+	}
+	$banner->process_form( $_POST );
+
+	if ( isset( $_POST['burst_add_new'] ) ) {
+		wp_redirect( admin_url( 'admin.php?page=burst-cookiebanner&id='
+		                        . $banner->id ) );
+		exit;
+	}
+}

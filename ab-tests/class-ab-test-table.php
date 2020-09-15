@@ -50,14 +50,6 @@ class burst_ab_test_Table extends WP_List_Table {
 	public $args = array();
 
 	/**
-	 * If true, only one ab_test is shown, without the "default" column
-	 *
-	 * @var bool
-	 */
-
-	private $show_default_only = false;
-
-	/**
 	 * Get things started
 	 *
 	 * @since 1.5
@@ -74,10 +66,6 @@ class burst_ab_test_Table extends WP_List_Table {
 			'plural'   => __( 'ab_tests', 'burst' ),
 			'ajax'     => false,
 		) );
-
-		//if ab testing is not enabled, show only the default.
-		$this->show_default_only = apply_filters( 'burst_default_only', true );
-
 	}
 
 	/**
@@ -91,7 +79,10 @@ class burst_ab_test_Table extends WP_List_Table {
 	 *
 	 */
 
+	
 	public function search_box( $text, $input_id ) {
+		/**
+		* @todo Add filters
 		$input_id = $input_id . '-search-input';
 		$status   = $this->get_status();
 		if ( ! empty( $_REQUEST['orderby'] ) ) {
@@ -104,26 +95,27 @@ class burst_ab_test_Table extends WP_List_Table {
 		}
 
 
-		if ( ! $this->show_default_only ) { ?>
 
-			<p class="search-box">
-				<label class="screen-reader-text"
-				       for="<?php echo $input_id ?>"><?php echo $text; ?>
-					:</label>
-				<select name="status">
-					<option value="active" <?php if ( $status === 'active' )
-						echo "selected" ?>><?php _e( 'Active AB tests',
-							'burst' ) ?></option>
-					<option value="archived" <?php if ( $status === 'archived' )
-						echo "selected" ?>><?php _e( 'Archived AB tests',
-							'burst' ) ?></option>
-				</select>
-				<?php submit_button( $text, 'button', false, false,
-					array( 'ID' => 'search-submit' ) ); ?>
-			</p>
-			<?php
-		}
+		?>
+		<p class="search-box">
+			<label class="screen-reader-text"
+			       for="<?php echo $input_id ?>"><?php echo $text; ?>
+				:</label>
+			<select name="status">
+				<option value="active" <?php if ( $status === 'active' )
+					echo "selected" ?>><?php _e( 'Active AB tests',
+						'burst' ) ?></option>
+				<option value="archived" <?php if ( $status === 'archived' )
+					echo "selected" ?>><?php _e( 'Archived AB tests',
+						'burst' ) ?></option>
+			</select>
+			<?php submit_button( $text, 'button', false, false,
+				array( 'ID' => 'search-submit' ) ); ?>
+		</p>
+		<?php
+		*/
 	}
+	
 
 	/**
 	 * Gets the name of the primary column.
@@ -329,10 +321,6 @@ class burst_ab_test_Table extends WP_List_Table {
 		);
 
 		$args['name'] = $search;
-
-		if ( $this->show_default_only ) {
-			$args['default'] = true;
-		}
 
 		$this->args = $args;
 		$ab_tests    = burst_get_ab_tests( $args );
