@@ -6,7 +6,7 @@ function burst_add_ab_test_settings($fields){
 
 	$fields = $fields + array(
 
-			'title' => array(
+			'ab_test_title' => array(
 				'source'      => 'BURST_AB_TEST',
 				'step'        => 'general',
 				'type'        => 'text',
@@ -42,7 +42,6 @@ function burst_add_ab_test_settings($fields){
 				'type'        => 'radio',
 				'options' => array(
 					'sale'       => __( "Sale", 'burst' ),
-					'page-visit'  => __( "Page visit", 'burst' ),
 					'click-on-element'  => __( "Click on element", 'burst' ),
 					'click-through-rate'  => __( "Click through rate", 'burst' ),
 					'form-submission'  => __( "Form submission", 'burst' ),

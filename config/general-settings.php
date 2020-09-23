@@ -1,7 +1,9 @@
 <?php
 defined( 'ABSPATH' ) or die( "you do not have acces to this page!" );
 
-$this->fields = $this->fields + array(
+add_filter('burst_fields', 'burst_add_general_settings');
+function burst_add_general_settings($fields){
+	$fields = $fields + array(
 
 		'a_b_testing' => array(
 			'source'   => 'settings',
@@ -9,7 +11,7 @@ $this->fields = $this->fields + array(
 			'type'     => 'checkbox',
 			'label'    => __( "Enable A/B testing", 'burst' ),
 			'table'    => true,
-			'disabled' => true,
+			'disabled' => false,
 			'default'  => false,
 			//setting this to true will set it always to true, as the get_cookie settings will see an empty value
 		),
@@ -36,3 +38,5 @@ $this->fields = $this->fields + array(
 			'table'   => true,
 		),
 	);
+	return $fields;
+}

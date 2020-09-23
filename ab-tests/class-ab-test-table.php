@@ -218,12 +218,8 @@ class burst_ab_test_Table extends WP_List_Table {
 		if ( ! $this->show_default_only ) {
 			$columns['control_id'] = __( 'Control', 'burst' );
 			$columns['variant_id'] = __( 'Variant', 'burst' );
-			$columns['kpi'] = __( 'Key performance indicator', 'burst' );
+			$columns['kpi'] = __( 'Goal', 'burst' );
 			$columns['test_running'] = __( 'Active', 'burst' );
-		}
-
-		if ( ! $this->show_default_only ) {
-			$columns['archive'] = __( 'Archive', 'burst' );
 		}
 
 		return apply_filters( 'burst_report_customer_columns', $columns );

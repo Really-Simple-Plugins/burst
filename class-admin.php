@@ -501,7 +501,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 				<div class="wrap cookie-warning">
 					<h1><?php _e( "AB tests", 'burst' ) ?>
-						<?php //do_action( 'burst_after_cookiebanner_title' ); ?>
+						<?php //do_action( 'burst_after_ab_test_title' ); ?>
 						<a href="<?php echo admin_url('admin.php?page=burst-ab-tests&action=new'); ?>"
 		                   class="page-title-action"><?php _e('Add AB test', 'burst') ?></a>
 					</h1>
@@ -516,14 +516,14 @@ if ( ! class_exists( "burst_admin" ) ) {
 						?>
 						<input type="hidden" name="page" value="burst-ab_test"/>
 					</form>
-					<?php //do_action( 'burst_after_cookiebanner_list' ); ?>
+					<?php //do_action( 'burst_after_ab_test_list' ); ?>
 				</div>
 				<?php
 			}
 			$html = ob_get_clean();
 			
 			$args = array(
-				'page' => 'dashboard',
+				'page' => 'ab_test_overview',
 				'content' => burst_grid_container($html),
 			);
 			echo burst_get_template('admin_wrap.php', $args );
@@ -533,6 +533,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 
 		public function settings() {
+			ob_start();
 			?>
 			<div class="wrap burst-settings">
 				<h1><?php _e( "Settings" ) ?></h1>
@@ -549,6 +550,14 @@ if ( ! class_exists( "burst_admin" ) ) {
 				</form>
 			</div>
 			<?php
+
+			$html = ob_get_clean();
+			
+			$args = array(
+				'page' => 'general-settings',
+				'content' => burst_grid_container($html),
+			);
+			echo burst_get_template('admin_wrap.php', $args );
 		}
 
 

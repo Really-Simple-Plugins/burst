@@ -129,8 +129,8 @@ if ( ! class_exists( "burst_ab_test" ) ) {
  *
  * @todo fix the escaping
  */
-add_action( 'plugins_loaded', 'burst_cookiebanner_form_submit', 20 );
-function burst_cookiebanner_form_submit() {
+add_action( 'plugins_loaded', 'burst_ab_test_form_submit', 20 );
+function burst_ab_test_form_submit() {
 	if ( ! burst_user_can_manage() ) {
 		return;
 	}
@@ -152,7 +152,7 @@ function burst_cookiebanner_form_submit() {
 	$banner->process_form( $_POST );
 
 	if ( isset( $_POST['burst_add_new'] ) ) {
-		wp_redirect( admin_url( 'admin.php?page=burst-cookiebanner&id='
+		wp_redirect( admin_url( 'admin.php?page=burst-ab_test&id='
 		                        . $banner->id ) );
 		exit;
 	}
