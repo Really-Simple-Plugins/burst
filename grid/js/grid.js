@@ -59,7 +59,8 @@ jQuery(document).ready(function($) {
         $('.burst-grid').each(function(){
             var toggle_id = $(this).data('id');
             if ( typeof toggle_id === 'undefined' ) return;
-
+            //if the layout has less blocks then there actually are, we add it here. Otherwise it ends up floating over another block
+            if (!layout.includes( toggle_id.toString() ) ) layout.push( toggle_id.toString() );
             if (localStorage.getItem("burst_toggle_data_id_"+toggle_id) === null) {
                 window.localStorage.setItem('burst_toggle_data_id_'+toggle_id, 'checked');
             }

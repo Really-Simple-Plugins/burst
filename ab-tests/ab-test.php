@@ -1,19 +1,5 @@
 <?php 
 defined( 'ABSPATH' ) or die( "you do not have acces to this page!" );
-
-add_action( 'admin_init', 'burst_redirect_to_ab_test' );
-function burst_redirect_to_ab_test() {
-	//on ab_test page?
-	if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'burst-ab_tests' ) {
-		return;
-	}
-	if ( ! apply_filters( 'burst_show_ab_test_list_view', false )
-	     && ! isset( $_GET['id'] )
-	) {
-		wp_redirect( add_query_arg( 'id', burst_get_default_banner_id(),
-			admin_url( 'admin.php?page=burst-ab-tests' ) ) );
-	}
-}
 	
 if ( ! class_exists( "burst_ab_test" ) ) {
 	class burst_ab_test {
@@ -156,4 +142,42 @@ function burst_ab_test_form_submit() {
 		                        . $banner->id ) );
 		exit;
 	}
+}
+
+add_action( 'admin_init', 'burst_redirect_to_ab_test' );
+function burst_redirect_to_ab_test() {
+	//on ab_test page?
+	if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'burst-ab_tests' ) {
+		return;
+	}
+	if ( ! apply_filters( 'burst_show_ab_test_list_view', false )
+	     && ! isset( $_GET['id'] )
+	) {
+		wp_redirect( add_query_arg( 'id', burst_get_default_banner_id(),
+			admin_url( 'admin.php?page=burst-ab-tests' ) ) );
+	}
+}
+
+add_action( 'wp_ajax_burst_get_posts', 'burst_get_posts_ajax_callback' ); // wp_ajax_{action}
+function burst_get_posts_ajax_callback(){
+ 
+	// we will pass post IDs and titles to this array
+	$return = array();
+ 
+	// you can use WP_Query, query_posts() or get_posts() here - it doesn't matter
+	$search_results = new WP_Query( array( 
+		's'=> $_GET['q'], // the search query
+		'post_status' => 'publish', // if you don't want drafts to be returned
+		'ignore_sticky_posts' => 1,
+		'posts_per_page' => 50 // how much to show at once
+	) );
+	if( $search_results->have_posts() ) :
+		while( $search_results->have_posts() ) : $search_results->the_post();	
+			// shorten the title a little
+			$title = ( mb_strlen( $search_results->post->post_title ) > 50 ) ? mb_substr( $search_results->post->post_title, 0, 49 ) . '...' : $search_results->post->post_title;
+			$return[] = array( $search_results->post->ID, $title ); // array( Post ID, Post Title )
+		endwhile;
+	endif;
+	echo json_encode( $return );
+	die;
 }

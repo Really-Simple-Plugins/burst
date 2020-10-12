@@ -258,6 +258,15 @@ if ( ! class_exists( "burst_admin" ) ) {
 				burst_version );
 			wp_enqueue_style( 'burst' );
 
+			//select2
+			wp_register_style( 'select2',
+					burst_url . 'assets/select2/css/select2.min.css', false,
+					burst_version );
+				wp_enqueue_style( 'select2' );
+				wp_enqueue_script( 'select2',
+					burst_url . "assets/select2/js/select2.min.js",
+					array( 'jquery' ), burst_version, true );
+
 			$minified = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? ''
 				: '.min';
 
@@ -637,12 +646,12 @@ if ( ! class_exists( "burst_admin" ) ) {
 
         public function show_message() {
 			if ( ! empty( $this->error_message ) ) {
-				cmplz_notice( $this->error_message, 'warning' );
+				burst_notice( $this->error_message, 'warning' );
 				$this->error_message = "";
 			}
 
 			if ( ! empty( $this->success_message ) ) {
-				cmplz_notice( $this->success_message, 'success', true );
+				burst_notice( $this->success_message, 'success', true );
 				$this->success_message = "";
 			}
 		}

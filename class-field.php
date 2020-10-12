@@ -1253,6 +1253,9 @@ if ( ! class_exists( "burst_field" ) ) {
 					case 'select':
 						$this->select( $args );
 						break;
+					case 'select2':
+						$this->select2( $args );
+						break;
 					case 'colorpicker':
 						$this->colorpicker( $args );
 						break;
@@ -1363,6 +1366,36 @@ if ( ! class_exists( "burst_field" ) ) {
 			<?php do_action( 'burst_after_field', $args ); ?>
 			<?php
 		}
+
+		public
+		function select2(
+			$args
+		) {
+
+			$fieldname = 'burst_' . $args['fieldname'];
+
+			$value = $this->get_value( $args['fieldname'], $args['default'] );
+			if ( ! $this->show_field( $args ) ) {
+				return;
+			}
+
+			?>
+			<?php do_action( 'burst_before_label', $args ); ?>
+			<label
+				for="<?php echo esc_html( $fieldname ) ?>"><?php echo esc_html( $args['label'] ) ?><?php echo $this->get_help_tip_btn( $args ); ?>
+				<?php do_action( 'burst_after_label', $args ); ?>
+				<select class="burst-select2 form-control" <?php if ( $args['required'] ) {
+					echo 'required';
+				} ?> name="<?php echo esc_html( $fieldname ) ?>">
+					<option value=""><?php _e( "Choose an option",
+							'burst' ) ?></option>
+				</select>
+			</label>
+
+			<?php do_action( 'burst_after_field', $args ); ?>
+			<?php
+		}
+
 
 		public
 		function label(
