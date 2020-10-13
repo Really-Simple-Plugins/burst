@@ -3,7 +3,7 @@
  * Plugin Name: Burst | A/B Split Testing
  * Plugin URI: https://www.wordpress.org/plugins/burst
  * Description: A/B testing tool
- * Version: 1.0.4
+ * Version: 1.0.6
  * Text Domain: burst
  * Domain Path: /languages
  * Author: Really Simple Plugins
@@ -58,7 +58,7 @@ require_once( plugin_dir_path( __FILE__ ) . 'functions.php' );
 if ( ! class_exists( 'BURST' ) ) {
 	class BURST {
 		public static $instance;
-		public static $ab_tester;
+		public static $ab_testing;
 		public static $admin;
 		public static $review;
 		public static $field;
@@ -68,7 +68,7 @@ if ( ! class_exists( 'BURST' ) ) {
 			self::setup_constants();
 			self::includes();
 			self::hooks();
-			self::$ab_tester  = new burst_ab_test();
+			self::$ab_testing  = new burst_ab_testing();
 
 			self::$config = new burst_config();
 
@@ -123,9 +123,12 @@ if ( ! class_exists( 'BURST' ) ) {
 				require_once( burst_path . 'grid/grid.php' );
 			}
 
+			require_once( burst_path . 'statistics/statistics.php' );
+			require_once( burst_path . 'statistics/class-statistics.php' );
+
 			require_once( burst_path . 'class-review.php' );
 			require_once( burst_path . 'ab-tests/class-ab-test.php' );
-			require_once( burst_path . 'ab-tests/ab-test.php' );
+			require_once( burst_path . 'ab-tests/ab-testing.php' );
 
 			require_once( burst_path . 'config/class-config.php');
 		}

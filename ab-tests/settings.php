@@ -6,7 +6,7 @@ function burst_add_ab_test_settings($fields){
 
 	$fields = $fields + array(
 
-			'ab_test_title' => array(
+			'name' => array(
 				'source'      => 'BURST_AB_TEST',
 				'step'        => 'general',
 				'type'        => 'text',
@@ -15,41 +15,25 @@ function burst_add_ab_test_settings($fields){
 				'help'        => __( 'This name is for internal use only. Try to give the experiment a clear name, so you can find this test again.', 'burst' ),
 			),
 
-			'control_id' => array(
-				'source'             => 'BURST_AB_TEST',
-				'step'               => 'general',
-				'type'               => 'select2',
-				'options' => array(
-					'bottom'       => __( "Banner bottom", 'complianz-gdpr' ),
-					'bottom-left'  => __( "Floating left", 'complianz-gdpr' ),
-					'bottom-right' => __( "Floating right", 'complianz-gdpr' ),
-					'center'       => __( "Center", 'complianz-gdpr' ),
-					'top'          => __( "Banner top", 'complianz-gdpr' ),
-					'static'       => __( "Push down", 'complianz-gdpr' ),
-				),
-				'label'              => __( "Control",
-					'burst' ),
-				'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
-					'burst' ),
-			),
+			// 'control_id' => array(
+			// 	'source'             => 'BURST_AB_TEST',
+			// 	'step'               => 'general',
+			// 	'type'               => 'select2',
+			// 	'label'              => __( "Control",
+			// 		'burst' ),
+			// 	'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
+			// 		'burst' ),
+			// ),
 
-			'variant_id' => array(
-				'source'             => 'BURST_AB_TEST',
-				'step'               => 'general',
-				'type'               => 'select',
-				'options' => array(
-					'bottom'       => __( "Banner bottom", 'complianz-gdpr' ),
-					'bottom-left'  => __( "Floating left", 'complianz-gdpr' ),
-					'bottom-right' => __( "Floating right", 'complianz-gdpr' ),
-					'center'       => __( "Center", 'complianz-gdpr' ),
-					'top'          => __( "Banner top", 'complianz-gdpr' ),
-					'static'       => __( "Push down", 'complianz-gdpr' ),
-				),
-				'label'              => __( "Variant",
-					'burst' ),
-				'help'               => __( 'Select or make a variant page. The variant page is the page you want to test against your control page. The variant page should be an improvement compared to the control page. At least you should think it is an improvement. That is something you will find out by running the experiment.',
-					'burst' ),
-			),
+			// 'variant_id' => array(
+			// 	'source'             => 'BURST_AB_TEST',
+			// 	'step'               => 'general',
+			// 	'type'               => 'select2',
+			// 	'label'              => __( "Variant",
+			// 		'burst' ),
+			// 	'help'               => __( 'Select or make a variant page. The variant page is the page you want to test against your control page. The variant page should be an improvement compared to the control page. At least you should think it is an improvement. That is something you will find out by running the experiment.',
+			// 		'burst' ),
+			// ),
 
 
 			'kpi' => array(

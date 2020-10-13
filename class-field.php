@@ -1391,6 +1391,7 @@ if ( ! class_exists( "burst_field" ) ) {
 							'burst' ) ?></option>
 				</select>
 			</label>
+			<?php do_action( 'burst_after_label', $args ); ?>
 
 			<?php do_action( 'burst_after_field', $args ); ?>
 			<?php

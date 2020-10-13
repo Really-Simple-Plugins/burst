@@ -35,7 +35,7 @@ function burst_install_ab_tests_table() {
 	}
 }
 
-if ( ! class_exists( "burst_ab_test" ) ) {
+if ( ! class_exists( "BURST_AB_TEST" ) ) {
 	class BURST_AB_TEST {
 		public $id = false;
 		public $archived = false;
