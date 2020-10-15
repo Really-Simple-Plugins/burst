@@ -16,6 +16,8 @@ if ( ! class_exists( "burst_ab_testing" ) ) {
 			add_action( 'init', array($this, 'add_variant_post_status') );
 			add_filter( 'the_content', array($this, 'load_variant_content') );
 
+			add_action('wp_enqueue_scripts', array($this,'enqueue_assets') );
+			
 			add_action('admin_footer-post.php', array($this,'add_variant_status_add_in_post_page') );
 		    add_action('admin_footer-post-new.php', array($this,'add_variant_status_add_in_post_page') );
 		    add_action('admin_footer-edit.php', array($this,'add_variant_status_add_in_quick_edit') );
@@ -27,6 +29,19 @@ if ( ! class_exists( "burst_ab_testing" ) ) {
 			return self::$_this;
 		}
 
+
+		public function enqueue_assets( $hook ) {
+			$minified = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+			wp_enqueue_script( 'burst',
+				burst_url . "assets/js/burst$minified.js", array(),
+				burst_version, true );
+			wp_localize_script(
+				'burst',
+				'burst',
+				array( 'url' => site_url('wp-json/burst/v1/hit'))
+			);
+			
+		}
 		/**
 		 *
 		 * //if ab testing enabled

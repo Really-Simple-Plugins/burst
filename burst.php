@@ -130,6 +130,8 @@ if ( ! class_exists( 'BURST' ) ) {
 			require_once( burst_path . 'ab-tests/class-ab-test.php' );
 			require_once( burst_path . 'ab-tests/ab-testing.php' );
 
+			require_once( burst_path . 'rest-api/rest-api.php' );
+
 			require_once( burst_path . 'config/class-config.php');
 		}
 
