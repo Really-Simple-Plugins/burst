@@ -20,17 +20,17 @@ function burst_track_hit(WP_REST_Request $request){
 	error_log('track hit');
 
 	// if user is logged in get burst meta user id
-	if (user_is_logged_in()) {
-		get_user_meta(get_current_user_id(), 'burst_cookie_uid')
+	if (is_user_logged_in()) {
+		$user_meta = get_user_meta(get_current_user_id(), 'burst_cookie_uid');
 	}
 
 	//check if this user has a cookie 
 	$user_id = isset( $_COOKIE['burst_uid']) ? $_COOKIE['burst_uid'] : false;
 	if ( !$user_id ) {
-		$key = uniqid('', true));
+		$key = uniqid('', true);
 		//generate uid 
 		//@todo get random string 
-		$user_id = ;
+		$user_id = 23;
 	}
 	
 
