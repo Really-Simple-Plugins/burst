@@ -19,28 +19,31 @@ function burst_register_rest_routes(){
 function burst_track_hit(WP_REST_Request $request){
 	error_log('track hit');
 
-	// if user is logged in get burst meta user id
-	if (is_user_logged_in()) {
-		$user_meta = get_user_meta(get_current_user_id(), 'burst_cookie_uid');
-	}
-
 	//check if this user has a cookie 
-	$user_id = isset( $_COOKIE['burst_uid']) ? $_COOKIE['burst_uid'] : false;
-	if ( !$user_id ) {
-		$key = uniqid('', true);
-		//generate uid 
-		//@todo get random string 
-		$user_id = 23;
+	$burst_uid = isset( $_COOKIE['burst_uid']) ? $_COOKIE['burst_uid'] : false;
+	if ( !$burst_uid ) {
+		// if user is logged in get burst meta user id
+		if (is_user_logged_in()) {
+			$burst_uid = get_user_meta(get_current_user_id(), 'burst_cookie_uid');
+			//if no user meta is found, add new unique ID
+			if (!isset($burst_uid)) {
+				//generate radom string
+				$burst_uid = burst_random_str();
+				update_user_meta(get_current_user_id(), 'burst_cookie_uid', $burst_uid);
+			}
+		} else {
+			$burst_uid = burst_random_str();
+		}
 	}
 	
 
-	setcookie('burst_uid', $user_id, time() + apply_filters('burst_cookie_retention', DAY_IN_SECONDS * 365), '/');
+	setcookie('burst_uid', $burst_uid, time() + apply_filters('burst_cookie_retention', DAY_IN_SECONDS * 365), '/');
 
 	$url = $request->get_body();
 	
-	$statistics = new BURST_STATISTICS($url);
+	$statistics = new BURST_STATISTICS($url, $burst_uid);
 
-	$statistics->page_id = get_queried_object_id();
+	$statistics->page_id = url_to_postid($url);
 
 	$statistics->save();
 

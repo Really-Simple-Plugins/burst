@@ -18,7 +18,9 @@ function burst_install_statistics_table() {
 			`ID` int(11) NOT NULL AUTO_INCREMENT ,
             `page_id` int(11) NOT NULL,
             `page_url` varchar(255) NOT NULL,
-            `visits` varchar(255) NOT NULL,
+            `time` varchar(255) NOT NULL,
+            `uid` varchar(255) NOT NULL,
+            `test_version` varchar(255) NOT NULL,
               PRIMARY KEY  (ID)
             ) $charset_collate;";
 		dbDelta( $sql );
@@ -32,18 +34,16 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 		public $id = false;
 		public $page_url = false;
 		public $page_id = false;
-		public $visits; //timestamp(seconds from 01-01-1970);
+		public $time; //timestamp(seconds from 01-01-1970);
+		public $uid;
+		public $test_version;
 		//public $clicked; //array('timestamp(seconds from 01-01-1970)' => clicked on url );
 		//public $referer; //array('timestamp(seconds from 01-01-1970)' => previous URL );
 
-		function __construct( $page_url = false ) {
+		function __construct( $page_url = false, $uid = false ) {
 
+			$this->uid = $uid;
 			$this->page_url = $page_url;
-
-			if ( $this->page_url !== false ) {
-				//initialize the statistic settings with this page_url.
-				$this->get();
-			}
 
 		}
 
@@ -56,14 +56,14 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 		 */
 
 		private function add() {
-			error_log('add start');
-			if ( ! current_user_can( 'manage_options' ) ) {
-				return false;
-			}
+			// if ( ! current_user_can( 'manage_options' ) ) {
+			// 	return false;
+			// }
 
 			$array = array(
 				'page_url' => $this->page_url,
-				'visits' => serialize(array()),
+				'uid' => $this->uid,
+				'time' => time(),
 			);
 
 			global $wpdb;
@@ -72,7 +72,7 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 				$wpdb->prefix . 'burst_statistics',
 				$array
 			);
-			error_log('add end');
+			$this->id = $wpdb->insert_id;
 		}
 
 		/**
@@ -84,14 +84,15 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 			global $wpdb;
 
 			$statistics
-				= $wpdb->get_results( $wpdb->prepare( "select * from {$wpdb->prefix}burst_statistics where page_url = %s",
-				esc_attr( $this->page_url ) ) );
+				= $wpdb->get_results( $wpdb->prepare( "select * from {$wpdb->prefix}burst_statistics where id = %s",
+				esc_attr( $this->id ) ) );
 
 			if ( isset( $statistics[0] ) ) {
-				$statistic         = $statistics[0];
-				$this->page_url       = $statistic->page_url;
-				$this->page_id          = $statistic->page_id;
-				$this->visits = $statistic->visits;
+				$statistic          = $statistics[0];
+				$this->page_url     = $statistic->page_url;
+				$this->page_id      = $statistic->page_id;
+				$this->time 		= $statistic->time;
+				$this->uid 			= $statistic->uid;
 				return true;
 			}
 			return false;
@@ -107,26 +108,21 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 		 */
 
 		public function save() {
-			$get = $this->get();
-			if ( ! $get ) {
-				$this->add();
-				$this->visits = array();
-			}
+			
+			$this->add();
 
-			$visits   = maybe_unserialize( $this->visits );
-			array_push($visits,time()); 
-			$visits   = serialize( $visits );
 			$update_array = array(
 				'page_url'            		=> esc_attr( $this->page_url ),
 				'page_id'                   => intval( $this->page_id ),
-				'visits'               		=> $visits,
+				'time'               		=> time(),
+				'uid'               		=> $this->uid,
 			);
 			error_log('update array');
-			error_log(print_r($visits, true));
+			error_log(print_r($update_array, true));
 			global $wpdb;
 			$updated = $wpdb->update( $wpdb->prefix . 'burst_statistics',
 				$update_array,
-				array( 'page_url' => $this->page_url )
+				array( 'ID' => $this->id )
 			);
 
 		}
