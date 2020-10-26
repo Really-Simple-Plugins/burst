@@ -88,8 +88,8 @@ if ( ! class_exists( "burst_ab_testing" ) ) {
 			}
 
 			//check if this user has a cookie 
-			$burst_uid = isset( $_COOKIE['burst_uid']) ? $_COOKIE['burst_uid'] : false;
-			setcookie('burst_uid', $burst_uid, time() + apply_filters('burst_cookie_retention', DAY_IN_SECONDS * 365), '/');
+			// $burst_uid = isset( $_COOKIE['burst_uid']) ? $_COOKIE['burst_uid'] : false;
+			// setcookie('burst_uid', $burst_uid, time() + apply_filters('burst_cookie_retention', DAY_IN_SECONDS * 365), '/');
 
 			return $content;
 		}

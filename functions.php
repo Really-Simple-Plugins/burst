@@ -317,3 +317,31 @@ if ( ! function_exists( 'burst_random_str' ) ) {
 	    return implode('', $pieces);
 	}
 }
+
+if ( ! function_exists( 'burst_get_active_experiment_id' ) ) {
+
+	/**
+	 * Get array of banner objects
+	 *
+	 * @param array $args
+	 *
+	 * @return stdClass Object
+	 */
+
+	function burst_get_active_experiment_id( $args = array() ) {
+		$args = wp_parse_args( $args, array( 'status' => 'active' ) );
+		$sql  = '';
+		global $wpdb;
+		if ( $args['status'] === 'archived' ) {
+			$sql = 'AND cdb.archived = true and cdb.test_running = true';
+		}
+		if ( $args['status'] === 'active' ) {
+			$sql = 'AND cdb.archived = false and cdb.test_running = true';
+		}
+
+		$ab_tests
+			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_ab_tests as cdb where 1=1 $sql" );
+
+		return $ab_tests;
+	}
+}

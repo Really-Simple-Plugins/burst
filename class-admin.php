@@ -262,10 +262,19 @@ if ( ! class_exists( "burst_admin" ) ) {
 			wp_register_style( 'select2',
 					burst_url . 'assets/select2/css/select2.min.css', false,
 					burst_version );
-				wp_enqueue_style( 'select2' );
-				wp_enqueue_script( 'select2',
-					burst_url . "assets/select2/js/select2.min.js",
-					array( 'jquery' ), burst_version, true );
+			wp_enqueue_style( 'select2' );
+			wp_enqueue_script( 'select2',
+				burst_url . "assets/select2/js/select2.min.js",
+				array( 'jquery' ), burst_version, true );
+
+				//chartjs
+			wp_register_style( 'chartjs',
+					burst_url . 'assets/chartjs/Chart.min.css', false,
+					burst_version );
+			wp_enqueue_style( 'chartjs' );
+			wp_enqueue_script( 'chartjs',
+				burst_url . "assets/chartjs/Chart.min.js",
+				array(), burst_version, true );
 
 			$minified = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? ''
 				: '.min';
@@ -418,46 +427,46 @@ if ( ! class_exists( "burst_admin" ) ) {
 			$grid_items =
 				array(
 					array(
-						'header' => __("Your progress", "burst"),
-						'body'  => 'progress',
+						'header' => __("Your last experiment", "burst"),
+						'body'  => 'statistics',
 						'footer' => 'footer',
 						'class' => '',
 						'page' => 'dashboard',
 						'controls' => sprintf(__("Remaining tasks (%s)", "burst"), count( $this->get_warnings() )),
 					),
-					array(
-						'header' => __("Documents", "burst"),
-						'body'  => 'documents',
-						'footer' => 'footer',
-						'class' => 'small',
-						'page' => 'dashboard',
-						'controls' => __("Last update", "burst"),
-					),
+					// array(
+					// 	'header' => __("Documents", "burst"),
+					// 	'body'  => 'documents',
+					// 	'footer' => 'footer',
+					// 	'class' => 'small',
+					// 	'page' => 'dashboard',
+					// 	'controls' => __("Last update", "burst"),
+					// ),
 
-					array(
-						'header' => __("Tools", "burst"),
-						'body'  => 'tools',
-						'footer' => 'footer',
-						'class' => 'small',
-						'page' => 'dashboard',
-						'controls' => '',
-					),
-					array(
-	                    'header' => __("Tips & Tricks", "burst"),
-	                    'body' => 'tipstricks',
-	                    'footer' => 'footer',
-	                    'class' => 'half-height burst-tips-tricks',
-	                    'page' => 'dashboard',
-	                    'controls' => '',
-	                ),
-	                array(
-	                    'header' => __("Our Plugins", "burst"),
-	                    'body' => 'upsell-element',
-	                    'footer' => 'footer',
-	                    'class' => 'half-height no-border no-background upsell-grid-container upsell',
-	                    'page' => 'dashboard',
-	                    'controls' => '<div class="rsp-logo"><a href="https://really-simple-plugins.com/"><img src="'. trailingslashit(burst_url) .'assets/images/really-simple-plugins.png" /></a></div>',
-	                ),
+					// array(
+					// 	'header' => __("Tools", "burst"),
+					// 	'body'  => 'tools',
+					// 	'footer' => 'footer',
+					// 	'class' => 'small',
+					// 	'page' => 'dashboard',
+					// 	'controls' => '',
+					// ),
+					// array(
+	    //                 'header' => __("Tips & Tricks", "burst"),
+	    //                 'body' => 'tipstricks',
+	    //                 'footer' => 'footer',
+	    //                 'class' => 'half-height burst-tips-tricks',
+	    //                 'page' => 'dashboard',
+	    //                 'controls' => '',
+	    //             ),
+	    //             array(
+	    //                 'header' => __("Our Plugins", "burst"),
+	    //                 'body' => 'upsell-element',
+	    //                 'footer' => 'footer',
+	    //                 'class' => 'half-height no-border no-background upsell-grid-container upsell',
+	    //                 'page' => 'dashboard',
+	    //                 'controls' => '<div class="rsp-logo"><a href="https://really-simple-plugins.com/"><img src="'. trailingslashit(burst_url) .'assets/images/really-simple-plugins.png" /></a></div>',
+	    //             ),
 				);
 
 			//give each item the key as index
