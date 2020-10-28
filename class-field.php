@@ -1381,16 +1381,14 @@ if ( ! class_exists( "burst_field" ) ) {
 
 			?>
 			<?php do_action( 'burst_before_label', $args ); ?>
+		
 			<label
 				for="<?php echo esc_html( $fieldname ) ?>"><?php echo esc_html( $args['label'] ) ?><?php echo $this->get_help_tip_btn( $args ); ?>
 				<?php do_action( 'burst_after_label', $args ); ?>
-				<select class="burst-select2 form-control" <?php if ( $args['required'] ) {
-					echo 'required';
-				} ?> name="<?php echo esc_html( $fieldname ) ?>">
-					<option value=""><?php _e( "Choose an option",
-							'burst' ) ?></option>
-				</select>
 			</label>
+			<select class="burst-select2" name="<?php echo esc_html( $fieldname ) ?>" <?php if ( $args['required'] ){echo 'required'; } ?> >
+				<option value=""><?php _e( "Choose an option", 'burst' ) ?></option>
+			</select>
 			<?php do_action( 'burst_after_label', $args ); ?>
 
 			<?php do_action( 'burst_after_field', $args ); ?>

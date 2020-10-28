@@ -172,65 +172,47 @@ jQuery(document).ready(function ($) {
         });
     }
 
-    // jQuery.ajax({
-    //     type : "get",
-    //     dataType : "json",
-    //     url : ajaxurl,
-    //     data : {action: "burst_get_experiment_statistics"},
-    //     success: function(response) {
-    //         if(response.type == "success") {
-    //            var chartjs_data = response
-    //         }
-    //         else {
-    //            alert("Your vote could not be added")
-    //         }
-    //     }
-    // })
-    // var ctx = document.getElementById('dashboard-statistics').getContext('2d');
-    // var myChart = new Chart(ctx, {
-    //     type: 'line',
-    //     data: chartjs_data,
-    //     options: {
-    //         responsive: true,
-    //         maintainAspectRatio: false,
-    //         scales: {
-    //             yAxes: [{
-    //                 ticks: {
-    //                     beginAtZero: true
-    //                 }
-    //             }]
-    //         }
-    //     }
-    // });
+    
+    //chartJS dropdown
+    if ($('.burst-chartjs-stats').length) {
+        burstInitChartJS()
+    }
 
-    var ctx = document.getElementById('dashboard-statistics').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-            datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
+    function burstInitChartJS() {
+
+        jQuery.ajax({
+            type : "get",
+            dataType : "json",
+            url : ajaxurl,
+            data : {action: "burst_get_experiment_statistics"},
+            success: function(response) {
+                if(response.success == true) {
+                    console.log(response)
+
+                    var ctx = document.getElementsByClassName('burst-chartjs-stats');
+                    var myChart = new Chart(ctx, {
+                        type: 'line',
+                        data: response.data,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            spanGaps: true,
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                    console.log(response)
+                }
+                else {
+                   alert("Your experiment data could not be loaded")
+                }
             }
-        }
-    });
+        })
+    }
 
 });
