@@ -132,13 +132,13 @@ jQuery(document).ready(function ($) {
     }
 
     //select2 dropdown
-    if ($('.burst-select2').length) {
+    if ($('.burst-select2-page-field').length) {
         burstInitSelect2()
     }
 
     function burstInitSelect2() {
         // multiple select with AJAX search
-        $('.burst-select2').select2({
+        $('.burst-select2-page-field').select2({
             ajax: {
                     url: ajaxurl, // AJAX URL is predefined in WordPress admin
                     dataType: 'json',
@@ -172,7 +172,7 @@ jQuery(document).ready(function ($) {
         });
     }
 
-    
+
     //chartJS dropdown
     if ($('.burst-chartjs-stats').length) {
         burstInitChartJS()

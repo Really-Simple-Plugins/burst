@@ -6,7 +6,7 @@ function burst_add_ab_test_settings($fields){
 
 	$fields = $fields + array(
 
-			'name' => array(
+			'title' => array(
 				'source'      => 'BURST_AB_TEST',
 				'step'        => 'general',
 				'type'        => 'text',
@@ -25,15 +25,15 @@ function burst_add_ab_test_settings($fields){
 					'burst' ),
 			),
 
-			// 'variant_id' => array(
-			// 	'source'             => 'BURST_AB_TEST',
-			// 	'step'               => 'general',
-			// 	'type'               => 'select2',
-			// 	'label'              => __( "Variant",
-			// 		'burst' ),
-			// 	'help'               => __( 'Select or make a variant page. The variant page is the page you want to test against your control page. The variant page should be an improvement compared to the control page. At least you should think it is an improvement. That is something you will find out by running the experiment.',
-			// 		'burst' ),
-			// ),
+			'variant_id' => array(
+				'source'             => 'BURST_AB_TEST',
+				'step'               => 'general',
+				'type'               => 'select2',
+				'label'              => __( "Variant",
+					'burst' ),
+				'help'               => __( 'Select or make a variant page. The variant page is the page you want to test against your control page. The variant page should be an improvement compared to the control page. At least you should think it is an improvement. That is something you will find out by running the experiment.',
+					'burst' ),
+			),
 
 
 			'kpi' => array(

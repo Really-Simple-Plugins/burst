@@ -87,6 +87,7 @@ if ( ! class_exists( "burst_field" ) ) {
 		}
 
 		public function process_save() {
+			error_log(print_r($_POST, true));
 			if ( ! current_user_can( 'manage_options' ) ) {
 				return;
 			}
@@ -457,30 +458,20 @@ if ( ! class_exists( "burst_field" ) ) {
 			$cols_class = $cols ? "burst-cols-$cols" : '';
 
 			$this->get_master_label( $args );
-			if ( $args['table'] ) {
-				echo '<tr class="burst-settings field-group '
-				     . esc_attr( 'burst-' . $args['fieldname'] . ' burst-'
-				                 . $args['type'] . ' ' . $hidden_class . ' '
-				                 . $condition_class ) . ' "';
-				echo $condition ? 'data-condition-question="'
-				                  . esc_attr( $condition_question )
-				                  . '" data-condition-answer="'
-				                  . esc_attr( $condition_answer ) . '"' : '';
-				echo '><th scope="row">';
-			} else {
-				echo '<div class="field-group ' . esc_attr( $args['fieldname'] . ' '
-	                                            . esc_attr( $cols_class ) . ' '
-				                                            .'burst-'. $type . ' '
-				                                            . $hidden_class . ' '
-				                                            . $first_class . ' '
-				                                            . $condition_class )
-				     . '" ';
-				echo $condition ? 'data-condition-question="'
-				                  . esc_attr( $condition_question )
-				                  . '" data-condition-answer="'
-				                  . esc_attr( $condition_answer ) . '"' : '';
-				echo '><div class="burst-label">';
-			}
+	
+			echo '<div class="field-group ' . esc_attr( $args['fieldname'] . ' '
+                                            . esc_attr( $cols_class ) . ' '
+			                                            .'burst-'. $type . ' '
+			                                            . $hidden_class . ' '
+			                                            . $first_class . ' '
+			                                            . $condition_class )
+			     . '" ';
+			echo $condition ? 'data-condition-question="'
+			                  . esc_attr( $condition_question )
+			                  . '" data-condition-answer="'
+			                  . esc_attr( $condition_answer ) . '"' : '';
+			echo '><div class="burst-label">';
+			
 		}
 
 		public function get_master_label( $args ) {
@@ -513,11 +504,9 @@ if ( ! class_exists( "burst_field" ) ) {
 		function after_label(
 			$args
 		) {
-			if ( $args['table'] ) {
-				echo '</th><td>';
-			} else {
-				echo '</div><div class="burst-field">';
-			}
+	
+			echo '</div><div class="burst-field">';
+			
 
 			do_action( 'burst_notice_' . $args['fieldname'], $args );
 
@@ -529,11 +518,8 @@ if ( ! class_exists( "burst_field" ) ) {
 		) {
 			$this->get_comment( $args );
 
-			if ( $args['table'] ) {
-				echo '</td></tr>';
-			} else {
-				echo '</div></div>';
-			}
+			echo '</div></div>';
+			
 		}
 
 
@@ -1370,8 +1356,7 @@ if ( ! class_exists( "burst_field" ) ) {
 		public
 		function select2(
 			$args
-		) {
-
+		) { 
 			$fieldname = 'burst_' . $args['fieldname'];
 
 			$value = $this->get_value( $args['fieldname'], $args['default'] );
@@ -1381,15 +1366,30 @@ if ( ! class_exists( "burst_field" ) ) {
 
 			?>
 			<?php do_action( 'burst_before_label', $args ); ?>
-		
 			<label
-				for="<?php echo esc_html( $fieldname ) ?>"><?php echo esc_html( $args['label'] ) ?><?php echo $this->get_help_tip_btn( $args ); ?>
-				<?php do_action( 'burst_after_label', $args ); ?>
+				for="<?php echo esc_html( $fieldname ) ?>"><?php echo esc_html( $args['label'] ) ?><?php //echo $this->get_help_tip_btn( $args ); ?>
 			</label>
-			<select class="burst-select2" name="<?php echo esc_html( $fieldname ) ?>" <?php if ( $args['required'] ){echo 'required'; } ?> >
-				<option value=""><?php _e( "Choose an option", 'burst' ) ?></option>
-			</select>
 			<?php do_action( 'burst_after_label', $args ); ?>
+
+			<select class="burst-select2-page-field form-control" <?php if ( $args['required'] ) {
+				echo 'required';
+			} ?> name="<?php echo esc_html( $fieldname ) ?>">
+				<?php if ($value) {
+					$post = get_post($value);
+					if($post){ ?>
+						<option value="<?=$value?>">
+						<?php echo $post->post_title ?></option>
+				
+					<?php }
+
+				} else { ?> 
+					<option value="">
+					<?php _e( "Choose an option wdhuwduwudh",
+						'burst' ) ?></option>
+				<?php } ?>
+				
+			</select>
+
 
 			<?php do_action( 'burst_after_field', $args ); ?>
 			<?php
