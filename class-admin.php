@@ -28,6 +28,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 			add_action( 'admin_init', array( $this, 'check_upgrade' ), 10, 2 );
 			add_action( 'burst_show_message', array( $this, 'show_message' ) );
 
+			add_action('admin_init', array($this, 'init_grid') );
+			add_action('wp_ajax_burst_get_datatable', array($this, 'ajax_get_datatable'));
+
 
 			add_action( 'admin_init',array( $this, 'create_variant_from_post' ) );
 			add_action ( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
@@ -254,7 +257,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 				return;
 			}
 			wp_register_style( 'burst',
-				trailingslashit( burst_url ) . 'assets/css/style.css', "",
+				trailingslashit( burst_url ) . 'assets/css/admin.css', "",
 				burst_version );
 			wp_enqueue_style( 'burst' );
 
@@ -419,56 +422,83 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 		}
 
+		public function init_grid(){
+		    $this->tabs = apply_filters('burst_tabs', array(
+		            'dashboard' => array(
+		                    'title'=> __( "General", "burst" ),
+                    ),
+		            'settings' => array(
+			            'title'=> __( "Settings", "burst" ),
+			            'capability' => 'manage_options',
+		            ),
+            ));
+
+            $this->grid_items = array(
+                1 => array(
+                    'title' => __("Your last experiment", "burst"),
+                    'content' => '<div class="burst-skeleton burst-skeleton-statistics"></div><canvas class="burst-chartjs-stats" width="400" height="400"></canvas>',
+                    'class' => 'table-overview burst-load-ajax',
+                    'type' => 'no-type',
+                    'controls' => sprintf(__("Remaining tasks (%s)", "burst"), count( $this->get_warnings() )),
+                    'can_hide' => true,
+                    'page' => 'dashboard',
+                    'body' => 'admin_wrap',
+
+                ),
+                2 => array(
+                    'title' => __("Documents", "burst"),
+                    'content' => '<div class="burst-skeleton"></div>',
+                    'class' => 'small burst-load-ajax',
+                    'type' => 'no-type',
+                    'controls' => __("Last update", "burst"),
+                    'can_hide' => true,
+                    'ajax_load' => true,
+                    'page' => 'dashboard',
+                    'body' => 'admin_wrap',
+
+                ),
+                3 => array(
+                    'title' => __("Tools", "burst"),
+                    'content' => '<div class="burst-skeleton"></div>',
+                    'class' => 'small burst-load-ajax',
+                    'type' => 'no-type',
+                    'controls' => '',
+                    'can_hide' => true,
+                    'ajax_load' => true,
+                    'page' => 'dashboard',
+                    'body' => 'admin_wrap',
+
+                ),
+                4 => array(
+                    'title' => __("Tips & Tricks", "burst"),
+                    'content' => $this->generate_tips_tricks(),
+                    'type' => 'no-type',
+                    'class' => 'half-height burst-tips-tricks',
+                    'can_hide' => true,
+                    'controls' => '',
+                    'page' => 'dashboard',
+                    'body' => 'admin_wrap',
+                ),
+                5 => array(
+                    'title' => __("Our Plugins", "burst"),
+                    'content' => $this->generate_other_plugins(),
+                    'class' => 'half-height no-border no-background upsell-grid-container upsell',
+                    'type' => 'no-type',
+                    'can_hide' => false,
+                    'controls' => '<div class="rsp-logo"><a href="https://really-simple-plugins.com/"><img src="'. trailingslashit(burst_url) .'assets/images/really-simple-plugins.png" /></a></div>',
+                    'page' => 'dashboard',
+                    'body' => 'admin_wrap',
+                ),
+            );
+        }
+
 		/**
 		 * Main settings page
 		 */
 
 		public function main_page() {
-			$grid_items =
-				array(
-					array(
-						'header' => __("Your last experiment", "burst"),
-						'body'  => 'statistics',
-						'footer' => 'footer',
-						'class' => '',
-						'page' => 'dashboard',
-						'controls' => sprintf(__("Remaining tasks (%s)", "burst"), count( $this->get_warnings() )),
-					),
-					// array(
-					// 	'header' => __("Documents", "burst"),
-					// 	'body'  => 'documents',
-					// 	'footer' => 'footer',
-					// 	'class' => 'small',
-					// 	'page' => 'dashboard',
-					// 	'controls' => __("Last update", "burst"),
-					// ),
 
-					// array(
-					// 	'header' => __("Tools", "burst"),
-					// 	'body'  => 'tools',
-					// 	'footer' => 'footer',
-					// 	'class' => 'small',
-					// 	'page' => 'dashboard',
-					// 	'controls' => '',
-					// ),
-					// array(
-	    //                 'header' => __("Tips & Tricks", "burst"),
-	    //                 'body' => 'tipstricks',
-	    //                 'footer' => 'footer',
-	    //                 'class' => 'half-height burst-tips-tricks',
-	    //                 'page' => 'dashboard',
-	    //                 'controls' => '',
-	    //             ),
-	    //             array(
-	    //                 'header' => __("Our Plugins", "burst"),
-	    //                 'body' => 'upsell-element',
-	    //                 'footer' => 'footer',
-	    //                 'class' => 'half-height no-border no-background upsell-grid-container upsell',
-	    //                 'page' => 'dashboard',
-	    //                 'controls' => '<div class="rsp-logo"><a href="https://really-simple-plugins.com/"><img src="'. trailingslashit(burst_url) .'assets/images/really-simple-plugins.png" /></a></div>',
-	    //             ),
-				);
-
+			$grid_items = $this->grid_items;
 			//give each item the key as index
 			array_walk($grid_items, function(&$a, $b) { $a['index'] = $b; });
 
@@ -547,7 +577,110 @@ if ( ! class_exists( "burst_admin" ) ) {
 			echo burst_get_template('admin_wrap.php', $args );
 		}
 
+		public function generate_other_plugins()
+        {
+            $items = array(
+                1 => array(
+                    'title' => '<div class="rsssl-yellow burst-bullet"></div>',
+                    'content' => __("Really Simple SSL - Easily migrate your website to SSL"),
+                    'link' => 'https://wordpress.org/plugins/really-simple-ssl/',
+                    'class' => 'rsssl',
+                    'constant_free' => 'rsssl_plugin',
+                    'constant_premium' => 'rsssl_pro_plugin',
+                    'website' => 'https://really-simple-ssl.com/pro',
+                    'search' => 'Really+Simple+SSL+Mark+Wolters',
+                ),
+                2 => array(
+                    'title' => '<div class="cmplz-blue burst-bullet"></div>',
+                    'content' => __("Complianz Privacy Suite - Cookie Consent Management as it should be ", "burst"),
+                    'link' => 'https://wordpress.org/plugins/complianz-gdpr/',
+                    'class' => 'cmplz',
+                    'constant_free' => 'cmplz_plugin',
+                    'constant_premium' => 'cmplz_premium',
+                    'website' => 'https://complianz.io/pricing',
+                    'search' => 'complianz',
+                ),
+                3 => array(
+                    'title' => '<div class="zip-pink burst-bullet"></div>',
+                    'content' => __("Zip Recipes - Beautiful recipes optimized for Google ", "burst"),
+                    'link' => 'https://wordpress.org/plugins/zip-recipes/',
+                    'class' => 'zip',
+                    'constant_free' => 'ZRDN_PLUGIN_BASENAME',
+                    'constant_premium' => 'ZRDN_PREMIUM',
+                    'website' => 'https://ziprecipes.net/premium/',
+                    'search' => 'zip+recipes+recipe+maker+really+simple+plugins',                ),
+            );
 
+            $element = $this->get_template('dashboard/upsell-element.php');
+            error_log(print_r($element, true));
+            $output = '';
+            foreach ($items as $item) {
+            	error_log('item');
+            	error_log(print_r($item, true));
+                $output .= str_replace(array(
+                    '{title}',
+                    '{link}',
+                    '{content}',
+                    '{status}',
+                    '{class}',
+                ), array(
+                    $item['title'],
+                    $item['link'],
+                    $item['content'],
+                    $this->get_status_link($item),
+                    $item['class'],
+                    '',
+                ), $element);
+            }
+            error_log('output');
+            error_log(print_r($output, true));
+
+            return '<div>'.$output.'</div>';
+        }
+
+        public function generate_tips_tricks()
+        {
+            $items = array(
+                1 => array(
+                    'content' => __("Writing Content for Google", "burst"),
+                    'link'    => 'https://wpsearchinsights.com/writing-content-for-google/',
+                ),
+                2 => array(
+                    'content' => __("WP Search Insights Beginner's Guide", "burst"),
+                    'link' => 'https://wpsearchinsights.com/burst-beginners-guide/',
+                ),
+                3 => array(
+                    'content' => __("Using CSV/Excel Exports", "burst"),
+                    'link' => 'https://wpsearchinsights.com/using-csv-excel-exports/',
+                ),
+                4 => array(
+                    'content' => __("Improving your Search Result Page", "burst"),
+                    'link' => 'https://wpsearchinsights.com/improving-your-search-result-page/',
+                ),
+                5 => array(
+                    'content' => __("The Search Filter", "burst"),
+                    'link' => 'https://wpsearchinsights.com/the-search-filter/',
+                ),
+                6 => array(
+                    'content' => __("Positioning your search form", "burst"),
+                    'link' => 'https://wpsearchinsights.com/about-search-forms/',
+                ),
+            );
+	        $button = '<a href="https://wpsearchinsights.com/tips-tricks/" target="_blank"><button class="button button-upsell">'.__("View all" , "burst").'</button></a>';
+
+	        $container = $this->get_template('dashboard/tipstricks.php');
+	        $output = "";
+            foreach ($items as $item) {
+	            $output .= str_replace(array(
+                    '{link}',
+                    '{content}',
+                ), array(
+                    $item['link'],
+                    $item['content'],
+                ), $container);
+            }
+            return '<div>'.$output.'</div>'.$button;
+        }
 
 
 		public function settings() {
@@ -680,14 +813,14 @@ if ( ! class_exists( "burst_admin" ) ) {
             }
 
 	        if (defined($item['constant_free']) && defined($item['constant_premium'])) {
-		        $status = __("Installed", "wp-search-insights");
+		        $status = __("Installed", "burst");
 	        } elseif (defined($item['constant_free']) && !defined($item['constant_premium'])) {
 		        $link = $item['website'];
-		        $text = __('Upgrade to pro', 'wp-search-insights');
+		        $text = __('Upgrade to pro', 'burst');
 		        $status = "<a href=$link>$text</a>";
 	        } else {
 		        $link = $install_url.$item['search']."&tab=search&type=term";
-		        $text = __('Install', 'wp-search-insights');
+		        $text = __('Install', 'burst');
 		        $status = "<a href=$link>$text</a>";
 	        }
 	        return $status;
@@ -708,6 +841,71 @@ if ( ! class_exists( "burst_admin" ) ) {
         	}
 
         }
+
+        public function ajax_get_datatable()
+	    {
+		    $error = false;
+		    $total = 0;
+		    $html  = __("No data found", "burst");
+		    if (!current_user_can('manage_options')) {
+			    $error = true;
+		    }
+
+		    if (!isset($_GET['start'])){
+			    $error = true;
+		    }
+
+		    if (!isset($_GET['end'])){
+			    $error = true;
+		    }
+
+		    if (!isset($_GET['type'])){
+			    $error = true;
+		    }
+
+		    if (!isset($_GET['token'])){
+			    $error = true;
+		    }
+
+		    $page = isset($_GET['page']) ? intval($_GET['page']) : false;
+
+		    if (!$error && !wp_verify_nonce(sanitize_title($_GET['token']), 'search_insights_nonce')){
+			    $error = true;
+		    }
+
+		    if (!$error){
+			    $start = intval($_GET['start']);
+			    $end = intval($_GET['end']);
+			    $type = sanitize_title($_GET['type']);
+			    $total = $this->get_results_count($type, $start, $end);
+			    switch ($type){
+                    case 'all':
+	                    $html = $this->recent_table( $start, $end, $page);
+	                    break;
+                    case 'popular':
+	                    $html = $this->generate_dashboard_widget(true, $start, $end);
+	                    break;
+				    case 'results':
+					    $html = $this->results_table( $start, $end);
+					    break;
+                    default:
+                        $html = apply_filters("burst_ajax_content_$type", '');
+                        break;
+			    }
+		    }
+
+		    $data = array(
+			    'success' => !$error,
+			    'html' => $html,
+                'total_rows' => $total,
+                'batch' => $this->rows_batch,
+		    );
+
+		    $response = json_encode($data);
+		    header("Content-Type: application/json");
+		    echo $response;
+		    exit;
+	    }
 
 	}
 } //class closure

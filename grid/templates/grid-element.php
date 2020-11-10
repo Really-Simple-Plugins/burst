@@ -1,4 +1,4 @@
-<div class="burst-grid grid-active {class}" data-id="{index}">
+<div class="burst-grid grid-active {class}" data-id="{index}" data-table_type="{type}" data-default_range="week">
 	<div class="item-container">
 		<div class="burst-grid-header">
 			<div class="burst-grid-header-container">

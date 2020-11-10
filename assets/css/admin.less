@@ -2,13 +2,20 @@
 @default-margin: 15px;
 @default-padding: 20px;
 @big-margin: 30px;
-@brand-primary: #29b6f6;
+@brand-primary: #22932e;
 @brand-secondary: #61ce70;
 @border-radius: 25px;
 @input-background-color: #F1F1F1;
 @input-border-color: #dadada;
 @gray: #c6c6c6;
 @default-font-size: 14px;
+
+@color-blue: #29b6f6;
+@color-success: #61ce70;
+@color-error: @brand-primary;
+@light-text-color: #3c3c3c;
+@border-color: #DEDEDE;
+@grey-light: #ededed;
 
 #burst {
 	margin:0 0 0 -20px;
@@ -111,4 +118,224 @@
 			display:none;
 		}
 	}
+	.upsell-grid-container{
+		//display: flex !important; //we need important here, because the grid switch overrides it on element level
+		//justify-content: space-between;
+		.rsp-logo {
+			img {
+				height: 30px;
+			}
+		}
+		.burst-upsell {
+			display: flex !important; //we need important here, because the grid switch overrides it on element level
+			flex-direction: row;
+			padding: 6px;
+			align-items: center;
+			color: @light-text-color;
+
+			.rsssl-yellow {
+				background-color: #EFBF4B;
+			}
+
+			.cmplz-blue  {
+				background-color: #27ADEA;
+			}
+
+			.zip-pink {
+				background-color: #E366A1;
+			}
+
+			.plugin-status {
+				margin-left: auto;
+			}
+		}
+	}
+
+
+	/*
+	Animated skeleton screen using CSS.
+
+	Create shapes using gradients that simulate solids.
+
+	Use `:empty` pseduo-class to show skeleton screen background only while container has no content (ex: for the "loading" state). When content is added to the container element, the pseudo-class selector won't match anymore and the skeleton screen will be removed automatically; no need to toggle a separate class on the container.
+
+	See: https://developer.mozilla.org/en-US/docs/Web/CSS/:empty
+
+	Animating one layer of the background which is a tilted linear gradient with white in the middle to achieve shine effect.
+	*/
+	.burst-skeleton:empty {
+
+		width: 350px;
+		height: 400px; /* change height to see repeat-y behavior */
+
+		background-image:
+		linear-gradient( 100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 80% ),
+		linear-gradient( #dadada 20px, transparent 0 ),
+		linear-gradient( #dadada 20px, transparent 0 ),
+		linear-gradient( #dadada 20px, transparent 0 ),
+		linear-gradient( #dadada 20px, transparent 0 );
+
+		background-repeat: repeat-y;
+
+		background-size:
+			50px 160px, /* highlight */
+			150px 160px,
+			350px 160px,
+			300px 160px,
+			250px 160px;
+
+		background-position:
+			0 0, /* highlight */
+			0px 0,
+			0px 40px,
+			0px 80px,
+			0px 120px;
+
+		animation: shine 1s infinite;
+	}
+
+	@keyframes shine {
+	to {
+	background-position:
+		100% 0, /* move highlight to right */
+		0px 0,
+		0px 40px,
+		0px 80px,
+		0px 120px;
+		}
+	}
+
+	/* Notices */
+	.burst-panel {
+		font-size: 13px!important;
+		color: #383d41;
+		background-color: #F2F2F2;
+		border: 1px solid #d6d8db;
+		padding: 10px 15px;
+		border-radius: 0px;
+		margin: 0px 0;
+
+		.burst-panel-title{
+			cursor: pointer;
+		}
+
+		.burst-field>div{
+			margin:10px 0;
+		}
+
+		.burst-panel-content {
+			display:none;
+			background-color:#fff;
+			border: 1px solid #d6d8db;
+			border-top: 0;
+			border-bottom-left-radius: 5px;
+			border-bottom-right-radius: 5px;
+			padding: 10px 15px;
+		}
+
+		h1 {
+			font-size:22px;
+		}
+
+		p {
+			font-size: 13px!important;
+		}
+
+		&.burst-notice {
+			background-color: #fff;
+			border-color: #fff;
+			border: 0;
+			border-left: 4px solid #29b6f6;
+			color: black;
+			margin: 10px 0px 10px 0px;
+			padding-left: 15px;
+		}
+
+		&.burst-success {
+			background-color: #61ce70;
+			border-color: #61ce70;
+			color: #fff;
+		}
+
+		&.burst-warning {
+			color: #333333;
+			background-color: #fbc43d;
+			border-color: #fbc43d;
+			margin: 10px 0px 10px 0px;
+		}
+
+		ul {
+			list-style-type: disc;
+			margin-left: 22px;
+		}
+
+	}
+
+	.burst-bullet {
+		height: 15px;
+		width: 15px;
+		border-radius: 50%;
+		margin-right: 10px;
+	}
+
+	/*
+    Tips and Tricks
+   */
+
+	.burst-tips-tricks, .upsell-grid-container {
+		.item-content > div {
+			display: flex !important;
+			flex-direction: column;
+			flex-wrap: wrap;
+			height: 100px;
+			margin-bottom: 10px;
+			border-bottom: 1px solid @border-color;
+			@media screen and (max-width: 480px) {
+				flex-direction: row;
+				overflow: hidden;
+			}
+
+			.burst-tips-tricks-element, .plugin-text {
+				color: @light-text-color;
+				a {
+					text-decoration: none;
+					color: @light-text-color;
+
+					&:hover {
+						color: @brand-primary;
+					}
+				}
+
+				.burst-bullet {
+					margin: 7px;
+					background-color: @grey-light;
+					float: left;
+
+					&:hover {
+					background-color: @brand-primary;
+					}
+				}
+
+				.burst-tips-tricks-content {
+					margin: 7px 0;
+					float: left;
+				}
+			}
+		}
+	}
+
+	.burst-tips-tricks-container-title {
+		border-bottom: 1px solid @border-color;
+	}
+
+	//make sure tooltips are not bold, because of title wrap
+	.burst-tooltip-right, .burst-tooltip-bottom {
+		font-weight:normal;
+	}
+
+	/*Tooltips on dashboard/settings page*/
+	.burst-tooltip-right {
+		float: right;
+	}
+
 }

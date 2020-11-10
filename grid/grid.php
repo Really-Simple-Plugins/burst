@@ -48,7 +48,7 @@ function burst_grid_element($grid_item){
 		$contents = file_get_contents($file);
 	}
 
-	$template_part = $grid_item['page'].'/'.$grid_item['body'].'.php';
+	$template_part = $grid_item['body'].'.php';
 	$template_part = burst_get_template($template_part);
 	$contents = str_replace( array(
 		'{class}',
@@ -56,14 +56,12 @@ function burst_grid_element($grid_item){
 		'{controls}',
 		'{body}',
 		'{index}',
-		'{footer}'
 	), array(
 		$grid_item['class'],
-		$grid_item['header'],
+		$grid_item['title'],
 		$grid_item['controls'],
-		$template_part,
+		$grid_item['content'],
 		$grid_item['index'],
-		$grid_item['footer']
 	), $contents );
 
 

@@ -1,4 +1,4 @@
-<div class="wpsi-upsell wpsi-{class}">
+<div class="burst-upsell burst-{class}">
     <div class="plugin-color">
         {title}
     </div>
