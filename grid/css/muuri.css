@@ -2,13 +2,15 @@
   position: relative;
 }
 .burst-grid .burst-grid {
-  width: 800px;
+  width: calc(50% - 20px);
+  padding: 10px;
   position: absolute;
-  height: 500px;
+  height: 50vh;
+  min-height: 500px;
   z-index: 1;
 }
 .burst-grid .burst-grid.small {
-  width: 400px;
+  width: calc(25% - 20px);
 }
 .burst-grid .burst-grid.muuri-item-hidden {
   z-index: 0;
@@ -21,7 +23,6 @@
 }
 .burst-grid .burst-grid .burst-grid-header {
   border-bottom: 1px solid #cecece;
-  cursor: pointer;
   padding: 0;
   height: 60px;
 }
@@ -30,6 +31,7 @@
   height: 100%;
 }
 .burst-grid .burst-grid .burst-grid-header .burst-grid-title {
+  cursor: pointer;
   font-size: 20px;
   padding: 20px 0;
   font-weight: bold;
@@ -44,8 +46,7 @@
   background-color: #fff;
   position: relative;
   box-shadow: 1px 1px #dedede;
-  width: 780px;
-  height: 480px;
+  height: 100%;
 }
 .burst-grid .burst-grid .item-container .item-content {
   clear: both;
@@ -54,11 +55,16 @@
   padding-top: 0px;
   padding-bottom: 10px;
 }
+.burst-grid .burst-grid.half-height {
+  height: 25vh;
+  min-height: 250px;
+}
 .burst-grid .burst-grid.half-height .item-container {
-  height: 250px;
+  height: 25vh;
+  min-height: 250px;
 }
 .burst-grid .burst-grid.small .item-container {
-  width: 380px;
+  min-width: 5%;
 }
 .burst-grid .burst-grid.no-border .item-container {
   border: none;
@@ -73,4 +79,3 @@
 .burst-grid .upsell-grid-container .item-container {
   box-shadow: none;
 }
-/*# sourceMappingURL=muuri.css.map */
