@@ -148,16 +148,16 @@ jQuery(document).ready(function($) {
      */
 
     // Get grid toggle checkbox values
-    var zrdnFormValues = JSON.parse(localStorage.getItem('zrdnFormValues')) || {};
-    var checkboxes = $("#zrdn-toggle-dashboard :checkbox");
+    var burstFormValues = JSON.parse(localStorage.getItem('burstFormValues')) || {};
+    var checkboxes = $("#burst-toggle-dashboard :checkbox");
 
     // Enable all checkboxes by default to show all grid items. Set localstorage val when set so it only runs once.
-    if (localStorage.getItem("zrdnDashboardDefaultsSet") === null) {
+    if (localStorage.getItem("burstDashboardDefaultsSet") === null) {
         checkboxes.each(function () {
-            zrdnFormValues[this.id] = 'checked';
+            burstFormValues[this.id] = 'checked';
         });
-        localStorage.setItem("zrdnFormValues", JSON.stringify(zrdnFormValues));
-        localStorage.setItem('zrdnDashboardDefaultsSet', 'set');
+        localStorage.setItem("burstFormValues", JSON.stringify(burstFormValues));
+        localStorage.setItem('burstDashboardDefaultsSet', 'set');
     }
 
     updateStorage();
@@ -168,27 +168,27 @@ jQuery(document).ready(function($) {
 
     function updateStorage(){
         checkboxes.each(function(){
-            zrdnFormValues[this.id] = this.checked;
+            burstFormValues[this.id] = this.checked;
         });
-        localStorage.setItem("zrdnFormValues", JSON.stringify(zrdnFormValues));
+        localStorage.setItem("burstFormValues", JSON.stringify(burstFormValues));
     }
 
     // Get checkbox values on pageload
-    $.each(zrdnFormValues, function(key, value) {
+    $.each(burstFormValues, function(key, value) {
         $("#" + key).prop('checked', value);
     });
 
     // Hide screen options by default
-    $("#zrdn-toggle-dashboard").hide();
+    $("#burst-toggle-dashboard").hide();
 
     // Show/hide screen options on toggle click
-    $('#zrdn-show-toggles').click(function(){
-        if ($("#zrdn-toggle-dashboard").is(":visible") ){
-            $("#zrdn-toggle-dashboard").slideUp();
-            $("#zrdn-toggle-arrows").attr('class', 'dashicons dashicons-arrow-down-alt2');
+    $('#burst-show-toggles').click(function(){
+        if ($("#burst-toggle-dashboard").is(":visible") ){
+            $("#burst-toggle-dashboard").slideUp();
+            $("#burst-toggle-arrows").attr('class', 'dashicons dashicons-arrow-down-alt2');
         } else {
-            $("#zrdn-toggle-dashboard").slideDown();
-            $("#zrdn-toggle-arrows").attr('class', 'dashicons dashicons-arrow-up-alt2');
+            $("#burst-toggle-dashboard").slideDown();
+            $("#burst-toggle-arrows").attr('class', 'dashicons dashicons-arrow-up-alt2');
         }
     });
 });

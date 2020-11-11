@@ -215,3 +215,149 @@ jQuery(document).ready(function ($) {
             }
         })
     }
+
+    /**
+     * Ajax loading of tables
+     */
+
+    window.burstLoadAjaxTables = function() {
+        $('.item-content').each(function () {
+            if ($(this).closest('.burst-item').hasClass('burst-load-ajax')) {
+                burstLoadData($(this), 1, 0);
+            }
+        });
+    };
+
+    window.burstLoadAjaxTables();
+    function burstInitSingleDataTable(container) {
+        var table = container.find('.burst-table');
+        var win = $(window);
+        var pageLength = burstDefaultRowCount;
+        var pagingType = burstDefaultPagingType;
+
+        var columnVisible = true;
+        if (win.width() < burstScreensizeHideColumn) {
+            columnVisible = false;
+        }
+        var columnTwoDef = '{ "visible": '+columnVisible+',  "targets": [ 2 ] }';
+        if (win.width() < burstScreensizeLowerMobile) {
+            pageLength = burstMobileRowCount;
+            pagingType = burstMobilePagingType;
+        }
+        table.DataTable( {
+            "dom": 'frt<"table-footer"p><"clear">B',
+            "pageLength": pageLength,
+            "pagingType": pagingType,
+            "stateSave": true,
+            "columns": [
+                { "width": "15%" },
+                { "width": "5%" },
+                { "width": "12%" },
+                { "width": "" },
+                { "width": "15%" },
+            ],
+            "columnDefs": [
+                { "visible": false,  "targets": [ 3 ] },
+                { "visible": columnVisible,  "targets": [ 2 ] },
+                { "iDataSort": 3, "aTargets": [ 2] },
+                columnTwoDef,
+                { "targets": [1,2,3,4], "searchable": false } //search only on first column
+            ],
+            buttons: [
+                //{extend: 'csv', text: 'Download CSV'}
+            ],
+            conditionalPaging: true,
+            "language": {
+                "paginate": {
+                    "previous": burst.localize['previous'],
+                    "next": burst.localize['next'],
+                },
+                searchPlaceholder: burst.localize['search'],
+                "search": "",
+                "emptyTable": burst.localize['no-searches']
+            },
+            "order": [[2, "desc"]],
+        });
+
+        container.find('.burst-table').on( 'page.dt', function () {
+            var table = $(this).closest('table').DataTable();
+            var info = table.page.info();
+            lastSelectedPage = info.page;
+        } );
+    }
+
+
+    function localize_html(str) {
+        var strings = burst.localize;
+        for (var k in strings) {
+            if (strings.hasOwnProperty(k)) {
+                if ( k === str ) return strings[k];
+            }
+        }
+        return str;
+    }
+
+
+    function burstLoadData(container, page, received){
+        var type = container.closest('.burst-item').data('table_type');
+        if(page===1) container.html(burst.skeleton);
+        var unixStart = localStorage.getItem('burst_range_start');
+        var unixEnd = localStorage.getItem('burst_range_end');
+        if (unixStart === null || unixEnd === null ) {
+            unixStart = moment().subtract(1, 'week').unix();
+            unixEnd = moment().unix();
+            localStorage.setItem('burst_range_start', unixStart);
+            localStorage.setItem('burst_range_end', unixEnd);
+        }
+        unixStart = parseInt(unixStart);
+        unixEnd = parseInt(unixEnd);
+        $.ajax({
+            type: "GET",
+            url: burst.ajaxurl,
+            dataType: 'json',
+            data: ({
+                action : 'burst_get_datatable',
+                start  : unixStart,
+                end    : unixEnd,
+                page   : page,
+                type   : type,
+                token  : burst.token
+            }),
+            success: function (response) {
+                //this only on first page of table
+                if (page===1){
+                    container.html(response.html);
+                    if (type==='all') {
+                        burstInitSingleDataTable(container);
+                        burstInitDeleteCapability();
+                    }
+                } else {
+                    var table = container.find('table').DataTable();
+                    var rowCount = response.html.length;
+                    for (var key in response.html) {
+                        if (response.html.hasOwnProperty(key)) {
+                            var row = $(response.html[key]);
+                            //only redraw on last row
+                            if (parseInt(key) >= (rowCount-1) ) {
+                                table.row.add(row).draw();
+                                table.page( lastSelectedPage ).draw( false )
+                            } else {
+                                table.row.add(row);
+                            }
+                        }
+                    }
+                }
+
+                received += response.batch;
+                if (response.total_rows > received) {
+                    page++;
+                    burstLoadData(container, page , received);
+                } else {
+                    page = 1;
+                }
+
+            }
+        });
+    }
+
+});

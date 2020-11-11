@@ -371,7 +371,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 				$menu_label,
 				'manage_options',
 				'burst',
-				array( $this, 'main_page' ),
+				array( $this, 'dashboard' ),
 				burst_url . 'assets/images/menu-icon.svg',
 				burst_MAIN_MENU_POSITION
 			);
@@ -382,7 +382,15 @@ if ( ! class_exists( "burst_admin" ) ) {
 				__( 'Dashboard', 'burst' ),
 				'manage_options',
 				'burst',
-				array( $this, 'main_page' )
+				array( $this, 'dashboard' )
+			);
+			add_submenu_page(
+				'burst',
+				__( 'Insights', 'burst' ),
+				__( 'Insights', 'burst' ),
+				'manage_options',
+				'burst-insights',
+				array( $this, 'insights' )
 			);
 
 			add_submenu_page(
@@ -489,14 +497,26 @@ if ( ! class_exists( "burst_admin" ) ) {
                     'page' => 'dashboard',
                     'body' => 'admin_wrap',
                 ),
+                6 => array(
+                    'title' => __("Pannekoek", "burst"),
+                    'content' => '<div class="burst-skeleton burst-skeleton-statistics"></div>',
+                    'class' => 'table-overview burst-load-ajax',
+                    'type' => 'no-type',
+                    'controls' => sprintf(__("Remaining tasks (%s)", "burst"), count( $this->get_warnings() )),
+                    'can_hide' => true,
+                    'page' => 'insights',
+                    'body' => 'admin_wrap',
+
+                ),
+
             );
         }
 
 		/**
-		 * Main settings page
+		 * Dashboard page
 		 */
 
-		public function main_page() {
+		public function dashboard() {
 
 			$grid_items = $this->grid_items;
 			//give each item the key as index
@@ -504,10 +524,36 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			$grid_html = '';
 			foreach ($grid_items as $index => $grid_item) {
+
+				error_log('$grid_item');
+				error_log(print_r($grid_item, true));
+				if($grid_item['page'] !== 'dashboard') continue;
 				$grid_html .= burst_grid_element($grid_item);
 			}
 			$args = array(
 				'page' => 'dashboard',
+				'content' => burst_grid_container($grid_html),
+			);
+			echo burst_get_template('admin_wrap.php', $args );
+		}
+
+		/**
+		 * Insights page
+		 */
+
+		public function insights() {
+
+			$grid_items = $this->grid_items;
+			//give each item the key as index
+			array_walk($grid_items, function(&$a, $b) { $a['index'] = $b; });
+
+			$grid_html = '';
+			foreach ($grid_items as $index => $grid_item) {
+				if($grid_item['page'] !== 'insights') continue;
+				$grid_html .= burst_grid_element($grid_item);
+			}
+			$args = array(
+				'page' => 'insights',
 				'content' => burst_grid_container($grid_html),
 			);
 			echo burst_get_template('admin_wrap.php', $args );
