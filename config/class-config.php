@@ -33,7 +33,7 @@ if ( ! class_exists( "burst_config" ) ) {
 					'burst' ),
 					'<a href="https://burst.io" target="_blank">', '</a>' )
 				  . "&nbsp;";
-			$this->premium_ab_testing
+			$this->premium_experimenting
 				= sprintf( __( "If you want to run a/b testing to track which banner gets the highest acceptance ratio, %sget premium%s.",
 					'burst' ),
 					'<a href="https://burst.io" target="_blank">', '</a>' )
@@ -41,7 +41,7 @@ if ( ! class_exists( "burst_config" ) ) {
 
 
 			/* config files */
-			require_once( burst_path . '/ab-tests/settings.php' );
+			require_once( burst_path . '/experiments/settings.php' );
 			require_once( burst_path . '/config/general-settings.php' );
 			
 

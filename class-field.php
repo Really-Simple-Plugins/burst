@@ -1550,9 +1550,9 @@ if ( ! class_exists( "burst_field" ) ) {
 					$id = intval( $_POST['id'] );
 				}
 
-				$ab_test = new BURST_AB_TEST( $id );
-				$value  = ! empty( $ab_test->{$fieldname} )
-					? $ab_test->{$fieldname} : false;
+				$experiment = new BURST_EXPERIMENT( $id );
+				$value  = ! empty( $experiment->{$fieldname} )
+					? $experiment->{$fieldname} : false;
 
 			} else {
 				$options = get_option( 'burst_options_' . $source );

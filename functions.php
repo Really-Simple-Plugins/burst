@@ -123,7 +123,7 @@ if ( ! function_exists( 'burst_get_value' ) ) {
 	}
 }
 
-if ( ! function_exists( 'burst_get_ab_tests' ) ) {
+if ( ! function_exists( 'burst_get_experiments' ) ) {
 
 	/**
 	 * Get array of banner objects
@@ -133,7 +133,7 @@ if ( ! function_exists( 'burst_get_ab_tests' ) ) {
 	 * @return stdClass Object
 	 */
 
-	function burst_get_ab_tests( $args = array() ) {
+	function burst_get_experiments( $args = array() ) {
 		$args = wp_parse_args( $args, array( 'status' => 'active' ) );
 		$sql  = '';
 		global $wpdb;
@@ -144,14 +144,14 @@ if ( ! function_exists( 'burst_get_ab_tests' ) ) {
 			$sql = 'AND cdb.archived = false';
 		}
 
-		$ab_tests
-			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_ab_tests as cdb where 1=1 $sql" );
+		$experiments
+			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments as cdb where 1=1 $sql" );
 
-		return $ab_tests;
+		return $experiments;
 	}
 }
 
-if ( ! function_exists( 'burst_get_ab_tests_by' ) ) {
+if ( ! function_exists( 'burst_get_experiments_by' ) ) {
 
 	/**
 	 * Get array of banner objects
@@ -162,13 +162,13 @@ if ( ! function_exists( 'burst_get_ab_tests_by' ) ) {
 	 * @return stdClass Object
 	 */
 
-	function burst_get_ab_tests_by( $field, $value ) {
+	function burst_get_experiments_by( $field, $value ) {
 		global $wpdb;
 
-		$ab_tests
-			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_ab_tests as cdb where {$field} = {$value}" );
+		$experiments
+			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments as cdb where {$field} = {$value}" );
 
-		return $ab_tests;
+		return $experiments;
 	}
 }
 
@@ -339,9 +339,9 @@ if ( ! function_exists( 'burst_get_active_experiment_id' ) ) {
 			$sql = 'AND cdb.archived = false and cdb.test_running = true';
 		}
 
-		$ab_tests
-			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_ab_tests as cdb where 1=1 $sql" );
+		$experiments
+			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments as cdb where 1=1 $sql" );
 
-		return $ab_tests;
+		return $experiments;
 	}
 }

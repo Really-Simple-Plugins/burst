@@ -1,10 +1,10 @@
 <?php 
 defined( 'ABSPATH' ) or die( "you do not have acces to this page!" );
 	
-if ( ! class_exists( "burst_ab_testing" ) ) {
-	class burst_ab_testing {
+if ( ! class_exists( "burst_experimenting" ) ) {
+	class burst_experimenting {
 		private static $_this;
-		public $ab_testing_enabled = false;
+		public $experimenting_enabled = false;
 
 
 		function __construct() {
@@ -44,7 +44,7 @@ if ( ! class_exists( "burst_ab_testing" ) ) {
 		}
 		/**
 		 *
-		 * //if ab testing enabled
+		 * //if experimenting enabled
 		 * //if a post is loaded, check if it has variants.
 		 * get content of variant and load instead of post.
 		 *
@@ -61,10 +61,10 @@ if ( ! class_exists( "burst_ab_testing" ) ) {
 		 */
 		public function load_variant_content($content){
 			global $post;
-			global $ab_testing_enabled;
+			global $experimenting_enabled;
 			//if ab enabled
-			$ab_testing_enabled = true;
-			if (!$ab_testing_enabled) return $content;
+			$experimenting_enabled = true;
+			if (!$experimenting_enabled) return $content;
 			
 			//if has variant
 			//get content
@@ -134,8 +134,8 @@ if ( ! class_exists( "burst_ab_testing" ) ) {
  *
  * @todo fix the escaping
  */
-add_action( 'plugins_loaded', 'burst_ab_test_form_submit', 20 );
-function burst_ab_test_form_submit() {
+add_action( 'plugins_loaded', 'burst_experiment_form_submit', 20 );
+function burst_experiment_form_submit() {
 	if ( ! burst_user_can_manage() ) {
 		return;
 	}
@@ -149,30 +149,30 @@ function burst_ab_test_form_submit() {
 	}
 
 	if ( isset( $_POST['burst_add_new'] ) ) {
-		$ab_test = new BURST_AB_TEST();
+		$experiment = new BURST_AB_TEST();
 	} else {
 		$id     = intval( $_GET['id'] );
-		$ab_test = new BURST_AB_TEST( $id );
+		$experiment = new BURST_AB_TEST( $id );
 	}
-	$ab_test->process_form( $_POST );
+	$experiment->process_form( $_POST );
 
 	if ( isset( $_POST['burst_add_new'] ) ) {
-		wp_redirect( admin_url( 'admin.php?page=burst-ab_test&id='
-		                        . $ab_test->id ) );
+		wp_redirect( admin_url( 'admin.php?page=burst-experiments&id='
+		                        . $experiment->id ) );
 		exit;
 	}
 }
 
-add_action( 'admin_init', 'burst_redirect_to_ab_test' );
-function burst_redirect_to_ab_test() {
-	//on ab_test page?
-	if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'burst-ab_tests' ) {
-		return;
-	}
-	if ( ! apply_filters( 'burst_show_ab_test_list_view', false )
-	     && ! isset( $_GET['id'] )
-	) {
-		wp_redirect( add_query_arg( 'id', burst_get_default_banner_id(),
-			admin_url( 'admin.php?page=burst-ab-tests' ) ) );
-	}
-}
+// add_action( 'admin_init', 'burst_redirect_to_experiment' );
+// function burst_redirect_to_experiment() {
+// 	//on experiment page?
+// 	if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'burst-experiments' ) {
+// 		return;
+// 	}
+// 	if ( ! apply_filters( 'burst_show_experiment_list_view', false )
+// 	     && ! isset( $_GET['id'] )
+// 	) {
+// 		wp_redirect( add_query_arg( 'id', $_GET['id'],
+// 			admin_url( 'admin.php?page=burst-experiments' ) ) );
+// 	}
+// }
