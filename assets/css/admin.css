@@ -28,7 +28,7 @@
   width: 120px;
 }
 #burst #burst-content-area {
-  margin: 15px;
+  margin: 10px;
 }
 #burst h3 {
   margin-top: 30px;
@@ -268,4 +268,9 @@
 }
 #burst .burst-tooltip-right {
   float: right;
+}
+.toplevel_page_burst #wpbody-content,
+.burst-1_page_burst-ab-tests #wpbody-content,
+.burst-1_page_burst-settings #wpbody-content {
+  padding-bottom: 20px;
 }
