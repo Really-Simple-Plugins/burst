@@ -1,6 +1,6 @@
 <?php
 /**
- * AB tests Reports Table Class
+ * Experiments Reports Table Class
  *
  *
  */
@@ -15,7 +15,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-class burst_ab_test_Table extends WP_List_Table {
+class burst_experiment_Table extends WP_List_Table {
 
 	/**
 	 * Number of items per page
@@ -62,8 +62,8 @@ class burst_ab_test_Table extends WP_List_Table {
 
 		// Set parent defaults
 		parent::__construct( array(
-			'singular' => __( 'ab_test', 'burst' ),
-			'plural'   => __( 'ab_tests', 'burst' ),
+			'singular' => __( 'experiment', 'burst' ),
+			'plural'   => __( 'experiments', 'burst' ),
 			'ajax'     => false,
 		) );
 	}
@@ -103,10 +103,10 @@ class burst_ab_test_Table extends WP_List_Table {
 				:</label>
 			<select name="status">
 				<option value="active" <?php if ( $status === 'active' )
-					echo "selected" ?>><?php _e( 'Active AB tests',
+					echo "selected" ?>><?php _e( 'Active Experiments',
 						'burst' ) ?></option>
 				<option value="archived" <?php if ( $status === 'archived' )
-					echo "selected" ?>><?php _e( 'Archived AB tests',
+					echo "selected" ?>><?php _e( 'Archived Experiments',
 						'burst' ) ?></option>
 			</select>
 			<?php submit_button( $text, 'button', false, false,
@@ -131,21 +131,21 @@ class burst_ab_test_Table extends WP_List_Table {
 
 	public function column_name( $item ) {
 		$name = ! empty( $item['name'] ) ? $item['name']
-			: '<em>' . __( 'Unnamed ab_test', 'burst' )
+			: '<em>' . __( 'Unnamed experiment', 'burst' )
 			  . '</em>';
-		$name = apply_filters( 'burst_ab_test_name', $name );
+		$name = apply_filters( 'burst_experiment_name', $name );
 
 		$actions = array(
 			'edit'   => '<a href="'
-			            . admin_url( 'admin.php?page=burst-ab-tests&id='
+			            . admin_url( 'admin.php?page=burst-experiments&id='
 			                         . $item['ID'] ) . '&action=edit">' . __( 'Edit',
 					'burst' ) . '</a>',
-			'delete' => '<a class="burst-delete-ab_test" data-id="' . $item['ID']
+			'delete' => '<a class="burst-delete-experiment" data-id="' . $item['ID']
 			            . '" href="#">' . __( 'Delete', 'burst' )
 			            . '</a>'
 		);
 
-		$ab_test_count = count( burst_get_ab_tests() );
+		$experiment_count = count( burst_get_experiments() );
 
 		return $name . $this->row_actions( $actions );
 	}
@@ -154,7 +154,7 @@ class burst_ab_test_Table extends WP_List_Table {
 		$test_running = ! empty( $item['test_running'] ) ? $item['test_running']
 			: '<em>' . __( 'Not set', 'burst' )
 			  . '</em>';
-		$test_running = apply_filters( 'burst_ab_test_test_running', $test_running );
+		$test_running = apply_filters( 'burst_experiment_test_running', $test_running );
 
 		return $test_running;
 	}
@@ -163,7 +163,7 @@ class burst_ab_test_Table extends WP_List_Table {
 		$kpi = ! empty( $item['kpi'] ) ? $item['kpi']
 			: '<em>' . __( 'No KPI selected', 'burst' )
 			  . '</em>';
-		$kpi = apply_filters( 'burst_ab_test_kpi', $kpi );
+		$kpi = apply_filters( 'burst_experiment_kpi', $kpi );
 
 		return $kpi;
 	}
@@ -172,7 +172,7 @@ class burst_ab_test_Table extends WP_List_Table {
 		$post = get_post($item['control_id']);
 		$control_id = $item['control_id'] ? $post->post_title : __( 'No control ID', 'burst' );
 		$control_id .= '</br><span style="color: grey; ">/'.$post->post_name.'</span>';
-		$control_id = apply_filters( 'burst_ab_test_control_id', $control_id );
+		$control_id = apply_filters( 'burst_experiment_control_id', $control_id );
 
 
 		$actions = array(
@@ -188,7 +188,7 @@ class burst_ab_test_Table extends WP_List_Table {
 		$post = get_post($item['variant_id']);
 		$variant_id = $item['variant_id'] ? $post->post_title : 'No variant ID';
 		$variant_id .= '</br><span style="color: grey; ">/'.$post->post_name.'</span>';
-		$variant_id = apply_filters( 'burst_ab_test_variant_id', $variant_id );
+		$variant_id = apply_filters( 'burst_experiment_variant_id', $variant_id );
 
 		$actions = array(
 			'edit'   => '<a href="'
@@ -319,16 +319,16 @@ class burst_ab_test_Table extends WP_List_Table {
 		$args['name'] = $search;
 
 		$this->args = $args;
-		$ab_tests    = burst_get_ab_tests( $args );
-		if ( $ab_tests ) {
+		$experiments    = burst_get_experiments( $args );
+		if ( $experiments ) {
 
-			foreach ( $ab_tests as $ab_test ) {
+			foreach ( $experiments as $experiment ) {
 				$data[] = array(
-					'ID'   => $ab_test->ID,
-					'name' => $ab_test->title,
-					'control_id' => $ab_test->control_id,
-					'variant_id' => $ab_test->variant_id,
-					'kpi' => $ab_test->kpi,
+					'ID'   => $experiment->ID,
+					'name' => $experiment->title,
+					'control_id' => $experiment->control_id,
+					'variant_id' => $experiment->variant_id,
+					'kpi' => $experiment->kpi,
 				);
 			}
 		}
@@ -347,7 +347,7 @@ class burst_ab_test_Table extends WP_List_Table {
 
 		$this->items = $this->reports_data();
 
-		$this->total = count( burst_get_ab_tests() );
+		$this->total = count( burst_get_experiments() );
 
 		// Add condition to be sure we don't divide by zero.
 		// If $this->per_page is 0, then set total pages to 1.

@@ -1,13 +1,13 @@
 <?php
 defined( 'ABSPATH' ) or die( "you do not have acces to this page!" );
 
-add_filter('burst_fields', 'burst_add_ab_test_settings');
-function burst_add_ab_test_settings($fields){
+add_filter('burst_fields', 'burst_add_experiment_settings');
+function burst_add_experiment_settings($fields){
 
 	$fields = $fields + array(
 
 			'title' => array(
-				'source'      => 'BURST_AB_TEST',
+				'source'      => 'BURST_EXPERIMENT',
 				'step'        => 'general',
 				'type'        => 'text',
 				'label'       => __( "Descriptive name for your experiment", 'burst' ),
@@ -16,7 +16,7 @@ function burst_add_ab_test_settings($fields){
 			),
 
 			'control_id' => array(
-				'source'             => 'BURST_AB_TEST',
+				'source'             => 'BURST_EXPERIMENT',
 				'step'               => 'general',
 				'type'               => 'select2',
 				'label'              => __( "Control",
@@ -26,7 +26,7 @@ function burst_add_ab_test_settings($fields){
 			),
 
 			'variant_id' => array(
-				'source'             => 'BURST_AB_TEST',
+				'source'             => 'BURST_EXPERIMENT',
 				'step'               => 'general',
 				'type'               => 'select2',
 				'label'              => __( "Variant",
@@ -37,7 +37,7 @@ function burst_add_ab_test_settings($fields){
 
 
 			'kpi' => array(
-				'source'      => 'BURST_AB_TEST',
+				'source'      => 'BURST_EXPERIMENT',
 				'step'        => 'goals',
 				'type'        => 'radio',
 				'options' => array(
@@ -47,7 +47,7 @@ function burst_add_ab_test_settings($fields){
 					'form-submission'  => __( "Form submission", 'burst' ),
 				),
 				'label'       => __( "Key Performance Indicator", 'burst' ),
-				'placeholder' => __( 'Descriptive title of the AB test' ),
+				'placeholder' => __( 'Descriptive title of the experiment (For example: Red button vs blue button)' ),
 				'help'        => __( 'For internal use only', 'burst' ),
 			),
 

@@ -47,7 +47,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 		function add_variant($post_type)
 		{
 			if (!current_user_can('edit_posts')) return;
-			add_meta_box('burst_edit_meta_box', __('Burst Split AB testing', 'burst'), array($this, 'show_proposal_metabox'), null, 'side', 'high', array(
+			add_meta_box('burst_edit_meta_box', __('Burst Experiments', 'burst'), array($this, 'show_proposal_metabox'), null, 'side', 'high', array(
 				//'__block_editor_compatible_meta_box' => true,
 			));
 		}
@@ -67,12 +67,12 @@ if ( ! class_exists( "burst_admin" ) ) {
 		    if (!current_user_can('edit_posts')) return;
 
 			global $post;
-			$ab_tests = burst_get_ab_tests_by('control_id', $post->ID) ? burst_get_ab_tests_by('control_id', $post->ID) : burst_get_ab_tests_by('variant_id', $post->ID);
-			if ($ab_tests) {
-				foreach ($ab_tests as $ab_test) {
-					$variant_id = $ab_test->variant_id;
+			$experiments = burst_get_experiments_by('control_id', $post->ID) ? burst_get_experiments_by('control_id', $post->ID) : burst_get_experiments_by('variant_id', $post->ID);
+			if ($experiments) {
+				foreach ($experiments as $experiment) {
+					$variant_id = $experiment->variant_id;
 					$variant = get_post($variant_id);
-					$control_id = $ab_test->control_id;
+					$control_id = $experiment->control_id;
 					$control = get_post($control_id);
 
 					$html = 
@@ -85,7 +85,7 @@ if ( ! class_exists( "burst_admin" ) ) {
            		<form method="POST">
                 <?php wp_nonce_field('burst_create_variant', 'burst_create_variant_nonce' )?>
                 <input type="hidden" name="burst_create_variant_id" value="<?php echo $post->ID?>">
-                <input type="submit" class="button-primary" value="<?php _e("Create AB test", "burst")?>">
+                <input type="submit" class="button-primary" value="<?php _e("Create experiment", "burst")?>">
             	</form>
 				<?php
 			}
@@ -191,14 +191,14 @@ if ( ! class_exists( "burst_admin" ) ) {
 				* create database entry
 				*/
 
-				$ab_test = new BURST_AB_TEST();
-				$ab_test->archived = false;
-				$ab_test->title = $post_title;
-				$ab_test->control_id = $post_id;
-				$ab_test->variant_id = $new_post_id;
-				$ab_test->test_running = false;
-				$ab_test->date_created = date("Y-m-d h:i:sa");
-				$ab_test->save();
+				$experiment = new BURST_EXPERIMENT();
+				$experiment->archived = false;
+				$experiment->title = $post_title;
+				$experiment->control_id = $post_id;
+				$experiment->variant_id = $new_post_id;
+				$experiment->test_running = false;
+				$experiment->date_created = date("Y-m-d h:i:sa");
+				$experiment->save();
 
 				add_post_meta( $post_id,'contains_tests', true );
 				
@@ -387,11 +387,11 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			add_submenu_page(
 				'burst',
-				__( 'AB tests', 'burst' ),
-				__( 'AB tests', 'burst' ),
+				__( 'Experiments', 'burst' ),
+				__( 'Experiments', 'burst' ),
 				'manage_options',
-				'burst-ab-tests',
-				array( $this, 'ab_tests_overview' )
+				'burst-experiments',
+				array( $this, 'experiments_overview' )
 			);
 
 			add_submenu_page(
@@ -504,6 +504,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			$grid_html = '';
 			foreach ($grid_items as $index => $grid_item) {
+				
 				$grid_html .= burst_grid_element($grid_item);
 			}
 			$args = array(
@@ -513,7 +514,31 @@ if ( ! class_exists( "burst_admin" ) ) {
 			echo burst_get_template('admin_wrap.php', $args );
 		}
 
-		function ab_tests_overview() {
+
+		/**
+		 * Insights page
+		 */
+
+		public function insights() {
+
+			$grid_items = $this->grid_items;
+			//give each item the key as index
+			array_walk($grid_items, function(&$a, $b) { $a['index'] = $b; });
+
+			$grid_html = '';
+			foreach ($grid_items as $index => $grid_item) {
+				if($grid_item['page'] !== 'insights') continue;
+				$grid_html .= burst_grid_element($grid_item);
+			}
+			$args = array(
+				'page' => 'insights',
+				'content' => burst_grid_container($grid_html),
+			);
+			echo burst_get_template('admin_wrap.php', $args );
+		}
+
+		function experiments_overview() {
+
 
 			if ( ! burst_user_can_manage() ) {
 				return;
@@ -537,41 +562,41 @@ if ( ! class_exists( "burst_admin" ) ) {
 			ob_start();
 
 			if ( $id || ( isset( $_GET['action'] ) && $_GET['action'] == 'new' ) ) {
-				include( dirname( __FILE__ ) . "/ab-tests/edit.php" );
+				include( dirname( __FILE__ ) . "/experiments/edit.php" );
 			} else {
 
-				include( dirname( __FILE__ ) . '/ab-tests/class-ab-test-table.php' );
+				include( dirname( __FILE__ ) . '/experiments/class-experiment-table.php' );
 
-				$ab_tests_table = new burst_ab_test_Table();
-				$ab_tests_table->prepare_items();
+				$experiments_table = new burst_experiment_Table();
+				$experiments_table->prepare_items();
 
 				?>
 
-				<div class="wrap cookie-warning">
-					<h1><?php _e( "AB tests", 'burst' ) ?>
-						<?php //do_action( 'burst_after_ab_test_title' ); ?>
-						<a href="<?php echo admin_url('admin.php?page=burst-ab-tests&action=new'); ?>"
-		                   class="page-title-action"><?php _e('Add AB test', 'burst') ?></a>
+				<div class="wrap experiment">
+					<h1><?php _e( "Your experiments", 'burst' ) ?>
+						<?php //do_action( 'burst_after_experiment_title' ); ?>
+						<a href="<?php echo admin_url('admin.php?page=burst-experiments&action=new'); ?>"
+		                   class="page-title-action"><?php _e('Add experiment', 'burst') ?></a>
 					</h1>
 
-					<form id="burst-ab_test-filter" method="get"
+					<form id="burst-experiment-filter" method="get"
 					      action="">
 
 						<?php
-						$ab_tests_table->search_box( __( 'Filter', 'burst' ),
-							'burst-ab_test' );
-						$ab_tests_table->display();
+						$experiments_table->search_box( __( 'Filter', 'burst' ),
+							'burst-experiment' );
+						$experiments_table->display();
 						?>
-						<input type="hidden" name="page" value="burst-ab_test"/>
+						<input type="hidden" name="page" value="burst-experiment"/>
 					</form>
-					<?php //do_action( 'burst_after_ab_test_list' ); ?>
+					<?php //do_action( 'burst_after_experiment_list' ); ?>
 				</div>
 				<?php
 			}
 			$html = ob_get_clean();
 			
 			$args = array(
-				'page' => 'ab_test_overview',
+				'page' => 'experiments_overview',
 				'content' => burst_grid_container($html),
 			);
 			echo burst_get_template('admin_wrap.php', $args );

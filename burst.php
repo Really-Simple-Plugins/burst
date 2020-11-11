@@ -58,7 +58,7 @@ require_once( plugin_dir_path( __FILE__ ) . 'functions.php' );
 if ( ! class_exists( 'BURST' ) ) {
 	class BURST {
 		public static $instance;
-		public static $ab_testing;
+		public static $experimenting;
 		public static $admin;
 		public static $review;
 		public static $field;
@@ -68,7 +68,7 @@ if ( ! class_exists( 'BURST' ) ) {
 			self::setup_constants();
 			self::includes();
 			self::hooks();
-			self::$ab_testing  = new burst_ab_testing();
+			self::$experimenting  = new burst_experimenting();
 
 			self::$config = new burst_config();
 
@@ -127,8 +127,8 @@ if ( ! class_exists( 'BURST' ) ) {
 			require_once( burst_path . 'statistics/class-statistics.php' );
 
 			require_once( burst_path . 'class-review.php' );
-			require_once( burst_path . 'ab-tests/class-ab-test.php' );
-			require_once( burst_path . 'ab-tests/ab-testing.php' );
+			require_once( burst_path . 'experiments/class-experiment.php' );
+			require_once( burst_path . 'experiments/experimenting.php' );
 
 			require_once( burst_path . 'rest-api/rest-api.php' );
 

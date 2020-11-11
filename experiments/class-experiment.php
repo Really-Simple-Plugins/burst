@@ -2,18 +2,18 @@
 defined( 'ABSPATH' ) or die( "you do not have acces to this page!" );
 
 /*
- * Install ab_test table
+ * Install experiment table
  * */
 
-add_action( 'plugins_loaded', 'burst_install_ab_tests_table', 10 );
-function burst_install_ab_tests_table() {
+add_action( 'plugins_loaded', 'burst_install_experiments_table', 10 );
+function burst_install_experiments_table() {
 	if ( get_option( 'burst_abdb_version' ) !== burst_version ) {
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 
-		$table_name = $wpdb->prefix . 'burst_ab_tests';
+		$table_name = $wpdb->prefix . 'burst_experiments';
 		$sql        = "CREATE TABLE $table_name (
             `ID` int(11) NOT NULL AUTO_INCREMENT,
             `archived` int(11) NOT NULL,
@@ -35,8 +35,8 @@ function burst_install_ab_tests_table() {
 	}
 }
 
-if ( ! class_exists( "BURST_AB_TEST" ) ) {
-	class BURST_AB_TEST {
+if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
+	class BURST_EXPERIMENT {
 		public $id = false;
 		public $archived = false;
 		public $title;
@@ -56,7 +56,7 @@ if ( ! class_exists( "BURST_AB_TEST" ) ) {
 			$this->id = $id;
 
 			if ( $this->id !== false ) {
-				//initialize the ab_test settings with this id.
+				//initialize the experiment settings with this id.
 				$this->get();
 			}
 
@@ -67,7 +67,7 @@ if ( ! class_exists( "BURST_AB_TEST" ) ) {
 
 
 		/**
-		 * Add a new ab_test database entry
+		 * Add a new experiment database entry
 		 */
 
 		private function add() {
@@ -76,13 +76,13 @@ if ( ! class_exists( "BURST_AB_TEST" ) ) {
 				return false;
 			}
 			$array = array(
-				'title' => __( 'New AB test', 'burst' ),
+				'title' => __( 'New experiment', 'burst' ),
 			);
 
 			global $wpdb;
 
 			$wpdb->insert(
-				$wpdb->prefix . 'burst_ab_tests',
+				$wpdb->prefix . 'burst_experiments',
 				$array
 			);
 			$this->id = $wpdb->insert_id;
@@ -106,7 +106,7 @@ if ( ! class_exists( "BURST_AB_TEST" ) ) {
 			//check nonce
 			if ( ! isset( $post['burst_nonce'] )
 			     || ! wp_verify_nonce( $post['burst_nonce'],
-					'burst_save_ab_test' )
+					'burst_save_experiment' )
 			) {
 				return false;
 			}
@@ -121,7 +121,7 @@ if ( ! class_exists( "BURST_AB_TEST" ) ) {
 		}
 
 		/**
-		 * Load the ab_test data
+		 * Load the experiment data
 		 *
 		 */
 
@@ -132,23 +132,23 @@ if ( ! class_exists( "BURST_AB_TEST" ) ) {
 				return;
 			}
 
-			$ab_tests
-				= $wpdb->get_results( $wpdb->prepare( "select * from {$wpdb->prefix}burst_ab_tests where ID = %s",
+			$experiments
+				= $wpdb->get_results( $wpdb->prepare( "select * from {$wpdb->prefix}burst_experiments where ID = %s",
 				intval( $this->id ) ) );
 
-			if ( isset( $ab_tests[0] ) ) {
-				$ab_test         = $ab_tests[0];
-				$this->archived       = $ab_test->archived;
-				$this->title          = $ab_test->title;
-				$this->variant_id = $ab_test->variant_id;
-				$this->control_id = $ab_test->control_id;
-				$this->test_running = $ab_test->test_running;
-				$this->date_created = $ab_test->date_created;
-				$this->date_modified = $ab_test->date_modified;
-				$this->date_started = $ab_test->date_started;
-				$this->date_end = $ab_test->date_end;
-				$this->kpi = $ab_test->kpi;
-				$this->statistics = $ab_test->statistics;
+			if ( isset( $experiments[0] ) ) {
+				$experiment         = $experiments[0];
+				$this->archived       = $experiment->archived;
+				$this->title          = $experiment->title;
+				$this->variant_id = $experiment->variant_id;
+				$this->control_id = $experiment->control_id;
+				$this->test_running = $experiment->test_running;
+				$this->date_created = $experiment->date_created;
+				$this->date_modified = $experiment->date_modified;
+				$this->date_started = $experiment->date_started;
+				$this->date_end = $experiment->date_end;
+				$this->kpi = $experiment->kpi;
+				$this->statistics = $experiment->statistics;
 
 
 
@@ -230,7 +230,7 @@ if ( ! class_exists( "BURST_AB_TEST" ) ) {
 		public function get_translation_id() {
 			//if this is the banner with the lowest ID's, no ID
 			global $wpdb;
-			$lowest = $wpdb->get_var( "select min(ID) from {$wpdb->prefix}burst_ab_tests" );
+			$lowest = $wpdb->get_var( "select min(ID) from {$wpdb->prefix}burst_experiments" );
 			if ( $lowest == $this->id ) {
 				return '';
 			} else {
@@ -342,7 +342,7 @@ if ( ! class_exists( "BURST_AB_TEST" ) ) {
 				'statistics'                => $this->statistics,
 			);
 			global $wpdb;
-			$updated = $wpdb->update( $wpdb->prefix . 'burst_ab_tests',
+			$updated = $wpdb->update( $wpdb->prefix . 'burst_experiments',
 				$update_array,
 				array( 'ID' => $this->id )
 			);
@@ -367,20 +367,20 @@ if ( ! class_exists( "BURST_AB_TEST" ) ) {
 
 			//do not delete the last one.
 			$count
-				= $wpdb->get_var( "select count(*) as count from {$wpdb->prefix}burst_ab_tests" );
+				= $wpdb->get_var( "select count(*) as count from {$wpdb->prefix}burst_experiments" );
 			if ( $count == 1 && ! $force ) {
 				$error = true;
 			}
 
 			if ( ! $error ) {
 
-				$wpdb->delete( $wpdb->prefix . 'burst_ab_tests', array(
+				$wpdb->delete( $wpdb->prefix . 'burst_experiments', array(
 					'ID' => $this->id,
 				) );
 
 				//clear all statistics regarding this banner
 				// $wpdb->delete( $wpdb->prefix . 'burst_statistics', array(
-				// 	'ab_test_id' => $this->id,
+				// 	'experiment_id' => $this->id,
 				// ) );
 			}
 
@@ -404,7 +404,7 @@ if ( ! class_exists( "BURST_AB_TEST" ) ) {
 		}
 
 		/**
-		 * Restore this ab_test
+		 * Restore this experiment
 		 *
 		 * @return void
 		 */
@@ -419,7 +419,7 @@ if ( ! class_exists( "BURST_AB_TEST" ) ) {
 		}
 
 		/**
-		 * Get the conversion to marketing for a ab_test
+		 * Get the conversion to marketing for a experiment
 		 *
 		 * @return float percentage
 		 */
@@ -490,8 +490,8 @@ if ( ! class_exists( "BURST_AB_TEST" ) ) {
 			$sql
 				= $wpdb->prepare( "SELECT count(*) from {$wpdb->prefix}burst_statistics WHERE status = %s "
 				                  . $consenttype_sql, $status );
-			if ( burst::$cookie_admin->ab_testing_enabled() ) {
-				$sql = $wpdb->prepare( $sql . " AND ab_test_id=%s",
+			if ( burst::$cookie_admin->experimenting_enabled() ) {
+				$sql = $wpdb->prepare( $sql . " AND experiment_id=%s",
 					$this->id );
 			}
 			$count = $wpdb->get_var( $sql );

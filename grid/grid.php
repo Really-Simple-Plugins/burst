@@ -3,7 +3,7 @@ defined( 'ABSPATH' ) or die( "you do not have access to this page!" );
 
 add_action( 'admin_enqueue_scripts', 'burst_enqueue_grid_assets' );
 function burst_enqueue_grid_assets( $hook ) {
-	if ( $hook !== 'toplevel_page_burst' ) return;
+	if ( $hook !== 'toplevel_page_burst' && $hook !== 'burst-1_page_burst-insights' ) return;
 
 	wp_register_style( ' burst-muuri',
 		trailingslashit( burst_url ) . "grid/css/muuri.css", "",
