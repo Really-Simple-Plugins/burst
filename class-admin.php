@@ -564,16 +564,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 				return;
 			}
 
-			/*
-			 * Reset the statistics
-			 * */
-			if ( class_exists( 'burst_statistics' )
-			     && ( isset( $_GET['action'] )
-			          && $_GET['action'] == 'reset_statistics' )
-			) {
-				BURST::$statistics->init_statistics();
-			}
-
 			$id = false;
 			if ( isset( $_GET['id'] ) ) {
 				$id = intval( $_GET['id'] );
@@ -617,7 +607,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			
 			$args = array(
 				'page' => 'experiments_overview',
-				'content' => burst_grid_container($html),
+				'content' => $html,
 			);
 			echo burst_get_template('admin_wrap.php', $args );
 		}

@@ -149,10 +149,10 @@ function burst_experiment_form_submit() {
 	}
 
 	if ( isset( $_POST['burst_add_new'] ) ) {
-		$experiment = new BURST_AB_TEST();
+		$experiment = new BURST_EXPERIMENT();
 	} else {
 		$id     = intval( $_GET['id'] );
-		$experiment = new BURST_AB_TEST( $id );
+		$experiment = new BURST_EXPERIMENT( $id );
 	}
 	$experiment->process_form( $_POST );
 
