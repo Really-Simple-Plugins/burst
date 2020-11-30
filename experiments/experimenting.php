@@ -54,12 +54,13 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 
 
 		/**
-		 * Load variant content
+		 * Load variant content by filtering the_content
 		 * @param string $content
 		 *
 		 * @return mixed
 		 */
 		public function load_variant_content($content){
+			error_log('load_variant_content');
 			global $post;
 			global $experimenting_enabled;
 			//if ab enabled
@@ -72,24 +73,32 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			$burst_variant_child_id = get_post_meta($post_id, 'burst_variant_child', true);
 			if (!intval($burst_variant_child_id)) return;
 
-			$choice = rand(0,1);
-			if ($choice === 1) {
-				$content = get_the_content(null, false, $burst_variant_child_id);
-				
-				$content = apply_filters( 'the_content', $content );
-				$content = str_replace( ']]>', ']]&gt;', $content );
-				// update_post_meta($variant_post_id, 'burst_hits', get_post_meta($variant_post_id,'burst_hits')+1);
-				error_log('A');
-
-			} else {
-				// update_post_meta($parent_post_id, 'burst_hits', get_post_meta($parent_post_id,'burst_hits')+1);
-				error_log('B');
-
+			$burst_uid = isset( $_COOKIE['burst_uid']) ? $_COOKIE['burst_uid'] : false;
+			$page_url = '/burst/';
+			$latest_visit = false;
+			if ($burst_uid) {
+				$latest_visit = burst_get_latest_visit($burst_uid, $page_url);
+				$test_version = $latest_visit[0]->test_version;
 			}
 
-			//check if this user has a cookie 
-			// $burst_uid = isset( $_COOKIE['burst_uid']) ? $_COOKIE['burst_uid'] : false;
-			// setcookie('burst_uid', $burst_uid, time() + apply_filters('burst_cookie_retention', DAY_IN_SECONDS * 365), '/');
+			if (!$test_version) {
+				$choice = rand(0,1);
+				if ($choice === 1) {
+					
+					$test_version = 'Variation';
+
+				} else {
+					// update_post_meta($parent_post_id, 'burst_hits', get_post_meta($parent_post_id,'burst_hits')+1);
+					$test_version = 'Original';
+				}
+			}
+			error_log('end');
+			if ($test_version == 'Variation') {
+				$content = get_the_content(null, false, $burst_variant_child_id);
+				$content = str_replace( ']]>', ']]&gt;', $content );
+			}
+			
+			echo '<script type="text/javascript"> var test_version = "'. $test_version.'"; </script>';
 
 			return $content;
 		}

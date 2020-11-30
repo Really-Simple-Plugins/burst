@@ -377,18 +377,13 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				$wpdb->delete( $wpdb->prefix . 'burst_experiments', array(
 					'ID' => $this->id,
 				) );
-
-				//clear all statistics regarding this banner
-				// $wpdb->delete( $wpdb->prefix . 'burst_statistics', array(
-				// 	'experiment_id' => $this->id,
-				// ) );
 			}
 
 			return ! $error;
 		}
 
 		/**
-		 * Archive this cookie banner
+		 * Archive this experiment
 		 *
 		 * @return void
 		 */

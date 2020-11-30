@@ -41,7 +41,7 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 		//public $referer; //array('timestamp(seconds from 01-01-1970)' => previous URL );
 
 		function __construct( $page_url = false, $uid = false ) {
-
+			error_log('constuct statistics');
 			$this->uid = $uid;
 			$this->page_url = $page_url;
 
@@ -116,6 +116,7 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 				'page_id'                   => intval( $this->page_id ),
 				'time'               		=> time(),
 				'uid'               		=> $this->uid,
+				'test_version'				=> $this->test_version,
 			);
 			error_log('update array');
 			error_log(print_r($update_array, true));

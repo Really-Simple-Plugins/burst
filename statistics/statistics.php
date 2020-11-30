@@ -55,3 +55,19 @@ function burst_get_experiment_statistics($experiment_id = false, $data = array('
 	error_log(print_r($return, true));
 	die;
 }
+
+function burst_get_latest_visit($burst_uid = false, $page_url = false){
+	error_log('burst_get_latest_visit');
+	if (!$burst_uid && !$page_url) {
+		return false; 
+	}
+
+	global $wpdb;
+	if ($burst_uid) {
+		$statistics
+		= $wpdb->get_results( $wpdb->prepare( "select * from {$wpdb->prefix}burst_statistics where uid = %s ORDER BY time DESC LIMIT 1",
+		esc_attr( $burst_uid) ) );
+	}
+	return $statistics;
+	
+}

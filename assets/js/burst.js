@@ -3,8 +3,12 @@ var request = new XMLHttpRequest();
 request.open('POST', burst.url, true);
 console.log(burst.url);
 var url = location.pathname;
-var data = [];
-data.push(url);
+var test_version = test_version;
+var data = {
+	'url': url,
+	'test_version': test_version,
+};
+
 console.log(data);
-request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-request.send(data);
+request.setRequestHeader('Content-type', 'application/json')
+request.send(JSON.stringify(data)) // Make sure to stringify

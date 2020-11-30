@@ -27,7 +27,7 @@ function burst_track_hit(WP_REST_Request $request){
 			$burst_uid = get_user_meta(get_current_user_id(), 'burst_cookie_uid');
 			//if no user meta is found, add new unique ID
 			if (!isset($burst_uid)) {
-				//generate radom string
+				//generate random string
 				$burst_uid = burst_random_str();
 				update_user_meta(get_current_user_id(), 'burst_cookie_uid', $burst_uid);
 			}
@@ -39,11 +39,18 @@ function burst_track_hit(WP_REST_Request $request){
 
 	setcookie('burst_uid', $burst_uid, time() + apply_filters('burst_cookie_retention', DAY_IN_SECONDS * 365), '/');
 
-	$url = $request->get_body();
+	$data = $request->get_json_params();
+	$url = $data['url'];
+	$test_version = $data['test_version'];
+
+	error_log('data');
+	error_log(print_r($data, true));
 	
 	$statistics = new BURST_STATISTICS($url, $burst_uid);
 
 	$statistics->page_id = url_to_postid($url);
+
+	$statistics->test_version = $test_version;
 
 	$statistics->save();
 
