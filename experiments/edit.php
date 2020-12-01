@@ -23,16 +23,18 @@
 			?><h3><?php _e( "Start your experiment", 'burst' ) ?></h3><?php 
 			BURST::$field->get_fields( 'BURST_EXPERIMENT',
 							'start_experiment' );
+
+			?><h3><?php _e( "Timeline", 'burst' ) ?></h3><?php 
+			BURST::$field->get_fields( 'BURST_EXPERIMENT',
+							'timeline' );
+
 			?>
-			
 
 			<div class="burst-experiment-save-button">
 				<button class="button button-secondary"
 				        type="submit"><?php _e( 'Save',
 						'burst' ) ?></button>
-				<button class="button button-primary"
-				        type="submit"><?php _e( 'Save and start the experiment',
-						'burst' ) ?></button>
+	
 				
 			</div>
 		</div>	

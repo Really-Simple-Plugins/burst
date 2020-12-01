@@ -493,15 +493,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 
 			return $count;
 		}
-
-		public function report_conversion_total_count( $statistics ) {
-			$total = 0;
-			foreach ( $statistics as $status => $count ) {
-				$total += $count;
-			}
-
-			return $total;
-		}
+		
 
 	}
 

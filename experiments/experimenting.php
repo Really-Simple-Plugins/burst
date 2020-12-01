@@ -74,11 +74,12 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			if (!intval($burst_variant_child_id)) return;
 
 			$burst_uid = isset( $_COOKIE['burst_uid']) ? $_COOKIE['burst_uid'] : false;
-			$page_url = '/burst/';
+			$page_url = burst_get_current_url();
+			error_log('page url');
+			error_log($page_url);
 			$latest_visit = false;
 			if ($burst_uid) {
-				$latest_visit = burst_get_latest_visit($burst_uid, $page_url);
-				$test_version = $latest_visit[0]->test_version;
+				$test_version = burst_get_latest_visit_data($burst_uid, $page_url, 'test_version');
 			}
 
 			if (!$test_version) {
@@ -94,7 +95,10 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			}
 			error_log('end');
 			if ($test_version == 'Variation') {
+				error_log('Variation');
 				$content = get_the_content(null, false, $burst_variant_child_id);
+				// $content = apply_filters( 'the_content', $content ); 
+				// Causes inifinte loop
 				$content = str_replace( ']]>', ']]&gt;', $content );
 			}
 			

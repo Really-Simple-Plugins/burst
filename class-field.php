@@ -1384,7 +1384,7 @@ if ( ! class_exists( "burst_field" ) ) {
 
 				} else { ?> 
 					<option value="">
-					<?php _e( "Choose an option wdhuwduwudh",
+					<?php _e( "Choose an option",
 						'burst' ) ?></option>
 				<?php } ?>
 				

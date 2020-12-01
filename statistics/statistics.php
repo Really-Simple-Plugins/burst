@@ -56,18 +56,39 @@ function burst_get_experiment_statistics($experiment_id = false, $data = array('
 	die;
 }
 
-function burst_get_latest_visit($burst_uid = false, $page_url = false){
+function burst_get_latest_visit_data($burst_uid = false, $page_url = false, $data_variable = false){
 	error_log('burst_get_latest_visit');
 	if (!$burst_uid && !$page_url) {
 		return false; 
+	}
+	$sql = "";
+	if ($page_url) {
+		$sql = " AND page_url ='" . esc_attr($page_url) . "' ";
+
 	}
 
 	global $wpdb;
 	if ($burst_uid) {
 		$statistics
-		= $wpdb->get_results( $wpdb->prepare( "select * from {$wpdb->prefix}burst_statistics where uid = %s ORDER BY time DESC LIMIT 1",
+		= $wpdb->get_results( $wpdb->prepare( "select * from {$wpdb->prefix}burst_statistics where uid = %s". $sql ." ORDER BY time DESC LIMIT 1 ",
 		esc_attr( $burst_uid) ) );
 	}
-	return $statistics;
+	error_log('stats');
+	error_log(print_r($statistics, true));
+	if (empty($statistics)){
+		return false;
+	} else {
+
+		if ($data_variable) {
+			return $statistics[0]->$data_variable;
+		} else {
+			return $statistics;	
+		}
+		
+	}	
 	
 }
+
+function burst_get_current_url() {
+        return parse_url(get_permalink(), PHP_URL_PATH);
+    }

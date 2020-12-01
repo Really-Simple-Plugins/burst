@@ -95,7 +95,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 		/**
 		 * Function for post duplication. Dups appear as drafts. User is redirected to the edit screen
 		 *
-		 *
 		 */
 		public function create_variant_from_post()
 		{
