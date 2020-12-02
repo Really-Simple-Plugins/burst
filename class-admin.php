@@ -35,6 +35,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			add_action( 'admin_init',array( $this, 'create_variant_from_post' ) );
 			add_action ( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
             add_action( 'add_meta_boxes', array( $this, 'add_variant' ) );
+            
 
 
 		}
@@ -47,11 +48,10 @@ if ( ! class_exists( "burst_admin" ) ) {
 		function add_variant($post_type)
 		{
 			if (!current_user_can('edit_posts')) return;
-			add_meta_box('burst_edit_meta_box', __('Burst Experiments', 'burst'), array($this, 'show_proposal_metabox'), null, 'side', 'high', array(
+			add_meta_box('burst_edit_meta_box', __(burst_plugin_name, 'burst'), array($this, 'show_proposal_metabox'), null, 'side', 'high', array(
 				//'__block_editor_compatible_meta_box' => true,
 			));
 		}
-
 
 		/**
 		 *
@@ -359,14 +359,14 @@ if ( ! class_exists( "burst_admin" ) ) {
 			$warning_count = count( $warnings );
 			$warning_title = esc_attr( sprintf( '%d plugin warnings',
 				$warning_count ) );
-			$menu_label    = sprintf( __( 'Burst %s', 'burst' ),
+			$menu_label    = sprintf( __( burst_plugin_name, 'burst' ),
 				"<span class='update-plugins count-$warning_count' title='$warning_title'><span class='update-count'>"
 				. number_format_i18n( $warning_count ) . "</span></span>" );
 
 
 			global $burst_admin_page;
 			$burst_admin_page = add_menu_page(
-				__( 'Burst', 'burst' ),
+				burst_plugin_name,
 				$menu_label,
 				'manage_options',
 				'burst',

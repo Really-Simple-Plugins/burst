@@ -151,9 +151,12 @@ class burst_experiment_Table extends WP_List_Table {
 	}
 
 	public function column_test_running( $item ) {
-		$test_running = ! empty( $item['test_running'] ) ? $item['test_running']
-			: '<em>' . __( 'Not set', 'burst' )
-			  . '</em>';
+		error_log('test running');
+		error_log(print_r($item, true));
+		$test_running = ! empty( $item['test_running'] ) 
+			? '<span class="burst-bullet burst-green"></span> <b>' . __( 'Active', 'burst' ) . '</b>'
+			: '<em>' . __( 'Not set', 'burst' ) . '</em>';
+
 		$test_running = apply_filters( 'burst_experiment_test_running', $test_running );
 
 		return $test_running;
@@ -329,6 +332,7 @@ class burst_experiment_Table extends WP_List_Table {
 					'control_id' => $experiment->control_id,
 					'variant_id' => $experiment->variant_id,
 					'kpi' => $experiment->kpi,
+					'test_running' => $experiment->test_running,
 				);
 			}
 		}

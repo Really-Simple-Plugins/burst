@@ -78,6 +78,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			error_log('page url');
 			error_log($page_url);
 			$latest_visit = false;
+			$test_version = false;
 			if ($burst_uid) {
 				$test_version = burst_get_latest_visit_data($burst_uid, $page_url, 'test_version');
 			}

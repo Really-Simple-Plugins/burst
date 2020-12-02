@@ -92,6 +92,7 @@ if ( ! class_exists( 'BURST' ) ) {
 			define( 'burst_url', plugin_dir_url( __FILE__ ) );
 			define( 'burst_path', plugin_dir_path( __FILE__ ) );
 			define( 'burst_plugin', plugin_basename( __FILE__ ) );
+			define( 'burst_plugin_name', 'Burst A/B Testing' );
 			$debug = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? time() : '';
 			define( 'burst_version', $plugin_data['Version'] . $debug );
 			define( 'burst_plugin_file', __FILE__ );
@@ -121,12 +122,12 @@ if ( ! class_exists( 'BURST' ) ) {
 				require_once( burst_path . 'class-admin.php' );
 				require_once( burst_path . 'class-field.php');
 				require_once( burst_path . 'grid/grid.php' );
+				require_once( burst_path . 'class-review.php' );
 			}
 
 			require_once( burst_path . 'statistics/statistics.php' );
 			require_once( burst_path . 'statistics/class-statistics.php' );
 
-			require_once( burst_path . 'class-review.php' );
 			require_once( burst_path . 'experiments/class-experiment.php' );
 			require_once( burst_path . 'experiments/experimenting.php' );
 
@@ -177,4 +178,79 @@ if ( ! function_exists( 'burst_start_tour' ) ) {
 	}
 
 	register_activation_hook( __FILE__, 'burst_start_tour' );
+}
+
+if ( ! function_exists( 'burst_add_admin_bar_item' ) ) {
+	/**
+	 * Add admin bar for displaying if a test is running on the page
+	 *
+	 */
+	add_action( 'admin_bar_menu', 'burst_add_admin_bar_item', 500 );
+	function burst_add_admin_bar_item ( WP_Admin_Bar $admin_bar ) {
+	    if ( ! current_user_can( 'manage_options' ) ) {
+	        return;
+	    }
+	    $test_running = false;
+	    $active_experiments = burst_get_active_experiments_id();
+	    $count = count($active_experiments);
+	    $color = $count > 0 ? 'burst-green' : 'grey';
+	    $icon = '<span class="burst-bullet '. $color .'"></span>';
+	    $title =  burst_plugin_name;
+	    if ( $count > 0 ) {
+	    	$title .= ' | ' . sprintf( __( '%s active experiments', 'text_domain' ), $count );;
+	    }
+
+		wp_register_style( 'burst-admin-bar',
+		trailingslashit( burst_url ) . 'assets/css/admin-bar.css', "",
+		burst_version );
+		wp_enqueue_style( 'burst-admin-bar' );
+
+	    $admin_bar->add_menu( array(
+	        'id'    	=> 'burst',
+	        'parent' 	=> null,
+	        'group'  	=> null,
+	        'title' 	=> $icon . '<span class="burst-top-menu-text">'. $title .'</span>', //you can use img tag with image link. it will show the image icon Instead of the title.
+	        'href'  	=> admin_url('admin.php?page=burst'),
+	        'meta' 		=> [
+	            		'title' => __( $title, 'burst' ), //This title will show on hover
+	        ]
+	    ) );
+
+	    $admin_bar->add_menu(array(
+			'id'     	=> 'burst-results',
+			'parent' 	=> 'burst',
+			'title'  	=> __( 'Dashboard', 'burst' ),
+			'href'   	=> admin_url( 'admin.php?page=burst' ),
+		) );
+
+	    // if experiments are active display them here
+	    if ($count > 0) {
+	    	$admin_bar->add_menu(array(
+				'id'     	=> 'burst-active-experiments',
+				'parent' 	=> 'burst',
+				'title'  	=> __( 'Active experiments', 'burst' ),
+				'href'   	=> admin_url( 'admin.php?page=burst' ),
+			) );
+
+	    	// loop through active experiments and add to top menu
+			foreach ($active_experiments as $experiment) {
+		    	$admin_bar->add_menu(array(
+					'id'     	=> 'burst-add-experiment-'. $experiment->ID,
+					'parent' 	=> 'burst-active-experiments',
+					'title'  	=> $experiment->title,
+					'href'   	=> admin_url( 'admin.php?page=burst-experiments&id='. $experiment->ID .'&action=edit' ),
+				) );
+		    }
+	    }
+
+		$admin_bar->add_menu(array(
+			'id'     	=> 'burst-add-experiment',
+			'parent' 	=> 'burst',
+			'title'  	=> __( 'Add experiment', 'burst' ),
+			'href'   	=> admin_url( 'admin.php?page=burst-experiments&action=new' ),
+		) );
+
+		
+	}
+
 }

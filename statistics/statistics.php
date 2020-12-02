@@ -9,7 +9,7 @@ function burst_get_experiment_statistics($experiment_id = false, $data = array('
 	}
 	if (!$experiment_id) {
 		error_log('No experiment id');
-		$experiment_id = burst_get_active_experiment_id();
+		$experiment_id = burst_get_active_experiments_id();
 		error_log('experiment ID');
 		error_log(print_r($experiment_id, true));
 	}

@@ -318,7 +318,7 @@ if ( ! function_exists( 'burst_random_str' ) ) {
 	}
 }
 
-if ( ! function_exists( 'burst_get_active_experiment_id' ) ) {
+if ( ! function_exists( 'burst_get_active_experiments_id' ) ) {
 
 	/**
 	 * Get array of banner objects
@@ -328,20 +328,21 @@ if ( ! function_exists( 'burst_get_active_experiment_id' ) ) {
 	 * @return stdClass Object
 	 */
 
-	function burst_get_active_experiment_id( $args = array() ) {
-		$args = wp_parse_args( $args, array( 'status' => 'active' ) );
+	function burst_get_active_experiments_id( $args = array() ) {
+		// $args = wp_parse_args( $args, array( 'status' => 'active' ) );
 		$sql  = '';
 		global $wpdb;
-		if ( $args['status'] === 'archived' ) {
-			$sql = 'AND cdb.archived = true and cdb.test_running = true';
-		}
-		if ( $args['status'] === 'active' ) {
-			$sql = 'AND cdb.archived = false and cdb.test_running = true';
-		}
+		// if ( $args['status'] === 'archived' ) {
+		// 	$sql = 'AND cdb.archived = true and cdb.test_running = true';
+		// }
 
 		$experiments
-			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments as cdb where 1=1 $sql" );
-
-		return $experiments;
+			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments where test_running = 1" );
+		if (!empty($experiments)){
+			return $experiments;	
+		} else {
+			return array();
+		}
+		
 	}
 }

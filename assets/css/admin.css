@@ -116,15 +116,6 @@
   align-items: center;
   color: #3c3c3c;
 }
-#burst .upsell-grid-container .burst-upsell .rsssl-yellow {
-  background-color: #EFBF4B;
-}
-#burst .upsell-grid-container .burst-upsell .cmplz-blue {
-  background-color: #27ADEA;
-}
-#burst .upsell-grid-container .burst-upsell .zip-pink {
-  background-color: #E366A1;
-}
 #burst .upsell-grid-container .burst-upsell .plugin-status {
   margin-left: auto;
 }
@@ -197,12 +188,6 @@
   list-style-type: disc;
   margin-left: 22px;
 }
-#burst .burst-bullet {
-  height: 15px;
-  width: 15px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
 #burst .burst-tips-tricks .item-content > div,
 #burst .upsell-grid-container .item-content > div {
   display: flex !important;
@@ -268,6 +253,12 @@
 }
 #burst .burst-tooltip-right {
   float: right;
+}
+.burst-bullet {
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  margin-right: 10px;
 }
 .toplevel_page_burst #wpbody-content,
 .burst-1_page_burst-experiments #wpbody-content,
