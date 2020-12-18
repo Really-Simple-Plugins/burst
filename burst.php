@@ -197,7 +197,7 @@ if ( ! function_exists( 'burst_add_admin_bar_item' ) ) {
 	    $icon = '<span class="burst-bullet '. $color .'"></span>';
 	    $title =  burst_plugin_name;
 	    if ( $count > 0 ) {
-	    	$title .= ' | ' . sprintf( __( '%s active experiments', 'text_domain' ), $count );;
+	    	$title .= ' | ' . sprintf( __( '%s active experiments', 'burst' ), $count );
 	    }
 
 		wp_register_style( 'burst-admin-bar',

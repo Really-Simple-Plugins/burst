@@ -87,7 +87,10 @@ if ( ! class_exists( "burst_field" ) ) {
 		}
 
 		public function process_save() {
+			error_log('process_save');
 			error_log(print_r($_POST, true));
+
+
 			if ( ! current_user_can( 'manage_options' ) ) {
 				return;
 			}
@@ -149,6 +152,7 @@ if ( ! class_exists( "burst_field" ) ) {
 					array( $this, 'filter_burst_fields' ),
 					ARRAY_FILTER_USE_KEY );
 				foreach ( $posted_fields as $fieldname => $fieldvalue ) {
+					
 					$this->save_field( $fieldname, $fieldvalue );
 				}
 				//we're assuming the page is the same for all fields here, as it's all on the same page (or should be)
@@ -408,6 +412,8 @@ if ( ! class_exists( "burst_field" ) ) {
 				case 'url':
 					return esc_url_raw( $value );
 				case 'number':
+					return intval( $value );
+				case 'weightslider':
 					return intval( $value );
 				case 'css':
 				case 'javascript':
@@ -1205,7 +1211,6 @@ if ( ! class_exists( "burst_field" ) ) {
 
 			$fields = BURST::$config->fields( $source, $step, $section,
 				$get_by_fieldname );
-			error_log(print_r($fields, true));
 
 			$i = 0;
 			foreach ( $fields as $fieldname => $args ) {
@@ -1289,6 +1294,9 @@ if ( ! class_exists( "burst_field" ) ) {
 						break;
 					case 'label':
 						$this->label( $args );
+						break;
+					case 'weightslider';
+						$this->weightslider( $args );
 						break;
 				}
 			}
@@ -1472,6 +1480,80 @@ if ( ! class_exists( "burst_field" ) ) {
 			<?php
 		}
 
+		/**
+		 *
+		 * Weight slider field for dividing users over tests
+		 *
+		 * @param $args
+		 *
+		 * @echo string $html
+		 */
+
+		public
+		function weightslider(
+			$args
+		) {
+			$fieldname = 'burst_' . $args['fieldname'];
+
+			$value = $this->get_value( $args['fieldname'], $args['default'] );
+			if ( ! $this->show_field( $args ) ) {
+				return;
+			}
+			?>
+			<?php do_action( 'burst_before_label', $args ); ?>
+			<label><?php echo esc_html( $args['label'] ) ?><?php echo $this->get_help_tip_btn( $args ); ?></label>
+			<?php do_action( 'burst_after_label', $args ); ?>
+			<div class="weightslider">
+				<input  type="range" 
+						value="<?php echo esc_html( $value ) ?>" 
+						name="<?php echo esc_html( $fieldname ) ?>" 
+						min="0" 
+						max="100" 
+						value="100" 
+						step="10" 
+						oninput="weightsliderValue.value=value" >	
+				</input>
+				<p>
+					<output name="<?php echo esc_html( $fieldname ) ?>" id="weightsliderValue"><?php echo esc_html( $value ) ?></output><span>%</span>
+				</p>
+
+
+			</div>
+
+
+			<?php do_action( 'burst_after_field', $args ); ?>
+			<?php
+		}
+
+		public
+		function text2(
+			$args
+		) {
+			$fieldname = 'burst_' . $args['fieldname'];
+
+			$value = $this->get_value( $args['fieldname'], $args['default'] );
+			if ( ! $this->show_field( $args ) ) {
+				return;
+			}
+			?>
+
+			<?php do_action( 'burst_before_label', $args ); ?>
+			<label
+				for="<?php echo $args['fieldname'] ?>"><?php echo $args['label'] ?><?php echo $this->get_help_tip_btn( $args ); ?></label>
+			<?php do_action( 'burst_after_label', $args ); ?>
+			<input <?php if ( $args['required'] ) {
+				echo 'required';
+			} ?>
+				class="validation <?php if ( $args['required'] ) {
+					echo 'is-required';
+				} ?>"
+				placeholder="<?php echo esc_html( $args['placeholder'] ) ?>"
+				type="text"
+				value="<?php echo esc_html( $value ) ?>"
+				name="<?php echo esc_html( $fieldname ) ?>">
+			<?php do_action( 'burst_after_field', $args ); ?>
+			<?php
+		}
 
 		public
 		function multiple(

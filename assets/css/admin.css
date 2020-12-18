@@ -52,6 +52,13 @@
 #burst .field-group.first .burst-label {
   padding-top: 0;
 }
+#burst .field-group .weightslider {
+  width: 100%;
+}
+#burst .field-group .weightslider input {
+  width: 100%;
+  max-width: 400px;
+}
 #burst .burst-tooltip {
   font-weight: 400;
   font-size: 13px;

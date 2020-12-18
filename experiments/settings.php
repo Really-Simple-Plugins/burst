@@ -15,25 +15,25 @@ function burst_add_experiment_settings($fields){
 				'help'        => __( 'This name is for internal use only. Try to give the experiment a clear name, so you can find this test again.', 'burst' ),
 			),
 
-			'control_id' => array(
-				'source'             => 'BURST_EXPERIMENT',
-				'step'               => 'general',
-				'type'               => 'select2',
-				'label'              => __( "Control",
-					'burst' ),
-				'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
-					'burst' ),
-			),
+			// 'control_id' => array(
+			// 	'source'             => 'BURST_EXPERIMENT',
+			// 	'step'               => 'general',
+			// 	'type'               => 'select2',
+			// 	'label'              => __( "Control",
+			// 		'burst' ),
+			// 	'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
+			// 		'burst' ),
+			// ),
 
-			'variant_id' => array(
-				'source'             => 'BURST_EXPERIMENT',
-				'step'               => 'general',
-				'type'               => 'select2',
-				'label'              => __( "Variant",
-					'burst' ),
-				'help'               => __( 'Select or make a variant page. The variant page is the page you want to test against your control page. The variant page should be an improvement compared to the control page. At least you should think it is an improvement. That is something you will find out by running the experiment.',
-					'burst' ),
-			),
+			// 'variant_id' => array(
+			// 	'source'             => 'BURST_EXPERIMENT',
+			// 	'step'               => 'general',
+			// 	'type'               => 'select2',
+			// 	'label'              => __( "Variant",
+			// 		'burst' ),
+			// 	'help'               => __( 'Select or make a variant page. The variant page is the page you want to test against your control page. The variant page should be an improvement compared to the control page. At least you should think it is an improvement. That is something you will find out by running the experiment.',
+			// 		'burst' ),
+			// ),
 
 
 			'kpi' => array(
@@ -51,10 +51,11 @@ function burst_add_experiment_settings($fields){
 				'help'        => __( 'For internal use only', 'burst' ),
 			),
 
-			'percentage-included' => array(
+			'percentage_included' => array(
 				'source'      => 'BURST_EXPERIMENT',
-				'step'        => 'timeline',
-				'type'        => 'text',
+				'step'        => 'weight',
+				'type'        => 'weightslider',
+				'default'	  => '100',
 				'label'       => __( "What percentage of visitors should be included in the test?", 'burst' ),
 				'placeholder' => __( 'Percentage in numbers' ),
 				'help'        => __( 'For internal use only', 'burst' ),

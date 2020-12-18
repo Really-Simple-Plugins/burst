@@ -45,18 +45,24 @@ if ( ! class_exists( "burst_admin" ) ) {
 		}
 
 
-		function add_burst_metabox_to_classic_editor($post_type)
-		{
+		function add_burst_metabox_to_classic_editor()
+		{	
+			$post_id = $_GET['post'];
+			$post_status = get_post_status($post_id);
 			if (!current_user_can('edit_posts')) return;
-			if ($post_status == 'experiment') {
-				add_meta_box('burst_edit_meta_box', __(burst_plugin_name, 'burst'), array($this, 'show_burst_experiment_metabox'), null, 'side', 'high', array(
+			if ($post_status == 'variant') {
+				add_meta_box('burst_edit_meta_box', __(burst_plugin_name . ' - Experiment', 'burst'), array($this, 'show_burst_variant_metabox'), null, 'side', 'high', array(
 					//'__block_editor_compatible_meta_box' => true,
 				));
 			} else {
-				add_meta_box('burst_edit_meta_box', __(burst_plugin_name, 'burst'), array($this, 'show_burst_metabox'), null, 'side', 'high', array(
+				add_meta_box('burst_edit_meta_box', __(burst_plugin_name . ' - Experiment', 'burst'), array($this, 'show_burst_metabox'), null, 'side', 'high', array(
 					//'__block_editor_compatible_meta_box' => true,
 				));
 			}
+			wp_register_style( 'burst-metabox-css',
+				trailingslashit( burst_url ) . 'assets/css/metabox.css', "",
+				burst_version );
+			wp_enqueue_style( 'burst-metabox-css' );
 			
 		}
 
@@ -72,39 +78,15 @@ if ( ! class_exists( "burst_admin" ) ) {
 		public function show_burst_metabox(){
 
 		    if (!current_user_can('edit_posts')) return;
-
-			global $post;
-			$experiments = burst_get_experiments_by('control_id', $post->ID) ? burst_get_experiments_by('control_id', $post->ID) : burst_get_experiments_by('variant_id', $post->ID);
-			if ($experiments) {
-				foreach ($experiments as $experiment) {
-					$variant_id = $experiment->variant_id;
-					$variant = get_post($variant_id);
-					$control_id = $experiment->control_id;
-					$control = get_post($control_id);
-
-					$html = 
-					$html = $control->post_title.'(control) vs '. $variant->post_title.'(variant)';
-					echo $html;
-				}
-
-			} else {
-				?>
-           		<form method="POST">
-                <?php wp_nonce_field('burst_create_variant', 'burst_create_variant_nonce' )?>
-                <input type="hidden" name="burst_create_variant_id" value="<?php echo $post->ID?>">
-                <input type="submit" class="button-primary" name="burst_create_experiment" burst_create_variant_id value="<?php _e("Create experiment", "burst")?>">
-            	</form>
-				<?php
-			}
+		    include( dirname( __FILE__ ) . "/experiments/metabox-original.php" );
 			
 		}
 
-		public function show_burst_experiment_metabox(){
+		public function show_burst_variant_metabox(){
 
 		    if (!current_user_can('edit_posts')) return;
 
-			global $post;
-			echo "Pannekoek";
+			include( dirname( __FILE__ ) . "/experiments/metabox-variant.php" );
 			
 		}
 
@@ -680,11 +662,8 @@ if ( ! class_exists( "burst_admin" ) ) {
             );
 
             $element = $this->get_template('dashboard/upsell-element.php');
-            error_log(print_r($element, true));
             $output = '';
             foreach ($items as $item) {
-            	error_log('item');
-            	error_log(print_r($item, true));
                 $output .= str_replace(array(
                     '{title}',
                     '{link}',
@@ -700,8 +679,6 @@ if ( ! class_exists( "burst_admin" ) ) {
                     '',
                 ), $element);
             }
-            error_log('output');
-            error_log(print_r($output, true));
 
             return '<div>'.$output.'</div>';
         }
