@@ -32,12 +32,12 @@ if ( ! class_exists( "burst_admin" ) ) {
 			add_action('wp_ajax_burst_get_datatable', array($this, 'ajax_get_datatable'));
 
 
-			add_action( 'admin_init',array( $this, 'create_variant_from_post' ) );
+			add_action( 'admin_init',array( $this, 'duplicate_post_and_create_experiment' ) );
 			add_action ( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
-            add_action( 'add_meta_boxes', array( $this, 'add_variant' ) );
+            add_action( 'add_meta_boxes', array( $this, 'add_burst_metabox_to_classic_editor' ) );
+
+            add_filter( 'display_post_states', array( $this, 'add_display_post_states' ), 10, 2 );
             
-
-
 		}
 
 		static function this() {
@@ -45,12 +45,19 @@ if ( ! class_exists( "burst_admin" ) ) {
 		}
 
 
-		function add_variant($post_type)
+		function add_burst_metabox_to_classic_editor($post_type)
 		{
 			if (!current_user_can('edit_posts')) return;
-			add_meta_box('burst_edit_meta_box', __(burst_plugin_name, 'burst'), array($this, 'show_proposal_metabox'), null, 'side', 'high', array(
-				//'__block_editor_compatible_meta_box' => true,
-			));
+			if ($post_status == 'experiment') {
+				add_meta_box('burst_edit_meta_box', __(burst_plugin_name, 'burst'), array($this, 'show_burst_experiment_metabox'), null, 'side', 'high', array(
+					//'__block_editor_compatible_meta_box' => true,
+				));
+			} else {
+				add_meta_box('burst_edit_meta_box', __(burst_plugin_name, 'burst'), array($this, 'show_burst_metabox'), null, 'side', 'high', array(
+					//'__block_editor_compatible_meta_box' => true,
+				));
+			}
+			
 		}
 
 		/**
@@ -62,7 +69,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 		 *
 		 */
 
-		public function show_proposal_metabox(){
+		public function show_burst_metabox(){
 
 		    if (!current_user_can('edit_posts')) return;
 
@@ -85,10 +92,19 @@ if ( ! class_exists( "burst_admin" ) ) {
            		<form method="POST">
                 <?php wp_nonce_field('burst_create_variant', 'burst_create_variant_nonce' )?>
                 <input type="hidden" name="burst_create_variant_id" value="<?php echo $post->ID?>">
-                <input type="submit" class="button-primary" value="<?php _e("Create experiment", "burst")?>">
+                <input type="submit" class="button-primary" name="burst_create_experiment" burst_create_variant_id value="<?php _e("Create experiment", "burst")?>">
             	</form>
 				<?php
 			}
+			
+		}
+
+		public function show_burst_experiment_metabox(){
+
+		    if (!current_user_can('edit_posts')) return;
+
+			global $post;
+			echo "Pannekoek";
 			
 		}
 
@@ -96,12 +112,13 @@ if ( ! class_exists( "burst_admin" ) ) {
 		 * Function for post duplication. Dups appear as drafts. User is redirected to the edit screen
 		 *
 		 */
-		public function create_variant_from_post()
+		public function duplicate_post_and_create_experiment()
 		{
 			if (!current_user_can('edit_posts')) return;
 
+			
 			//if (!isset($_POST["burst_create_variant_id"]) && !isset($_POST['burst_create_variant_nonce']) && !wp_verify_nonce( $_POST['burst_create_variant_nonce'], 'burst_create_variant')) return;
-			if (!isset($_POST["burst_create_variant_id"])) return;
+			if (!isset($_POST["burst_create_experiment"]) || !isset($_POST["burst_create_variant_id"])) return; 
 
 
 			global $wpdb;
@@ -128,9 +145,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 				 * create new slug
 				 */
 				if (isset($post->post_name)) { 
-					$slug = $post->post_name . '_' . __( "variation", 'burst' );
+					$slug = $post->post_name . '_' . __( "experiment", 'burst' );
 				} else {
-					$slug = __( "variation", 'burst' );
+					$slug = __( "experiment", 'burst' );
 				}
 
 				/*
@@ -138,7 +155,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 				 */
 				$args = array(
 					'comment_status' => $post->comment_status,
-					'ping_status' => 'variant',
+					'ping_status' => 'experiment',
 					'post_author' => $new_post_author,
 					'post_content' => $post->post_content,
 					'post_excerpt' => $post->post_excerpt,
@@ -221,7 +238,24 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			}
 
+		}
 
+		/**
+		* Add a post display state for special UM pages in the page list table.
+		*
+		* @param array $post_states An array of post display states.
+		* @param \WP_Post $post The current post object.
+		*
+		* @return mixed
+		*/
+		
+		function add_display_post_states( $post_states, $post ) {
+			if ($post->post_status == 'experiment') {
+				$post_states[ 'Experiment' ] = __('Experiment', 'burst');
+			}
+        	
+
+			return $post_states;
 		}
 
 		/**
@@ -372,7 +406,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 				'burst',
 				array( $this, 'dashboard' ),
 				burst_url . 'assets/images/menu-icon.svg',
-				burst_MAIN_MENU_POSITION
+				burst_main_menu_position
 			);
 
 			add_submenu_page(

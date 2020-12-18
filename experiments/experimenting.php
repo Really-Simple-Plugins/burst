@@ -13,8 +13,8 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 					get_class( $this ) ) );
 			}
 
-			add_action( 'init', array($this, 'add_variant_post_status') );
-			add_filter( 'the_content', array($this, 'load_variant_content') );
+			add_action( 'init', array($this, 'add_experiment_post_status') );
+			add_filter( 'the_content', array($this, 'load_experiment_content') );
 
 			add_action('wp_enqueue_scripts', array($this,'enqueue_assets') );
 			
@@ -59,7 +59,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		 *
 		 * @return mixed
 		 */
-		public function load_variant_content($content){
+		public function load_experiment_content($content){
 			error_log('load_variant_content');
 			global $post;
 			global $experimenting_enabled;
@@ -112,21 +112,21 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		/**
 		 * Add 'variant' post status.
 		 */
-		function add_variant_post_status(){
+		function add_experiment_post_status(){
 			register_post_status( 'variant', array(
-				'label'                     => __( 'Variant', 'burst' ),
+				'label'                     => __( 'Experiment', 'burst' ),
 				'public'                    => false,
 				'exclude_from_search'       => true,
 				'show_in_admin_all_list'    => false,
 				'show_in_admin_status_list' => false,
-				'label_count'               => _n_noop( 'Unread <span class="count">(%s)</span>', 'Unread <span class="count">(%s)</span>' , 'burst'),
+				'label_count'               => _n_noop( 'Experiment <span class="count">(%s)</span>', 'Experiments <span class="count">(%s)</span>' , 'burst'),
 			) );
 		}
 
 	 	function add_variant_status_add_in_quick_edit() {
 	        echo "	<script>
 				        jQuery(document).ready( function() {
-				            jQuery( 'select[name=\"_status\"]' ).append( '<option value=\"Variant\">Variant</option>' );      
+				            jQuery( 'select[name=\"_status\"]' ).append( '<option value=\"experiment\">Experiment</option>' );      
 				        }); 
 			        </script>";
 	    }
@@ -134,7 +134,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 	    function add_variant_status_add_in_post_page() {
 	        echo "	<script>
 				        jQuery(document).ready( function() {        
-				            jQuery( 'select[name=\"post_status\"]' ).append( '<option value=\"Variant\">Variant</option>' );
+				            jQuery( 'select[name=\"post_status\"]' ).append( '<option value=\"experiment\">Experiment</option>' );
 				        });
 			        </script>";
 	    }

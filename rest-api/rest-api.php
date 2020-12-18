@@ -5,6 +5,7 @@ function burst_register_rest_routes(){
 	register_rest_route('burst/v1', 'hit', array(
         'methods' => 'POST',
         'callback' => 'burst_track_hit',
+        'permission_callback' => '__return_true',
     ));	
 }
 

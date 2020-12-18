@@ -92,11 +92,11 @@ if ( ! class_exists( 'BURST' ) ) {
 			define( 'burst_url', plugin_dir_url( __FILE__ ) );
 			define( 'burst_path', plugin_dir_path( __FILE__ ) );
 			define( 'burst_plugin', plugin_basename( __FILE__ ) );
-			define( 'burst_plugin_name', 'Burst A/B Testing' );
+			define( 'burst_plugin_name', 'Burst' );
 			$debug = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? time() : '';
 			define( 'burst_version', $plugin_data['Version'] . $debug );
 			define( 'burst_plugin_file', __FILE__ );
-			define( 'burst_MAIN_MENU_POSITION', 5 );
+			define( 'burst_main_menu_position', 40 );
 		}
 
 		/**
