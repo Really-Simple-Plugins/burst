@@ -137,7 +137,7 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 		 */
 
 		public function delete( $force = false ) {
-			if ( ! current_user_can( 'manage_options' ) ) {
+			if ( ! burst_user_can_manage()) {
 				return false;
 			}
 

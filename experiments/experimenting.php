@@ -22,6 +22,8 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		    add_action('admin_footer-post-new.php', array($this,'add_variant_status_add_in_post_page') );
 		    add_action('admin_footer-edit.php', array($this,'add_variant_status_add_in_quick_edit') );
 
+		    add_filter( 'display_post_states', array( $this, 'add_display_post_states' ), 10, 2 );
+
 			self::$_this = $this;
 		}
 
@@ -108,17 +110,36 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			return $content;
 		}
 
+		/**
+		* Add a post display state for Experiments in the page list table.
+		*
+		* @param array $post_states An array of post display states.
+		* @param \WP_Post $post The current post object.
+		*
+		* @return mixed
+		*/
+		
+		function add_display_post_states( $post_states, $post ) {
+			if ($post->post_status == 'experiment') {
+				$post_states[ 'Experiment' ] = __('Experiment', 'burst');
+			}
+        	
+			return $post_states;
+		}
+
 
 		/**
-		 * Add 'variant' post status.
+		 * Add 'Experiment' post status.
 		 */
 		function add_experiment_post_status(){
-			register_post_status( 'variant', array(
+			register_post_status( 'experiment', array(
 				'label'                     => __( 'Experiment', 'burst' ),
 				'public'                    => false,
+				'internal'					=> true,
 				'exclude_from_search'       => true,
-				'show_in_admin_all_list'    => false,
-				'show_in_admin_status_list' => false,
+				'show_in_admin_all_list'    => true,
+				'show_in_admin_status_list' => true,
+
 				'label_count'               => _n_noop( 'Experiment <span class="count">(%s)</span>', 'Experiments <span class="count">(%s)</span>' , 'burst'),
 			) );
 		}
@@ -170,11 +191,16 @@ function burst_experiment_form_submit() {
 	}
 	$experiment->process_form( $_POST );
 
-	if ( isset( $_POST['burst_add_new'] ) ) {
-		wp_redirect( admin_url( 'admin.php?page=burst-experiments&id='
-		                        . $experiment->id ) );
-		exit;
-	}
+
+	// redirect
+	// redirect to page with experiment status
+	
+	// redirect to experiment settings page
+	// if ( isset( $_POST['burst_add_new'] ) ) {
+	// 	wp_redirect( admin_url( 'admin.php?page=burst-experiments&id='
+	// 	                        . $experiment->id ) );
+	// 	exit;
+	// }
 }
 
 // add_action( 'admin_init', 'burst_redirect_to_experiment' );

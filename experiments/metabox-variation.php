@@ -1,42 +1,41 @@
-<form id='burst-experiment-settings' action="" method="post">
-	<div class="burst-grid">
-		<div class="burst-grid grid-active" data-id="1" data-table_type="{type}" data-default_range="week">
-
-			
-			<h3><?php _e( "Experiment", 'burst' ) ?></h3>
-			
-			
-			<?php wp_nonce_field( 'burst_save_experiment', 'burst_nonce' ); ?>
-
-			<?php
-			if ( ! $id ) { ?>
-				<input type="hidden" value="1" name="burst_add_new">
-			<?php } ?>
-			<?php
-			BURST::$field->get_fields( 'BURST_EXPERIMENT',
-							'general' );
-
-			?><h3><?php _e( "Goals", 'burst' ) ?></h3><?php 
-			BURST::$field->get_fields( 'BURST_EXPERIMENT',
-							'goals' );
-
-			?><h3><?php _e( "Start your experiment", 'burst' ) ?></h3><?php 
-			BURST::$field->get_fields( 'BURST_EXPERIMENT',
-							'start_experiment' );
-
-			?><h3><?php _e( "Timeline", 'burst' ) ?></h3><?php 
-			BURST::$field->get_fields( 'BURST_EXPERIMENT',
-							'timeline' );
-
-			?>
-
-			<div class="burst-experiment-save-button">
-				<button class="button button-secondary"
-				        type="submit"><?php _e( 'Save',
-						'burst' ) ?></button>
+<?php
+if (burst_post_has_experiment()) {
+?>
 	
-				
+<h1>Burst has experiment</h1>
+<?php
+} else {
+?>
+	
+	<form action="" method="post">
+		<div id='burst-metabox-experiment-settings'> 
+
+				<?php wp_nonce_field( 'burst_create_experiment', 'burst_nonce' ); ?>
+
+				<?php
+				$post_id = get_the_ID();
+				$experiment_id = 0;
+				if ( ! $experiment_id ) { ?>
+					<input type="hidden" value="1" name="burst_create_experiment">
+				<?php } ?>
+
+				<input type="hidden" value="<?php echo $post_id ?>" name="burst_original_post_id">
+				<?php
+				BURST::$field->get_fields( 'BURST_EXPERIMENT',
+								'general' );
+				?>
+				<?php
+				BURST::$field->get_fields( 'BURST_EXPERIMENT',
+								'weight' );
+				?>
+
+				<div class="burst-experiment-save-button">
+					<input class="button button-secondary" name="burst_create_experiment_button"
+					        type="submit" value="<?php _e( 'Configure variant',
+							'burst' ) ?>">
+				</div>
 			</div>
-		</div>	
-	</div>
-</form>
+		</div>
+	</form>
+<?php
+}

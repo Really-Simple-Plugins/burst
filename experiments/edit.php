@@ -31,7 +31,7 @@
 			?>
 
 			<div class="burst-experiment-save-button">
-				<button class="button button-secondary"
+				<button class="button button-primary"
 				        type="submit"><?php _e( 'Save',
 						'burst' ) ?></button>
 	

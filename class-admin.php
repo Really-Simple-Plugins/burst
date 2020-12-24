@@ -35,8 +35,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 			add_action( 'admin_init',array( $this, 'duplicate_post_and_create_experiment' ) );
 			add_action ( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
             add_action( 'add_meta_boxes', array( $this, 'add_burst_metabox_to_classic_editor' ) );
-
-            add_filter( 'display_post_states', array( $this, 'add_display_post_states' ), 10, 2 );
             
 		}
 
@@ -44,13 +42,16 @@ if ( ! class_exists( "burst_admin" ) ) {
 			return self::$_this;
 		}
 
-
+		/**
+		 * Well the function name says it all, this function 
+		 * adds the Burst metabox to the classic editor
+		 */
 		function add_burst_metabox_to_classic_editor()
 		{	
 			$post_id = $_GET['post'];
 			$post_status = get_post_status($post_id);
-			if (!current_user_can('edit_posts')) return;
-			if ($post_status == 'variant') {
+			if (!burst_user_can_manage()) return;
+			if ($post_status == 'experiment') {
 				add_meta_box('burst_edit_meta_box', __(burst_plugin_name . ' - Experiment', 'burst'), array($this, 'show_burst_variant_metabox'), null, 'side', 'high', array(
 					//'__block_editor_compatible_meta_box' => true,
 				));
@@ -66,27 +67,26 @@ if ( ! class_exists( "burst_admin" ) ) {
 			
 		}
 
+		
 		/**
-		 *
-		 * click "create" button
-		 * copy post to "variant" status
-		 *
-		 *
-		 *
+		 * Displays metabox on pages that do NOT have the post status of 'experiment'
+		 * 
 		 */
-
 		public function show_burst_metabox(){
 
-		    if (!current_user_can('edit_posts')) return;
+		    if (!burst_user_can_manage()) return;
 		    include( dirname( __FILE__ ) . "/experiments/metabox-original.php" );
 			
 		}
 
+		/**
+		 * Displays metabox on pages that DO have the post status of 'experiment'
+		 * 
+		 */
 		public function show_burst_variant_metabox(){
 
-		    if (!current_user_can('edit_posts')) return;
-
-			include( dirname( __FILE__ ) . "/experiments/metabox-variant.php" );
+		    if (!burst_user_can_manage()) return;
+			include( dirname( __FILE__ ) . "/experiments/metabox-variation.php" );
 			
 		}
 
@@ -96,16 +96,17 @@ if ( ! class_exists( "burst_admin" ) ) {
 		 */
 		public function duplicate_post_and_create_experiment()
 		{
-			if (!current_user_can('edit_posts')) return;
+			if (!burst_user_can_manage()) return;
 
 			
 			//if (!isset($_POST["burst_create_variant_id"]) && !isset($_POST['burst_create_variant_nonce']) && !wp_verify_nonce( $_POST['burst_create_variant_nonce'], 'burst_create_variant')) return;
-			if (!isset($_POST["burst_create_experiment"]) || !isset($_POST["burst_create_variant_id"])) return; 
-
+			if (!isset($_POST["burst_create_experiment_button"])) return; 
+			error_log('lekker doorgaan');
 
 			global $wpdb;
 
-			$post_id = intval($_POST["burst_create_variant_id"]);
+			$post_id = intval($_POST["burst_original_post_id"]);
+			error_log('ID: '.$post_id);
 
 			/*
 			 *  all the original post data then
@@ -137,7 +138,8 @@ if ( ! class_exists( "burst_admin" ) ) {
 				 */
 				$args = array(
 					'comment_status' => $post->comment_status,
-					'ping_status' => 'experiment',
+					'post_status' => 'experiment',
+					'hidden_post_status' => 'experiment',
 					'post_author' => $new_post_author,
 					'post_content' => $post->post_content,
 					'post_excerpt' => $post->post_excerpt,
@@ -156,8 +158,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 				 */
 
 				$new_post_id = wp_insert_post($args);
-				add_post_meta($new_post_id,'burst_variant_parent', $post_id );
-				add_post_meta($post_id,'burst_variant_child', $new_post_id );
 
 				/*
 				 * get all current post terms ad set them to the new post draft
@@ -195,49 +195,22 @@ if ( ! class_exists( "burst_admin" ) ) {
 				$experiment->control_id = $post_id;
 				$experiment->variant_id = $new_post_id;
 				$experiment->test_running = false;
-				$experiment->date_created = date("Y-m-d h:i:sa");
+				$experiment->date_created = time();
 				$experiment->save();
 
-				add_post_meta( $post_id,'contains_tests', true );
+				add_post_meta( $post_id,'burst_experiment_id', $experiment->id );
+				add_post_meta( $new_post_id,'burst_experiment_id', $experiment->id );
 				
 
 			}
-			// redirect to duplicated post also known as the variant
+			/**
+			* redirect to duplicated post also known as the variant
+			*/ 
 			$url = get_admin_url().'post.php?post='.$new_post_id.'&action=edit';
 			error_log($url);
 			if ( wp_redirect( $url ) ) {
 			    exit;
 			}
-		}
-
-		public function process_variant_submit(){
-
-			if (!current_user_can('edit_posts')) return;
-
-			if (isset($_POST['view_proposal_id'])){
-				$post_id = intval($_POST['view_proposal_id']);
-				//redirect to posst id
-
-			}
-
-		}
-
-		/**
-		* Add a post display state for special UM pages in the page list table.
-		*
-		* @param array $post_states An array of post display states.
-		* @param \WP_Post $post The current post object.
-		*
-		* @return mixed
-		*/
-		
-		function add_display_post_states( $post_states, $post ) {
-			if ($post->post_status == 'experiment') {
-				$post_states[ 'Experiment' ] = __('Experiment', 'burst');
-			}
-        	
-
-			return $post_states;
 		}
 
 		/**
@@ -367,7 +340,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 		 */
 
 		public function register_admin_page() {
-			if ( ! current_user_can('manage_options') ) {
+			if ( ! burst_user_can_manage() ) {
 				return;
 			}
 
@@ -530,7 +503,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 		/**
 		 * Dashboard page
 		 */
-
 		public function dashboard() {
 
 			$grid_items = $this->grid_items;
@@ -552,7 +524,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 		/**
 		 * Insights page
 		 */
-
 		public function insights() {
 
 			$grid_items = $this->grid_items;
@@ -571,7 +542,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 			echo burst_get_template('admin_wrap.php', $args );
 		}
 
-
+		/**
+		 * Experiments table overview
+		 */
 		function experiments_overview() {
 
 
@@ -627,6 +600,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 			echo burst_get_template('admin_wrap.php', $args );
 		}
 
+		/**
+		 * Get output for displaying the other Really Simple Plugins in the dashboard
+		 */
 		public function generate_other_plugins()
         {
             $items = array(
@@ -683,6 +659,9 @@ if ( ! class_exists( "burst_admin" ) ) {
             return '<div>'.$output.'</div>';
         }
 
+        /**
+		 * Get output for displaying relevant articles from wpburst.com
+		 */
         public function generate_tips_tricks()
         {
             $items = array(
@@ -727,7 +706,11 @@ if ( ! class_exists( "burst_admin" ) ) {
             return '<div>'.$output.'</div>'.$button;
         }
 
-
+        /**
+		 * General settings page
+		 *
+		 * @todo Settings need to be added or settings can be deleted
+		 */
 		public function settings() {
 			ob_start();
 			?>
@@ -790,6 +773,13 @@ if ( ! class_exists( "burst_admin" ) ) {
 			return $success;
 		}
 
+		/**
+		 * Get templates for parts of the dashboard
+		 * @param  string $file template file name
+		 * @param  string $path path to the template file
+		 * @param  array  $args
+		 * @return html   Returns the code with with dynamic content within the template
+		 */
 		public function get_template($file, $path = burst_path, $args = array())
         {
 
@@ -831,6 +821,12 @@ if ( ! class_exists( "burst_admin" ) ) {
 	        return $contents;
         }
 
+        /**
+         * Show error or warning message message 
+         * @return [type] [description]
+         *
+         * @todo  Add burst_notice(), can probably get it from the other plugins
+         */
         public function show_message() {
 			if ( ! empty( $this->error_message ) ) {
 				burst_notice( $this->error_message, 'warning' );
@@ -871,10 +867,11 @@ if ( ! class_exists( "burst_admin" ) ) {
 	        return $status;
         }
 
+        /**
+         * Hides all notices from other plugins and themes on Burst pages
+         * 
+         */
         public function hide_wordpress_and_other_plugin_notices(){
-        	/**
-        	* @todo Mag dit? Geen notices laten zien op onze pagina's. 
-        	*/
         	if ( isset( $_GET['page'] ) && strpos($_GET['page'], 'burst') === 0 ) {
 				if(! current_user_can('update_core')){ return; }
 				add_filter('pre_option_update_core','__return_null');
@@ -886,7 +883,13 @@ if ( ! class_exists( "burst_admin" ) ) {
         	}
 
         }
-
+        /**
+         * Function for a AJAX request. Used in the JS function burstLoadData()
+         * 
+         * @return json 
+         *
+         * @todo Aanpassen? 
+         */
         public function ajax_get_datatable()
 	    {
 		    $error = false;

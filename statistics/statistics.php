@@ -2,9 +2,16 @@
 defined( 'ABSPATH' ) or die( "you do not have acces to this page!" );
 
 add_action( 'wp_ajax_burst_get_experiment_statistics', 'burst_get_experiment_statistics' );
-
+/**
+ * Function for getting statistics for display with Chart JS
+ * @param  integer $experiment_id   Experiment ID, if no experiment ID is found get active experiments
+ * @param  array   $data   			Select the data you want to display
+ * @return json                     Returns a JSON that is compatible with Chart JS
+ *
+ * @todo  Real data should be displayed here
+ */
 function burst_get_experiment_statistics($experiment_id = false, $data = array('visits', 'conversions', 'conversionrate') ){
-	if ( ! current_user_can( 'manage_options' ) ) {
+	if ( ! burst_user_can_manage() ) {
 		return;
 	}
 	if (!$experiment_id) {
@@ -55,7 +62,17 @@ function burst_get_experiment_statistics($experiment_id = false, $data = array('
 	error_log(print_r($return, true));
 	die;
 }
-
+/**
+ * Get the latest visit for a UID for a specific page. 
+ * Specify a data_variable if you just want the result for a specific parameter
+ * 
+ * @param  integer $burst_uid     The Burst UID which is saved in a cookie 
+ *                                (and in the user meta if the user is logged in)
+ * @param  string  $page_url      The page URL you want the latest visit from
+ * @param  string  $data_variable Specify which data you want, if left empty you'll 
+ *                                get an object with everything
+ * @return object                 Returns the latest visit data        
+ */
 function burst_get_latest_visit_data($burst_uid = false, $page_url = false, $data_variable = false){
 	error_log('burst_get_latest_visit');
 	if (!$burst_uid && !$page_url) {
@@ -88,7 +105,10 @@ function burst_get_latest_visit_data($burst_uid = false, $page_url = false, $dat
 	}	
 	
 }
-
+/**
+ * Function to get the current URL used in the load_experiment_content function
+ * @return url The current URL
+ */
 function burst_get_current_url() {
         return parse_url(get_permalink(), PHP_URL_PATH);
     }

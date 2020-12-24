@@ -59,6 +59,7 @@ function burst_add_experiment_settings($fields){
 				'label'       => __( "What percentage of visitors should be included in the test?", 'burst' ),
 				'placeholder' => __( 'Percentage in numbers' ),
 				'help'        => __( 'For internal use only', 'burst' ),
+				'callback_condition' => ''
 			),
 
 		);

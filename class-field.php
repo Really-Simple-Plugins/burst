@@ -87,11 +87,9 @@ if ( ! class_exists( "burst_field" ) ) {
 		}
 
 		public function process_save() {
-			error_log('process_save');
-			error_log(print_r($_POST, true));
 
 
-			if ( ! current_user_can( 'manage_options' ) ) {
+			if ( ! burst_user_can_manage() ) {
 				return;
 			}
 
@@ -103,6 +101,9 @@ if ( ! class_exists( "burst_field" ) ) {
 				) {
 					return;
 				}
+
+				error_log('process_save');
+				error_log(print_r($_POST, true));
 
 				$fields = BURST::$config->fields();
 
@@ -230,7 +231,7 @@ if ( ! class_exists( "burst_field" ) ) {
 
 
 		public function save_multiple( $fieldnames ) {
-			if ( ! current_user_can( 'manage_options' ) ) {
+			if ( ! burst_user_can_manage() ) {
 				return;
 			}
 
@@ -281,7 +282,7 @@ if ( ! class_exists( "burst_field" ) ) {
 
 
 		public function save_field( $fieldname, $fieldvalue ) {
-			if ( ! current_user_can( 'manage_options' ) ) {
+			if ( ! burst_user_can_manage() ) {
 				return;
 			}
 
@@ -337,7 +338,7 @@ if ( ! class_exists( "burst_field" ) ) {
 
 
 		public function add_multiple_field( $fieldname, $cookie_type = false ) {
-			if ( ! current_user_can( 'manage_options' ) ) {
+			if ( ! burst_user_can_manage() ) {
 				return;
 			}
 
@@ -388,7 +389,7 @@ if ( ! class_exists( "burst_field" ) ) {
 		}
 
 		public function sanitize( $value, $type ) {
-			if ( ! current_user_can( 'manage_options' ) ) {
+			if ( ! burst_user_can_manage() ) {
 				return false;
 			}
 

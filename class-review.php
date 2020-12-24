@@ -15,8 +15,9 @@ if ( ! class_exists( "burst_review" ) ) {
 			self::$_this = $this;
 
 			//uncomment for testing
-//			update_option('burst_review_notice_shown', false);
-//			update_option( 'burst_activation_time', strtotime( "-2 month" ) );
+			//update_option('burst_review_notice_shown', false);
+			//update_option( 'burst_activation_time', strtotime( "-2 month" ) );
+			
 			//show review notice, only to free users
 			if ( ! defined( "burst_premium" ) && ! is_multisite() ) {
 				if ( ! get_option( 'burst_review_notice_shown' )

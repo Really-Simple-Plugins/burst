@@ -183,11 +183,11 @@ if ( ! function_exists( 'burst_start_tour' ) ) {
 if ( ! function_exists( 'burst_add_admin_bar_item' ) ) {
 	/**
 	 * Add admin bar for displaying if a test is running on the page
-	 *
+	 * 
 	 */
 	add_action( 'admin_bar_menu', 'burst_add_admin_bar_item', 500 );
 	function burst_add_admin_bar_item ( WP_Admin_Bar $admin_bar ) {
-	    if ( ! current_user_can( 'manage_options' ) ) {
+	    if ( ! burst_user_can_manage() ) {
 	        return;
 	    }
 	    $test_running = false;

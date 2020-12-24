@@ -54,7 +54,6 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 
 		function __construct( $id = false, $set_defaults = true ) {
 
-			$this->translation_id = $this->get_translation_id();
 			$this->id = $id;
 
 			if ( $this->id !== false ) {
@@ -74,7 +73,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 
 		private function add() {
 			error_log('added');
-			if ( ! current_user_can( 'manage_options' ) ) {
+			if ( ! burst_user_can_manage() ) {
 				return false;
 			}
 			$array = array(
@@ -97,7 +96,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 
 		public function process_form( $post ) {
 
-			if ( ! current_user_can( 'manage_options' ) ) {
+			if ( ! burst_user_can_manage() ) {
 				return false;
 			}
 
@@ -270,7 +269,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		 */
 
 		public function save() {
-			if ( ! current_user_can( 'manage_options' ) ) {
+			if ( ! burst_user_can_manage() ) {
 				return;
 			}
 
@@ -281,53 +280,8 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			error_log('save()');
 			error_log('id:' );
 			error_log($this->id);
-
-			// $this->banner_version ++;
-
-			//register translations fields
-			// $this->register_translation( $this->save_preferences,
-			// 	'save_preferences' );
-			// $this->register_translation( $this->accept_all,
-			// 	'accept_all' );
-			// $this->register_translation( $this->view_preferences,
-			// 	'view_preferences' );
-			// $this->register_translation( $this->category_functional,
-			// 	'category_functional' );
-			// $this->register_translation( $this->category_all, 'category_all' );
-			// $this->register_translation( $this->category_stats,
-			// 	'category_stats' );
-			// $this->register_translation( $this->category_prefs,
-			// 	'category_prefs' );
-
-			// $this->register_translation( $this->accept, 'accept' );
-			// $this->register_translation( $this->revoke, 'revoke' );
-			// $this->register_translation( $this->dismiss, 'dismiss' );
-			// $this->register_translation( $this->message_optin,
-			// 	'message_optin' );
-			// $this->register_translation( $this->readmore_optin,
-			// 	'readmore_optin' );
-			// $this->register_translation( $this->accept_informational,
-			// 	'accept_informational' );
-			// $this->register_translation( $this->message_optout,
-			// 	'message_optout' );
-			// $this->register_translation( $this->readmore_optout,
-			// 	'readmore_optout' );
-			// $this->register_translation( $this->readmore_optout_dnsmpi,
-			// 	'readmore_optout_dnsmpi' );
-			// $this->register_translation( $this->readmore_privacy,
-			// 	'readmore_privacy' );
-			// $this->register_translation( $this->readmore_impressum,
-			// 	'readmore_impressum' );
-
-			/**
-			 * If Tag manager fires categories, enable use categories by default
-			 */
-//            $tm_fires_scripts = burst_get_value('fire_scripts_in_tagmanager') === 'yes' ? true : false;
-//            $uses_tagmanager = burst_get_value('compile_statistics') === 'google-tag-manager' ? true : false;
-//            if ($uses_tagmanager && $tm_fires_scripts) {
-//                $this->use_categories = 'visible';
-//            }
 			error_log( print_r( $this, true ) );
+
 			if ( ! is_array( $this->statistics ) ) {
 				$this->statistics = array();
 			}
@@ -363,7 +317,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		 */
 
 		public function delete( $force = false ) {
-			if ( ! current_user_can( 'manage_options' ) ) {
+			if ( ! burst_user_can_manage() ) {
 				return false;
 			}
 
@@ -394,7 +348,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		 */
 
 		public function archive() {
-			if ( ! current_user_can( 'manage_options' ) ) {
+			if ( ! burst_user_can_manage() ) {
 				return;
 			}
       
@@ -410,7 +364,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		 */
 
 		public function restore() {
-			if ( ! current_user_can( 'manage_options' ) ) {
+			if ( ! burst_user_can_manage() ) {
 				return;
 			}
 
@@ -422,6 +376,8 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		 * Get the conversion to marketing for a experiment
 		 *
 		 * @return float percentage
+		 *
+		 * @todo  Aanpassen of verwijderen
 		 */
 
 		public function conversion_percentage( $filter_consenttype ) {
@@ -473,6 +429,8 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		 * @param $consenttype
 		 *
 		 * @return int $count
+		 *
+		 * @todo  Aanpassen of verwijderen
 		 */
 
 		public function get_count( $status, $consenttype = false ) {

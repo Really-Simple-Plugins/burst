@@ -14,6 +14,10 @@ if ( ! function_exists( 'burst_uses_google_analytics' ) ) {
 }
 
 if ( ! function_exists( 'burst_user_can_manage' ) ) {
+	/**
+	 * Check if user has Burst permissions 
+	 * @return boolean true or false
+	 */
 	function burst_user_can_manage() {
 		if ( ! is_user_logged_in() ) {
 			return false;
@@ -250,15 +254,13 @@ if ( ! function_exists( 'burst_array_filter_multidimensional' ) ) {
 add_action( 'wp_ajax_burst_get_posts', 'burst_get_posts_ajax_callback' ); // wp_ajax_{action}
 function burst_get_posts_ajax_callback(){
  
-	// we will pass post IDs and titles to this array
 	$return = array();
  
-	// you can use WP_Query, query_posts() or get_posts() here - it doesn't matter
 	$search_results = new WP_Query( array( 
-		's'=> $_GET['q'], // the search query
-		'post_status' => 'publish', // if you don't want drafts to be returned
+		's'=> $_GET['q'], 
+		'post_status' => 'publish',
 		'ignore_sticky_posts' => 1,
-		'posts_per_page' => 50 // how much to show at once
+		'posts_per_page' => 50
 	) );
 	if( $search_results->have_posts() ) :
 		while( $search_results->have_posts() ) : $search_results->the_post();	
@@ -346,3 +348,44 @@ if ( ! function_exists( 'burst_get_active_experiments_id' ) ) {
 		
 	}
 }
+
+if ( ! function_exists( 'burst_post_has_experiment' ) ) {
+
+	/**
+	 * Check if post has experiment attached
+	 * @param $post_id
+	 *
+	 * @return Boolean
+	 */
+	
+	function burst_post_has_experiment($post_id = false){
+		if (!$post_id) return;
+
+		$experiment_id = get_post_meta($post_id, 'burst_experiment_id');
+		$has_experiment = intval($experiment_id) ? true : false;
+
+		return $has_experiment;
+	}
+
+}
+
+if ( ! function_exists( 'burst_get_experiment_id_for_post' ) ) {
+
+	/**
+	 * Check if post has experiment attached
+	 * @param $post_id
+	 *
+	 * @return Boolean
+	 */
+	
+	function burst_get_experiment_id_for_post($post_id = false){
+
+		if (!$post_id) return;
+
+		$experiment_id = get_post_meta($post_id, 'burst_experiment_id');
+
+		return $experiment_id;
+	}
+
+}
+
