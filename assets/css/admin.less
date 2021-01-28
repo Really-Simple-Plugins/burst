@@ -17,16 +17,33 @@
 @border-color: #DEDEDE;
 @grey-light: #ededed;
 
+//wordpress inserts notices after the first h1 or h2. To prevent breaking layout we insert an empty h1 tag at the start of our page, where WP can insert the notice.
+.burst-noticed-hook-element {
+  display:none;
+}
+
 #burst {
 	margin:0 0 0 -20px;
 	font-size: @default-font-size;
 	#burst-header {
-	 	padding: @default-padding;
-		background-color: #fff;
+		display: flex;
+		justify-content: space-between;
+
 		img {
-			width: 120px;
+		  margin-left:@default-margin;
+		  width: 120px;
 		}
-			
+
+		padding: @default-padding;
+		background-color: #fff;
+
+		.burst-header-right {
+			display: flex;
+			align-items: center;
+			a {
+				margin-right: @default-margin;
+			}
+		}
 	}
 	#burst-content-area {
 		margin: @small-margin;

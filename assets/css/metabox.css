@@ -1,3 +1,13 @@
 #burst-metabox-experiment-settings input {
   width: 100%;
 }
+#burst-metabox-experiment-settings .burst-label {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 1em 0;
+  margin-bottom: 0.5em;
+}
+#burst-metabox-experiment-settings .burst-label label {
+  vertical-align: baseline;
+  font-weight: 600;
+}

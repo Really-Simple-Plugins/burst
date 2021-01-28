@@ -4,19 +4,18 @@ $experiment_id = burst_get_experiment_id_for_post($post_id);
 
 if (intval($experiment_id)) { 
 	$experiment = new BURST_EXPERIMENT($experiment_id);
-	error_log(print_r($experiment));
+	error_log(print_r($experiment, true));
 	?>
 
-<?php } else { ?>
+<?php } ?>
 	<form action="" method="post">
 		<div id='burst-metabox-experiment-settings'> 
-
+				<p>Create a experiment. Fill in a name and select the weight of your experiment. When you </p>
 				<?php wp_nonce_field( 'burst_create_experiment', 'burst_nonce' ); ?>
 
 				<?php
 				
-				$experiment_id = 0;
-				if ( ! $experiment_id ) { ?>
+				if ( ! intval($experiment_id) ) { ?>
 					<input type="hidden" value="1" name="burst_create_experiment">
 				<?php } ?>
 
@@ -31,14 +30,10 @@ if (intval($experiment_id)) {
 				?>
 
 				<div class="burst-experiment-save-button">
-					<input class="button button-secondary" name="burst_create_experiment_button"
-					        type="submit" value="<?php _e( 'Save',
-							'burst' ) ?>">
-					<input class="button button-primary" name="burst_create_experiment_button"
-					        type="submit" value="<?php _e( 'Save and configure variant',
+					<input class="button button-primary" name="burst_start_experiment"
+					        type="submit" value="<?php _e( 'Save and create variant',
 							'burst' ) ?>">
 				</div>
 			</div>
 		</div>
 	</form>
-<?php }

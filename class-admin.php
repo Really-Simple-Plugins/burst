@@ -35,7 +35,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 			add_action( 'admin_init',array( $this, 'duplicate_post_and_create_experiment' ) );
 			add_action ( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
             add_action( 'add_meta_boxes', array( $this, 'add_burst_metabox_to_classic_editor' ) );
-            
 		}
 
 		static function this() {
@@ -48,13 +47,15 @@ if ( ! class_exists( "burst_admin" ) ) {
 		 */
 		function add_burst_metabox_to_classic_editor()
 		{	
-			$post_id = $_GET['post'];
+			$post_id = isset($_GET['post']) ? $_GET['post'] : false;
 			$post_status = get_post_status($post_id);
 			if (!burst_user_can_manage()) return;
 			if ($post_status == 'experiment') {
 				add_meta_box('burst_edit_meta_box', __(burst_plugin_name . ' - Experiment', 'burst'), array($this, 'show_burst_variant_metabox'), null, 'side', 'high', array(
 					//'__block_editor_compatible_meta_box' => true,
 				));
+				// Remove the default publish metabox
+				remove_meta_box( 'submitdiv', 'page', 'side' );
 			} else {
 				add_meta_box('burst_edit_meta_box', __(burst_plugin_name . ' - Experiment', 'burst'), array($this, 'show_burst_metabox'), null, 'side', 'high', array(
 					//'__block_editor_compatible_meta_box' => true,

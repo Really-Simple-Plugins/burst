@@ -10,7 +10,7 @@ function burst_add_experiment_settings($fields){
 				'source'      => 'BURST_EXPERIMENT',
 				'step'        => 'general',
 				'type'        => 'text',
-				'label'       => __( "Descriptive name for your experiment", 'burst' ),
+				'label'       => __( "Experiment name", 'burst' ),
 				'placeholder' => __( 'For example: Red vs green buttons' ),
 				'help'        => __( 'This name is for internal use only. Try to give the experiment a clear name, so you can find this test again.', 'burst' ),
 			),
@@ -25,15 +25,15 @@ function burst_add_experiment_settings($fields){
 			// 		'burst' ),
 			// ),
 
-			// 'variant_id' => array(
-			// 	'source'             => 'BURST_EXPERIMENT',
-			// 	'step'               => 'general',
-			// 	'type'               => 'select2',
-			// 	'label'              => __( "Variant",
-			// 		'burst' ),
-			// 	'help'               => __( 'Select or make a variant page. The variant page is the page you want to test against your control page. The variant page should be an improvement compared to the control page. At least you should think it is an improvement. That is something you will find out by running the experiment.',
-			// 		'burst' ),
-			// ),
+			'variant_id' => array(
+				'source'             => 'BURST_EXPERIMENT',
+				'step'               => 'general',
+				'type'               => 'select2',
+				'label'              => __( "Variant",
+					'burst' ),
+				'help'               => __( 'Select or make a variant page. The variant page is the page you want to test against your control page. The variant page should be an improvement compared to the control page. At least you should think it is an improvement. That is something you will find out by running the experiment.',
+					'burst' ),
+			),
 
 
 			'kpi' => array(
@@ -56,7 +56,7 @@ function burst_add_experiment_settings($fields){
 				'step'        => 'weight',
 				'type'        => 'weightslider',
 				'default'	  => '100',
-				'label'       => __( "What percentage of visitors should be included in the test?", 'burst' ),
+				'label'       => __( "Experiment weight", 'burst' ),
 				'placeholder' => __( 'Percentage in numbers' ),
 				'help'        => __( 'For internal use only', 'burst' ),
 				'callback_condition' => ''

@@ -134,14 +134,15 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		function add_experiment_post_status(){
 			register_post_status( 'experiment', array(
 				'label'                     => __( 'Experiment', 'burst' ),
-				'public'                    => false,
+				'public'                    => true,
 				'internal'					=> true,
-				'exclude_from_search'       => true,
+				'exclude_from_search'       => false,
 				'show_in_admin_all_list'    => true,
 				'show_in_admin_status_list' => true,
 
 				'label_count'               => _n_noop( 'Experiment <span class="count">(%s)</span>', 'Experiments <span class="count">(%s)</span>' , 'burst'),
 			) );
+			
 		}
 
 	 	function add_variant_status_add_in_quick_edit() {

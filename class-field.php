@@ -1512,10 +1512,15 @@ if ( ! class_exists( "burst_field" ) ) {
 						max="100" 
 						value="100" 
 						step="10" 
-						oninput="weightsliderValue.value=value" >	
+						oninput="
+							weightsliderValueIncluded.value=value;
+							weightsliderValueNotIncluded.value= 100 - value;
+						"
 				</input>
 				<p>
-					<output name="<?php echo esc_html( $fieldname ) ?>" id="weightsliderValue"><?php echo esc_html( $value ) ?></output><span>%</span>
+					Visitors included: <output name="<?php echo esc_html( $fieldname ) ?>" id="weightsliderValueIncluded"><?php echo intval( $value ) ?></output><span>%</span>
+				</p><p>
+					Not included: <output name="<?php echo esc_html( $fieldname ) ?>" id="weightsliderValueNotIncluded"><?php echo 100 - intval($value ) ?></output><span>%</span>
 				</p>
 
 
@@ -1616,7 +1621,7 @@ if ( ! class_exists( "burst_field" ) ) {
 			$fieldname, $default = ''
 		) {
 			$fields = BURST::$config->fields();
-
+			error_log('get_value');
 			if ( ! isset( $fields[ $fieldname ] ) ) {
 				return false;
 			}
