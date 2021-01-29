@@ -258,9 +258,7 @@ function burst_get_posts_ajax_callback(){
  
 	$search_results = new WP_Query( array( 
 		's'=> $_GET['q'], 
-		'post_status' => 'publish',
-		'ignore_sticky_posts' => 1,
-		'posts_per_page' => 50
+		'posts_per_page' => 10
 	) );
 	if( $search_results->have_posts() ) :
 		while( $search_results->have_posts() ) : $search_results->the_post();	

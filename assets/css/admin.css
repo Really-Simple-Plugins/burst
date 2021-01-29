@@ -280,6 +280,37 @@
   border-radius: 50%;
   margin-right: 10px;
 }
+.burst-experiment-dot:before {
+  content: ' ';
+  height: 15px;
+  width: 15px;
+  background-color: #c6c6c6;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: text-bottom;
+  margin-right: 5px;
+  text-align: center;
+  color: #fff;
+  line-height: 1.4;
+  font-size: 10px;
+}
+.burst-experiment-dot.control:before {
+  background-color: #29b6f6;
+  content: 'A';
+}
+.burst-experiment-dot.variant:before {
+  background-color: #f4bf3e;
+  content: 'B';
+}
+.burst-info-box {
+  padding: 10px;
+  border-radius: 5px;
+  background: #f1f1f1;
+}
+.burst-accompanied-text {
+  color: #737373;
+  font-size: 12px;
+}
 .toplevel_page_burst #wpbody-content,
 .burst-1_page_burst-experiments #wpbody-content,
 .burst-1_page_burst-settings #wpbody-content {

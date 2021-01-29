@@ -1,16 +1,39 @@
+@import 'variables.less';
 #burst-metabox-experiment-settings{
-	input{
+	input[type="text"]{
 		width: 100%;
 	}
-	.burst-label{
+	.burst-label, p.label{
 		font-size: 13px;
 	    line-height: 1.5;
 	    margin: 1em 0;
 	    margin-bottom: 0.5em;
+	    font-weight: 600;
 		label {
 		    vertical-align: baseline;
 		    font-weight: 600;
 		}
 	}
-	
+	.burst-experiment-save-button{
+		margin-top: @default-margin;
+	}
+	p.control{
+		margin-top: 4px;
+	}
+	.burst-experiment-settings-info{
+		padding: 10px;
+		border-radius: 5px;
+		background-color: @grey-light;
+		p{
+			margin: 4px 0;
+			font-weight: 400;
+			font-size: 12px;
+		}
+		h4{
+			margin: 0 0 10px 0;
+		}
+		& > :last-child{
+			margin-bottom: 0;
+		}
+	}
 }

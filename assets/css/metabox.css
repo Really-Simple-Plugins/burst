@@ -1,13 +1,38 @@
-#burst-metabox-experiment-settings input {
+#burst-metabox-experiment-settings input[type="text"] {
   width: 100%;
 }
-#burst-metabox-experiment-settings .burst-label {
+#burst-metabox-experiment-settings .burst-label,
+#burst-metabox-experiment-settings p.label {
   font-size: 13px;
   line-height: 1.5;
   margin: 1em 0;
   margin-bottom: 0.5em;
+  font-weight: 600;
 }
-#burst-metabox-experiment-settings .burst-label label {
+#burst-metabox-experiment-settings .burst-label label,
+#burst-metabox-experiment-settings p.label label {
   vertical-align: baseline;
   font-weight: 600;
+}
+#burst-metabox-experiment-settings .burst-experiment-save-button {
+  margin-top: 15px;
+}
+#burst-metabox-experiment-settings p.control {
+  margin-top: 4px;
+}
+#burst-metabox-experiment-settings .burst-experiment-settings-info {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #ededed;
+}
+#burst-metabox-experiment-settings .burst-experiment-settings-info p {
+  margin: 4px 0;
+  font-weight: 400;
+  font-size: 12px;
+}
+#burst-metabox-experiment-settings .burst-experiment-settings-info h4 {
+  margin: 0 0 10px 0;
+}
+#burst-metabox-experiment-settings .burst-experiment-settings-info > :last-child {
+  margin-bottom: 0;
 }

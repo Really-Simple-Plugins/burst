@@ -256,21 +256,6 @@ if ( ! class_exists( "burst_field" ) ) {
 					$value['saved_by_user'] = true;
 					$multiple_field[ $key ] = $value;
 
-					//make cookies and thirdparties translatable
-					if ( $type === 'cookies' || $type === 'thirdparties'
-					     || $type === 'processors'
-					     || $type === 'editor'
-					) {
-						if ( isset( $fields[ $fieldname ]['translatable'] )
-						     && $fields[ $fieldname ]['translatable']
-						) {
-							foreach ( $value as $value_key => $field_value ) {
-								do_action( 'burst_register_translation',
-									$key . '_' . $fieldname . "_" . $value_key,
-									$field_value );
-							}
-						}
-					}
 				}
 
 				$options[ $fieldname ] = $multiple_field;
@@ -815,8 +800,7 @@ if ( ! class_exists( "burst_field" ) ) {
 			?>
 			<?php do_action( 'burst_before_label', $args ); ?>
 
-			<label
-				for="<?php echo $args['fieldname'] ?>"><?php echo $args['label'] ?><?php echo $this->get_help_tip_btn( $args ); ?></label>
+			<p class="label"><?php echo $args['label'] ?><?php echo $this->get_help_tip_btn( $args ); ?></p>
 
 			<?php do_action( 'burst_after_label', $args ); ?>
 			<div class="burst-validate-radio">
@@ -828,6 +812,7 @@ if ( ! class_exists( "burst_field" ) ) {
 					}
 					foreach ( $options as $option_value => $option_label ) {
 						?>
+						<label for="<?php echo esc_html( $option_value ) ?>" class="">
 						<input <?php if ( $args['disabled'] )
 							echo "disabled" ?>
 							<?php if ( $args['required'] ) {
@@ -840,7 +825,7 @@ if ( ! class_exists( "burst_field" ) ) {
 							                                                            == $option_value
 						)
 							echo "checked" ?>>
-						<label for="<?php echo esc_html( $option_value ) ?>" class="">
+						
 							<?php echo esc_html( $option_label ); ?>
 						</label>
 						<div class="clear"></div>
@@ -1257,12 +1242,6 @@ if ( ! class_exists( "burst_field" ) ) {
 					case 'textarea':
 						$this->textarea( $args );
 						break;
-					case 'cookies':
-						$this->cookies( $args );
-						break;
-					case 'services':
-						$this->services( $args );
-						break;
 					case 'multiple':
 						$this->multiple( $args );
 						break;
@@ -1295,6 +1274,9 @@ if ( ! class_exists( "burst_field" ) ) {
 						break;
 					case 'label':
 						$this->label( $args );
+						break;
+					case 'weightslider';
+						$this->weightslider( $args );
 						break;
 					case 'weightslider';
 						$this->weightslider( $args );

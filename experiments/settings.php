@@ -12,55 +12,106 @@ function burst_add_experiment_settings($fields){
 				'type'        => 'text',
 				'label'       => __( "Experiment name", 'burst' ),
 				'placeholder' => __( 'For example: Red vs green buttons' ),
-				'help'        => __( 'This name is for internal use only. Try to give the experiment a clear name, so you can find this test again.', 'burst' ),
+				//'help'        => __( 'This name is for internal use only. Try to give the experiment a clear name, so you can find this test again.', 'burst' ),
+			),
+
+			'duplicate_or_choose_existing' => array(
+				'source'             => 'BURST_EXPERIMENT',
+				'step'               => 'create',
+				'type'               => 'radio',
+				'label'              => '<span class="burst-experiment-dot variant">'. __( "Variant" . '</span>',
+					'burst' ),
+				'options' => array(
+					'duplicate'       => __( "Duplicate this page and edit", 'burst' ),
+					'existing-page'  => __( "Choose existing page", 'burst' ),
+				),
+				'default' => 'duplicate',
+			),
+
+			'variant_id' => array(
+				'source'             => 'BURST_EXPERIMENT',
+				'step'               => 'create',
+				'type'               => 'select2',
+				'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
+					'burst' ),
+				'condition' => array(
+					'duplicate_or_choose_existing' => 'existing-page',
+				),
 			),
 
 			// 'control_id' => array(
 			// 	'source'             => 'BURST_EXPERIMENT',
-			// 	'step'               => 'general',
-			// 	'type'               => 'select2',
-			// 	'label'              => __( "Control",
+			// 	'step'               => 'variant',
+			// 	'type'               => 'select2variant',
+			// 	'label'              => __( "Variant",
 			// 		'burst' ),
 			// 	'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
 			// 		'burst' ),
 			// ),
 
-			'variant_id' => array(
-				'source'             => 'BURST_EXPERIMENT',
-				'step'               => 'general',
-				'type'               => 'select2',
-				'label'              => __( "Variant",
-					'burst' ),
-				'help'               => __( 'Select or make a variant page. The variant page is the page you want to test against your control page. The variant page should be an improvement compared to the control page. At least you should think it is an improvement. That is something you will find out by running the experiment.',
-					'burst' ),
-			),
+			// 'variant_id' => array(
+			// 	'source'             => 'BURST_EXPERIMENT',
+			// 	'step'               => 'general',
+			// 	'type'               => 'select2',
+			// 	'label'              => __( "Variant",
+			// 		'burst' ),
+			// 	'help'               => __( 'Select or make a variant page. The variant page is the page you want to test against your control page. The variant page should be an improvement compared to the control page. At least you should think it is an improvement. That is something you will find out by running the experiment.',
+			// 		'burst' ),
+			// ),
 
 
-			'kpi' => array(
+			'goal' => array(
 				'source'      => 'BURST_EXPERIMENT',
-				'step'        => 'goals',
+				'step'        => 'setup',
 				'type'        => 'radio',
 				'options' => array(
-					'sale'       => __( "Sale", 'burst' ),
 					'click-on-element'  => __( "Click on element", 'burst' ),
-					'click-through-rate'  => __( "Click through rate", 'burst' ),
-					'form-submission'  => __( "Form submission", 'burst' ),
+					'page-visit'  => __( "Page visit", 'burst' ),
 				),
-				'label'       => __( "Key Performance Indicator", 'burst' ),
-				'placeholder' => __( 'Descriptive title of the experiment (For example: Red button vs blue button)' ),
-				'help'        => __( 'For internal use only', 'burst' ),
+				'label'       => __( "Goal", 'burst' ),
+				'default' => 'click-on-element',
 			),
 
-			'percentage_included' => array(
-				'source'      => 'BURST_EXPERIMENT',
-				'step'        => 'weight',
-				'type'        => 'weightslider',
-				'default'	  => '100',
-				'label'       => __( "Experiment weight", 'burst' ),
-				'placeholder' => __( 'Percentage in numbers' ),
-				'help'        => __( 'For internal use only', 'burst' ),
-				'callback_condition' => ''
+			'goal_element_id_or_class' => array(
+				'source'             => 'BURST_EXPERIMENT',
+				'step'               => 'setup',
+				'type'               => 'text',
+				'placeholder' => __( '.class or #id' ),
+				'condition' => array(
+					'goal' => 'click-on-element',
+				),
 			),
+
+			'goal_url' => array(
+				'source'             => 'BURST_EXPERIMENT',
+				'step'               => 'setup',
+				'type'               => 'select2',
+				'condition' => array(
+					'goal' => 'page-visit',
+				),
+			),
+
+			// 'end_date' => array(
+			// 	'source'             => 'BURST_EXPERIMENT',
+			// 	'step'               => 'setup',
+			// 	'type'               => 'radio',
+			// 	'options' => array(
+			// 		'two-weeks'  => __( "Click on element", 'burst' ),
+			// 		'one-month'  => __( "Page visit", 'burst' ),
+			// 	),
+			// 	'label'       => __( "End date", 'burst' ),
+			// 	'default' => 'click-on-element',
+			// ),
+
+			// 'percentage_included' => array(
+			// 	'source'      => 'BURST_EXPERIMENT',
+			// 	'step'        => 'setup',
+			// 	'type'        => 'weightslider',
+			// 	'default'	  => '100',
+			// 	'label'       => __( "Experiment weight", 'burst' ),
+			// 	'placeholder' => __( 'Percentage in numbers' ),
+			// 	'help'        => __( 'For internal use only', 'burst' ),
+			// ),
 
 		);
 

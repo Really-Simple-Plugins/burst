@@ -51,13 +51,13 @@ if ( ! class_exists( "burst_admin" ) ) {
 			$post_status = get_post_status($post_id);
 			if (!burst_user_can_manage()) return;
 			if ($post_status == 'experiment') {
-				add_meta_box('burst_edit_meta_box', __(burst_plugin_name . ' - Experiment', 'burst'), array($this, 'show_burst_variant_metabox'), null, 'side', 'high', array(
+				add_meta_box('burst_edit_meta_box', __('Setup experiment', 'burst'), array($this, 'show_burst_variant_metabox'), null, 'side', 'high', array(
 					//'__block_editor_compatible_meta_box' => true,
 				));
 				// Remove the default publish metabox
 				remove_meta_box( 'submitdiv', 'page', 'side' );
 			} else {
-				add_meta_box('burst_edit_meta_box', __(burst_plugin_name . ' - Experiment', 'burst'), array($this, 'show_burst_metabox'), null, 'side', 'high', array(
+				add_meta_box('burst_edit_meta_box', __('Create experiment', 'burst'), array($this, 'show_burst_metabox'), null, 'side', 'high', array(
 					//'__block_editor_compatible_meta_box' => true,
 				));
 			}
@@ -241,10 +241,10 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 
 		public function enqueue_assets( $hook ) {
-			if ( strpos( $hook, 'burst' ) === false
-			) {
-				return;
-			}
+			// if ( strpos( $hook, 'burst' ) === false
+			// ) {
+			// 	return;
+			// }
 			wp_register_style( 'burst',
 				trailingslashit( burst_url ) . 'assets/css/admin.css', "",
 				burst_version );
@@ -485,17 +485,6 @@ if ( ! class_exists( "burst_admin" ) ) {
                     'controls' => '<div class="rsp-logo"><a href="https://really-simple-plugins.com/"><img src="'. trailingslashit(burst_url) .'assets/images/really-simple-plugins.png" /></a></div>',
                     'page' => 'dashboard',
                     'body' => 'admin_wrap',
-                ),
-                6 => array(
-                    'title' => __("Pannekoek", "burst"),
-                    'content' => '<div class="burst-skeleton burst-skeleton-statistics"></div>',
-                    'class' => 'table-overview burst-load-ajax',
-                    'type' => 'no-type',
-                    'controls' => sprintf(__("Remaining tasks (%s)", "burst"), count( $this->get_warnings() )),
-                    'can_hide' => true,
-                    'page' => 'insights',
-                    'body' => 'admin_wrap',
-
                 ),
 
             );

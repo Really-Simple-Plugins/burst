@@ -166,9 +166,9 @@ jQuery(document).ready(function ($) {
                 },
                 cache: true
             },
-            minimumInputLength: 2, // the minimum of symbols to input before perform a search
+            minimumInputLength: 1, // the minimum of symbols to input before perform a search
             debug: true,
-            width:'400px',
+            width:'100%',
         });
     }
 

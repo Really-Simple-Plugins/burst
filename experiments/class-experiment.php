@@ -288,7 +288,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			$statistics   = serialize( $this->statistics );
 			$update_array = array(
 				'archived'            		=> intval( $this->archived ),
-				'title'                     => sanitize_text_field( $this->title ), //@Rogier Waarom zit hier geen dollarteken voor title? 
+				'title'                     => sanitize_text_field( $this->title ),
 				'variant_id'                => intval( $this->variant_id ),
 				'control_id'                => intval( $this->control_id ),
 				'test_running'              => boolval( $this->test_running ),
