@@ -380,7 +380,7 @@ if ( ! function_exists( 'burst_get_experiment_id_for_post' ) ) {
 
 		if (!$post_id) return;
 
-		$experiment_id = get_post_meta($post_id, 'burst_experiment_id');
+		$experiment_id = get_post_meta($post_id, 'burst_experiment_id', true);
 
 		return $experiment_id;
 	}

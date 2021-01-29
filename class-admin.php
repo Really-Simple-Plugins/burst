@@ -57,7 +57,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 				// Remove the default publish metabox
 				remove_meta_box( 'submitdiv', 'page', 'side' );
 			} else {
-				add_meta_box('burst_edit_meta_box', __('Create experiment', 'burst'), array($this, 'show_burst_metabox'), null, 'side', 'high', array(
+				add_meta_box('burst_edit_meta_box', __('Create experiment', 'burst'), array($this, 'show_burst_control_metabox'), null, 'side', 'high', array(
 					//'__block_editor_compatible_meta_box' => true,
 				));
 			}
@@ -73,10 +73,10 @@ if ( ! class_exists( "burst_admin" ) ) {
 		 * Displays metabox on pages that do NOT have the post status of 'experiment'
 		 * 
 		 */
-		public function show_burst_metabox(){
+		public function show_burst_control_metabox(){
 
 		    if (!burst_user_can_manage()) return;
-		    include( dirname( __FILE__ ) . "/experiments/metabox-original.php" );
+		    include( dirname( __FILE__ ) . "/experiments/metabox-control.php" );
 			
 		}
 
@@ -101,7 +101,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			
 			//if (!isset($_POST["burst_create_variant_id"]) && !isset($_POST['burst_create_variant_nonce']) && !wp_verify_nonce( $_POST['burst_create_variant_nonce'], 'burst_create_variant')) return;
-			if (!isset($_POST["burst_create_experiment_button"])) return; 
+			if (!isset($_POST["burst_create_experiment"])) return; 
 			error_log('lekker doorgaan');
 
 			global $wpdb;
@@ -147,7 +147,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 					'post_name' => $slug,
 					'post_parent' => $post->post_parent,
 					'post_password' => $post->post_password,
-					'post_title' => $post->post_title,
+					'post_title' => __('Duplicate:', 'burst') . ' ' . $post->post_title,
 					'post_slug' => $post->post_title,
 					'post_type' => $post->post_type,
 					'to_ping' => $post->to_ping,
@@ -187,20 +187,25 @@ if ( ! class_exists( "burst_admin" ) ) {
 				}
 
 				/*
-				* create database entry
+				* create experiment entry
 				*/
-
+			
+				$experiment_title = isset($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : 'unnamed';
+			
 				$experiment = new BURST_EXPERIMENT();
 				$experiment->archived = false;
-				$experiment->title = $post_title;
+				$experiment->title = $experiment_title;
 				$experiment->control_id = $post_id;
 				$experiment->variant_id = $new_post_id;
 				$experiment->test_running = false;
 				$experiment->date_created = time();
 				$experiment->save();
 
-				add_post_meta( $post_id,'burst_experiment_id', $experiment->id );
-				add_post_meta( $new_post_id,'burst_experiment_id', $experiment->id );
+				error_log('Experiment saved');
+				error_log(print_r($experiment, true));
+
+				update_post_meta( $post_id,'burst_experiment_id', $experiment->id );
+				update_post_meta( $new_post_id,'burst_experiment_id', $experiment->id );
 				
 
 			}

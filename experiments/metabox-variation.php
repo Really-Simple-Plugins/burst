@@ -4,6 +4,7 @@ $experiment_id = burst_get_experiment_id_for_post($post_id);
 
 if (intval($experiment_id)) { 
 	$experiment = new BURST_EXPERIMENT($experiment_id);
+	error_log('experiment in metabox');
 	error_log(print_r($experiment, true));
 	?>
 
@@ -11,9 +12,9 @@ if (intval($experiment_id)) {
 	<form action="" method="post">
 		<div id='burst-metabox-experiment-settings'>
 				<div class="burst-experiment-settings-info">
-					<h4>Title</h4>
-					<p><span class="burst-experiment-dot control">Page name of the control page </span></p>
-					<p><span class="burst-experiment-dot variant">Page name of the variant page </span></p>
+					<h4><?php echo $experiment->title; ?></h4>
+					<p><span class="burst-experiment-dot control"><?php echo get_the_title($experiment->control_id); ?></span></p>
+					<p><span class="burst-experiment-dot variant"><?php echo get_the_title($experiment->variant_id); ?></span></p>
 
 				</div>
 				<!-- <p>Fill in a name and select the type of experiment. Choose which page you want to use as a variant. Then choose the weight of your experiment. When your done click on 'Save and setup variant'. This will take you to the variant page and over there you can change the variant, choose your goal and start experimenting! </p> -->
