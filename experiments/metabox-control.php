@@ -4,20 +4,40 @@ $experiment_id = burst_get_experiment_id_for_post($post_id);
 
 if (intval($experiment_id)) { 
 	$experiment = new BURST_EXPERIMENT($experiment_id);
+	error_log('experiment');
 	error_log(print_r($experiment, true));
 	?>
 
 <?php } ?>
 	<form action="" method="post">
 		<div id='burst-metabox-experiment-settings'> 
-				<!-- <p>Fill in a name and select the type of experiment. Choose which page you want to use as a variant. Then choose the weight of your experiment. When your done click on 'Save and setup variant'. This will take you to the variant page and over there you can change the variant, choose your goal and start experimenting! </p> -->
-				<?php wp_nonce_field( 'burst_create_experiment', 'burst_nonce' ); ?>
+			<?php wp_nonce_field( 'burst_create_experiment_nonce', 'burst_nonce' ); ?>
 
-				<?php
-				
-				if ( ! intval($experiment_id) ) { ?>
-					<input type="hidden" value="1" name="burst_create_experiment">
-				<?php } ?>
+			<?php if (intval($experiment_id) && !empty($experiment->variant_id)) { ?>
+
+				<div class="burst-experiment-settings-info">
+					<h4><?php echo $experiment->title; ?></h4>
+					<p class="control"><span class="burst-experiment-dot control"></span><?php echo get_the_title($experiment->control_id); ?></p>
+					<p class="variant"><span class="burst-experiment-dot variant"></span><?php echo get_the_title($experiment->variant_id); ?></p>
+				</div>
+
+				<input type="hidden" value="<?php echo $experiment->variant_id ?>" name="burst_redirect_to_variant">
+
+				<div class="burst-experiment-save-button">
+					<input class="button button-secondary" name="burst_go_to_setup_experiment_button"
+					        type="submit" value="<?php _e( 'Edit variant and setup experiment',
+							'burst' ) ?>">
+				</div>
+				<p class="burst-info-box">
+					<?php 
+						_e( "When you click 'Edit variant and setup experiment', you will be redirected to the page you have selected as your variant. ", "burst"); 
+						_e( "Over there you can continue the setup and start the experiment! Happy experimenting!", "burst"); 
+					?>			
+				</p>
+
+			<?php } else { ?>
+
+				<input type="hidden" value="1" name="burst_create_experiment">
 
 				<input type="hidden" value="<?php echo $post_id ?>" name="burst_original_post_id">
 				<?php
@@ -27,11 +47,10 @@ if (intval($experiment_id)) {
 				
 				<div class="burst-label">
 					<label for="title">
-						<span class="burst-experiment-dot control">Control</span>
+						<span class="burst-experiment-dot control"><?php _e('Control', 'burst'); ?></span>
 					</label>
-					
 				</div>
-				<p class="control"><?php the_title(); ?> <span class="burst-accompanied-text">(Current page)</span></p>
+				<p class="control"><?php the_title(); ?> <span class="burst-accompanied-text">(<?php _e('Current page' , 'burst'); ?>)</span></p>
 
 				<?php
 				BURST::$field->get_fields( 'BURST_EXPERIMENT',
@@ -39,11 +58,17 @@ if (intval($experiment_id)) {
 				?>
 
 				<div class="burst-experiment-save-button">
-					<input class="button button-primary" name="burst_create_experiment"
+					<input class="button button-primary" name="burst_create_experiment_button"
 					        type="submit" value="<?php _e( 'Save and edit variant',
 							'burst' ) ?>">
 				</div>
-				<p class="burst-info-box">When you click 'Save and edit variant', you will be redirected to the page you have selected as your variant. Over there you can continue the setup and start the experiment! Happy experimenting!</p>
-			</div>
+				<p class="burst-info-box">
+					<?php 
+						_e( "When you click 'Save and edit variant', you will be redirected to the page you have selected as your variant.", "burst"); 
+						_e( "Over there you can continue the setup and start the experiment! Happy experimenting!", "burst"); 
+					?>			
+				</p>
+			<?php } ?>
+
 		</div>
 	</form>

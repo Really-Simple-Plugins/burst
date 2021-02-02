@@ -62,7 +62,7 @@ function burst_add_experiment_settings($fields){
 
 			'goal' => array(
 				'source'      => 'BURST_EXPERIMENT',
-				'step'        => 'setup',
+				'step'        => 'goal',
 				'type'        => 'radio',
 				'options' => array(
 					'click-on-element'  => __( "Click on element", 'burst' ),
@@ -74,7 +74,7 @@ function burst_add_experiment_settings($fields){
 
 			'goal_element_id_or_class' => array(
 				'source'             => 'BURST_EXPERIMENT',
-				'step'               => 'setup',
+				'step'               => 'goal',
 				'type'               => 'text',
 				'placeholder' => __( '.class or #id' ),
 				'condition' => array(
@@ -84,24 +84,37 @@ function burst_add_experiment_settings($fields){
 
 			'goal_url' => array(
 				'source'             => 'BURST_EXPERIMENT',
-				'step'               => 'setup',
+				'step'               => 'goal',
 				'type'               => 'select2',
 				'condition' => array(
 					'goal' => 'page-visit',
 				),
 			),
 
-			// 'end_date' => array(
-			// 	'source'             => 'BURST_EXPERIMENT',
-			// 	'step'               => 'setup',
-			// 	'type'               => 'radio',
-			// 	'options' => array(
-			// 		'two-weeks'  => __( "Click on element", 'burst' ),
-			// 		'one-month'  => __( "Page visit", 'burst' ),
-			// 	),
-			// 	'label'       => __( "End date", 'burst' ),
-			// 	'default' => 'click-on-element',
-			// ),
+			'timeline_select' => array(
+				'source'             => 'BURST_EXPERIMENT',
+				'step'               => 'timeline',
+				'type'               => 'radio',
+				'options' => array(
+					'7'  => __( "7 days", 'burst' ),
+					'14'  => __( "14 days", 'burst' ),
+					'28'  => __( "28 days (recommended)", 'burst' ),
+					'custom'  => __( "Custom number of days", 'burst' ),
+				),
+				'label'       => __( "Timeline", 'burst' ),
+				'default' => '28',
+			),
+
+			'timeline_custom' => array(
+				'source'             => 'BURST_EXPERIMENT',
+				'step'               => 'timeline',
+				'type'               => 'number',
+				'condition' => array(
+					'timeline_select' => 'custom',
+				),
+			),
+
+
 
 			// 'percentage_included' => array(
 			// 	'source'      => 'BURST_EXPERIMENT',

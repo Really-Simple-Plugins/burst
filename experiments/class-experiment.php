@@ -138,19 +138,19 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				intval( $this->id ) ) );
 
 			if ( isset( $experiments[0] ) ) {
-				$experiment         = $experiments[0];
-				$this->archived       = $experiment->archived;
-				$this->title          = $experiment->title;
-				$this->variant_id = $experiment->variant_id;
-				$this->control_id = $experiment->control_id;
-				$this->test_running = $experiment->test_running;
-				$this->date_created = $experiment->date_created;
-				$this->date_modified = $experiment->date_modified;
-				$this->date_started = $experiment->date_started;
-				$this->date_end = $experiment->date_end;
-				$this->kpi = $experiment->kpi;
-				$this->statistics = $experiment->statistics;
-				$this->percentage_included = $experiment->percentage_included;
+				$experiment         		= $experiments[0];
+				$this->archived       		= $experiment->archived;
+				$this->title          		= $experiment->title;
+				$this->variant_id 			= $experiment->variant_id;
+				$this->control_id 			= $experiment->control_id;
+				$this->test_running 		= $experiment->test_running;
+				$this->date_created 		= $experiment->date_created;
+				$this->date_modified 		= $experiment->date_modified;
+				$this->date_started 		= $experiment->date_started;
+				$this->date_end 			= $experiment->date_end;
+				$this->kpi 					= $experiment->kpi;
+				$this->statistics 			= $experiment->statistics;
+				$this->percentage_included 	= $experiment->percentage_included;
 
 
 
@@ -284,6 +284,9 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 
 			if ( ! is_array( $this->statistics ) ) {
 				$this->statistics = array();
+			}
+			if ( ! isset( $this->title ) ) {
+				$this->title = __('Unnamed experiment', 'burst');
 			}
 			$statistics   = serialize( $this->statistics );
 			$update_array = array(

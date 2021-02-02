@@ -13,9 +13,8 @@ if (intval($experiment_id)) {
 		<div id='burst-metabox-experiment-settings'>
 				<div class="burst-experiment-settings-info">
 					<h4><?php echo $experiment->title; ?></h4>
-					<p><span class="burst-experiment-dot control"><?php echo get_the_title($experiment->control_id); ?></span></p>
-					<p><span class="burst-experiment-dot variant"><?php echo get_the_title($experiment->variant_id); ?></span></p>
-
+					<p class="control"><span class="burst-experiment-dot control"></span><?php echo get_the_title($experiment->control_id); ?></p>
+					<p class="variant"><span class="burst-experiment-dot variant"></span><?php echo get_the_title($experiment->variant_id); ?></p>
 				</div>
 				<!-- <p>Fill in a name and select the type of experiment. Choose which page you want to use as a variant. Then choose the weight of your experiment. When your done click on 'Save and setup variant'. This will take you to the variant page and over there you can change the variant, choose your goal and start experimenting! </p> -->
 				<?php wp_nonce_field( 'burst_start_experiment', 'burst_nonce' ); ?>
@@ -28,14 +27,18 @@ if (intval($experiment_id)) {
 				<input type="hidden" value="<?php echo $post_id ?>" name="burst_original_post_id">
 				<?php
 				BURST::$field->get_fields( 'BURST_EXPERIMENT',
-								'setup' );
+								'goal' );
 				?>
 
+
+				<?php
+				BURST::$field->get_fields( 'BURST_EXPERIMENT',
+								'timeline' );
+				?>
 				<div class="burst-experiment-save-button">
 					<input class="button button-primary" name="burst_start_experiment_button"
 					        type="submit" value="<?php _e( 'Start the experiment',
 							'burst' ) ?>">
 				</div>
 			</div>
-		</div>
 	</form>
