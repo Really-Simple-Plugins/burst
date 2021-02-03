@@ -12,9 +12,9 @@ if (intval($experiment_id)) {
 	<form action="" method="post">
 		<div id='burst-metabox-experiment-settings'> 
 			<?php wp_nonce_field( 'burst_create_experiment_nonce', 'burst_nonce' ); ?>
-
+				<!-- Check if post already has experiment -->
 			<?php if (intval($experiment_id) && !empty($experiment->variant_id)) { ?>
-
+				<!-- Experiment exists -->
 				<div class="burst-experiment-settings-info">
 					<h4><?php echo $experiment->title; ?></h4>
 					<p class="control"><span class="burst-experiment-dot control"></span><?php echo get_the_title($experiment->control_id); ?></p>
@@ -36,6 +36,7 @@ if (intval($experiment_id)) {
 				</p>
 
 			<?php } else { ?>
+				<!-- Experiment does NOT exist -->
 
 				<input type="hidden" value="1" name="burst_create_experiment">
 

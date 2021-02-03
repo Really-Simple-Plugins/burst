@@ -21,10 +21,10 @@ function burst_install_experiments_table() {
             `variant_id` int(11) NOT NULL,
             `control_id` int(11) NOT NULL,
             `test_running` boolean NOT NULL,
-            `date_created` timestamp NOT NULL,
-            `date_modified` timestamp NOT NULL,
-            `date_started` timestamp NOT NULL,
-            `date_end` timestamp NOT NULL,
+            `date_created` varchar(255) NOT NULL,
+            `date_modified` varchar(255) NOT NULL,
+            `date_started` varchar(255) NOT NULL,
+            `date_end` varchar(255) NOT NULL,
             `kpi` text NOT NULL,
             `statistics` text NOT NULL,
             `percentage_included` int(11) NOT NULL,
@@ -72,7 +72,6 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		 */
 
 		private function add() {
-			error_log('added');
 			if ( ! burst_user_can_manage() ) {
 				return false;
 			}
@@ -87,9 +86,6 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				$array
 			);
 			$this->id = $wpdb->insert_id;
-			error_log('id van de added ding: ');
-			error_log($wpdb->insert_id);
-
 		}
 
 
@@ -277,16 +273,8 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				$this->add();
 			}
 
-			error_log('save()');
-			error_log('id:' );
-			error_log($this->id);
-			error_log( print_r( $this, true ) );
-
 			if ( ! is_array( $this->statistics ) ) {
 				$this->statistics = array();
-			}
-			if ( ! isset( $this->title ) ) {
-				$this->title = __('Unnamed experiment', 'burst');
 			}
 			$statistics   = serialize( $this->statistics );
 			$update_array = array(

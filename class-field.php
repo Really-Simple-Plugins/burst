@@ -1603,7 +1603,6 @@ if ( ! class_exists( "burst_field" ) ) {
 			$fieldname, $default = ''
 		) {
 			$fields = BURST::$config->fields();
-			error_log('get_value');
 			if ( ! isset( $fields[ $fieldname ] ) ) {
 				return false;
 			}

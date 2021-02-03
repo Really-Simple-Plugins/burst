@@ -47,9 +47,11 @@ if ( ! class_exists( "burst_admin" ) ) {
 		 */
 		function add_burst_metabox_to_classic_editor()
 		{	
-			$post_id = isset($_GET['post']) ? $_GET['post'] : false;
-			$post_status = get_post_status($post_id);
 			if (!burst_user_can_manage()) return;
+
+			$post = isset($_GET['post']) ? $_GET['post'] : false;
+			$post_status = get_post_status($post);
+			
 			if ($post_status == 'experiment') {
 				add_meta_box('burst_edit_meta_box', __('Setup experiment', 'burst'), array($this, 'show_burst_variant_metabox'), null, 'side', 'high', array(
 					//'__block_editor_compatible_meta_box' => true,
@@ -98,70 +100,97 @@ if ( ! class_exists( "burst_admin" ) ) {
 		public function process_burst_metaboxes()
 		{
 			if (!burst_user_can_manage()) return;
-			error_log('POST');
-			error_log(print_r($_POST, true));
-			
-			$post_id = isset($_GET['post']) ? $_GET['post'] : false;
-			if (!$post_id) return;
-			error_log('post_id: '. $post_id);
 
-			//if (!isset($_POST["burst_create_variant_id"]) && !isset($_POST['burst_create_variant_nonce']) && !wp_verify_nonce( $_POST['burst_create_variant_nonce'], 'burst_create_variant')) return;
-
-			// if post already has a experiment, go to experiment page on click.
-			if (isset($_POST["burst_go_to_setup_experiment_button"])) {
-				error_log('burst_go_to_setup_experiment_button');
-
-				/**
-				* redirect to duplicated post also known as the variant
-				*/ 
-				$variant_id = intval($_POST["burst_redirect_to_variant"]);
-
-				$redirect_id = $variant_id;
-			} elseif ($_POST["burst_create_experiment"]) {
-				error_log('lekker doorgaan');
-
-				if ($_POST["burst_duplicate_or_choose_existing"] == 'duplicate') {
-					error_log('duplicate');
-					$new_post_id = $this->duplicate_post($post_id);
-				} elseif($_POST["burst_duplicate_or_choose_existing"] == 'existing-page'){
-					$new_post_id = intval($_POST["burst_variant_id"]);
-					error_log('existing page');
-					error_log('variant_id');
-					error_log($_POST["burst_variant_id"]);
-				}
-				$redirect_id = $new_post_id;
-
-				/*
-				* create experiment entry
-				*/
-			
-				$experiment_title = empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : 'Unnamed experiment';
-			
-				$experiment = new BURST_EXPERIMENT();
-				$experiment->archived = false;
-				$experiment->title = $experiment_title;
-				$experiment->control_id = $post_id;
-				$experiment->variant_id = $new_post_id;
-				$experiment->test_running = false;
-				$experiment->date_created = time();
-				$experiment->save();
-
-				update_post_meta( $post_id,'burst_experiment_id', $experiment->id );
-				update_post_meta( $new_post_id,'burst_experiment_id', $experiment->id );
-			} else {
-				error_log('niks');
+			if ( isset( $_POST["burst_create_experiment_button"] ) ){
+				$redirect_id = $this->create_experiment();
+			} elseif ( isset( $_POST["burst_go_to_setup_experiment_button"] ) ){
+				$redirect_id = $_POST["burst_redirect_to_variant"];
+			} elseif ( isset( $_POST["burst_start_experiment_button"] ) ){
+				$redirect_id = $this->start_experiment();
 			}
 			
 			/**
 			* redirect to duplicated post also known as the variant
 			*/ 
 			if (isset($redirect_id)) {
+				error_log('redirect');
 				$url = get_admin_url().'post.php?post='.$redirect_id.'&action=edit';
 				error_log($url);
 				if ( wp_redirect( $url ) ) {
 				    exit;
 				}
+			} else {
+				error_log('no redirect');
 			}
+		}
+
+		public function create_experiment(){
+			if (!burst_user_can_manage()) return;
+
+			$post_id = intval( $_POST['burst_original_post_id'] ) ? $_POST['burst_original_post_id'] : false;
+			error_log('post_id: '. $post_id);
+			if (!$post_id) return;
+			
+				
+			if ($_POST["burst_duplicate_or_choose_existing"] === 'duplicate') {
+				error_log('duplicate');
+				$new_post_id = $this->duplicate_post($post_id);
+			} elseif($_POST["burst_duplicate_or_choose_existing"] === 'existing-page'){
+				$new_post_id = intval($_POST["burst_variant_id"]);
+			}
+
+			/*
+			* create experiment entry
+			*/
+			error_log('burst title' . $_POST['burst_title']);
+			$experiment_title = empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : 'Unnamed experiment';
+		
+			$experiment = new BURST_EXPERIMENT();
+			$experiment->archived = false;
+			$experiment->title = $experiment_title;
+			$experiment->control_id = $post_id;
+			$experiment->variant_id = $new_post_id;
+			$experiment->test_running = false;
+			$experiment->date_created = time();
+			$experiment->save();
+
+			update_post_meta( $post_id,'burst_experiment_id', $experiment->id );
+
+			update_post_meta( $new_post_id,'burst_experiment_id', $experiment->id );
+
+			$args = array(
+				'ID'           => $new_post_id,
+				'post_status' => 'experiment',
+				'hidden_post_status' => 'experiment',
+			);
+
+			$new_post_id = wp_update_post($args);
+
+			update_post_meta( $new_post_id,'post_status', 'experiment' );
+
+			return $new_post_id;
+		}
+
+		public function start_experiment(){
+			if (!burst_user_can_manage()) return;
+
+			/*
+			* create experiment entry
+			*/
+		
+			$experiment = new BURST_EXPERIMENT();
+			$experiment->test_running = true;
+			$experiment->date_modified = time();
+			$experiment->date_modified = time();
+			$experiment->date_modified = time();
+			$experiment->save();
+
+			update_post_meta( $post_id,'burst_experiment_id', $experiment->id );
+
+			update_post_meta( $new_post_id,'burst_experiment_id', $experiment->id );
+			update_post_meta( $new_post_id,'post_status', 'experiment' );
+
+			return $new_post_id;
 		}
 
 		/**
@@ -173,8 +202,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			if (!burst_user_can_manage()) return;
 			global $wpdb;
 
-			;
-
+			error_log('duplicate');
 			/*
 			 *  all the original post data then
 			 */
