@@ -94,7 +94,7 @@ if ( ! class_exists( "burst_review" ) ) {
 								'burst' ),
 								'<a href="https://wpburst.com/contact" target="_blank">',
 								'</a>' ); ?></p>
-						<i>- Rogier</i>
+						<i>- Hessel</i>
 						<div class="burst-buttons-row">
 							<a class="button button-primary" target="_blank"
 							   href="https://wordpress.org/support/plugin/burst/reviews/#new-post"><?php _e( 'Leave a review',

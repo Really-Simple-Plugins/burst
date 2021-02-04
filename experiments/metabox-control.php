@@ -30,8 +30,11 @@ if (intval($experiment_id)) {
 				</div>
 				<p class="burst-info-box">
 					<?php 
-						_e( "When you click 'Edit variant and setup experiment', you will be redirected to the page you have selected as your variant. ", "burst"); 
-						_e( "Over there you can continue the setup and start the experiment! Happy experimenting!", "burst"); 
+						_e( "When you click 'Edit variant and setup experiment', you will be redirected to the page you have selected as your variant.", "burst")
+                        .' '.
+						_e( "Over there you can continue the setup and start the experiment!", "burst")
+						.' '.
+                        _e("Happy experimenting!", "burst");
 					?>			
 				</p>
 

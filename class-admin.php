@@ -35,11 +35,25 @@ if ( ! class_exists( "burst_admin" ) ) {
 			add_action( 'admin_init',array( $this, 'process_burst_metaboxes' ) );
 			add_action ( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
             add_action( 'add_meta_boxes', array( $this, 'add_burst_metabox_to_classic_editor' ) );
+
+			add_action( 'admin_head', array( $this, 'hide_publish_button_on_experiments' ) );
 		}
 
 		static function this() {
 			return self::$_this;
 		}
+
+        public function hide_publish_button_on_experiments(){
+		    ?>
+                <style>
+                    /** Classic Editor **/
+                    #publishing-action { display: none; }
+                    /** Gutenberg Editor **/
+                    .edit-post-header__settings .components-button.editor-post-publish-panel__toggle { display: none; }
+                </style>
+            <?php
+        }
+
 
 		/**
 		 * Well the function name says it all, this function 
