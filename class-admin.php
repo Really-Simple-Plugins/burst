@@ -44,14 +44,19 @@ if ( ! class_exists( "burst_admin" ) ) {
 		}
 
         public function hide_publish_button_on_experiments(){
-		    ?>
-                <style>
-                    /** Classic Editor **/
-                    #publishing-action { display: none; }
-                    /** Gutenberg Editor **/
-                    .edit-post-header__settings .components-button.editor-post-publish-panel__toggle { display: none; }
-                </style>
-            <?php
+        	$post = isset($_GET['post']) ? $_GET['post'] : false;
+			$post_status = get_post_status($post);
+			
+			if ($post_status == 'experiment') {
+		    	?>
+		            <style>
+		                /** Classic Editor **/
+		                #publishing-action { display: none; }
+		                /** Gutenberg Editor **/
+		                .edit-post-header__settings .components-button.editor-post-publish-panel__toggle { display: none; }
+		            </style>
+		        <?php
+		    }
         }
 
 
@@ -69,9 +74,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			if ($post_status == 'experiment') {
 				add_meta_box('burst_edit_meta_box', __('Setup experiment', 'burst'), array($this, 'show_burst_variant_metabox'), null, 'side', 'high', array(
 					//'__block_editor_compatible_meta_box' => true,
-				));
-				// Remove the default publish metabox
-				remove_meta_box( 'submitdiv', 'page', 'side' );
+				));			
 			} else {
 				add_meta_box('burst_edit_meta_box', __('Create experiment', 'burst'), array($this, 'show_burst_control_metabox'), null, 'side', 'high', array(
 					//'__block_editor_compatible_meta_box' => true,
