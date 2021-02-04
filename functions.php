@@ -22,7 +22,7 @@ if ( ! function_exists( 'burst_user_can_manage' ) ) {
 		if ( ! is_user_logged_in() ) {
 			return false;
 		}
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'edit_posts' ) ) {
 			return false;
 		}
 
@@ -253,12 +253,13 @@ if ( ! function_exists( 'burst_array_filter_multidimensional' ) ) {
 
 add_action( 'wp_ajax_burst_get_posts', 'burst_get_posts_ajax_callback' ); // wp_ajax_{action}
 function burst_get_posts_ajax_callback(){
- 
+ 	if (!burst_user_can_manage()) return;
+
 	$return = array();
  
 	$search_results = new WP_Query( array( 
 		's'=> $_GET['q'], 
-		'posts_per_page' => 10
+		'posts_per_page' => 100
 	) );
 	if( $search_results->have_posts() ) :
 		while( $search_results->have_posts() ) : $search_results->the_post();	

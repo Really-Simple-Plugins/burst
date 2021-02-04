@@ -1612,12 +1612,17 @@ if ( ! class_exists( "burst_field" ) ) {
 			     && class_exists( $source )
 			) {
 				$id = false;
-				if ( isset( $_GET['id'] ) ) {
+
+				if ( isset( $_GET['post'] ) ) {
+					$post_id = intval( $_GET['post'] );
+					$id = burst_get_experiment_id_for_post($post_id);
+				}  else if ( isset( $_GET['id'] ) ) {
 					$id = intval( $_GET['id'] );
-				}
-				if ( isset( $_POST['id'] ) ) {
+				} else if ( isset( $_POST['id'] ) ) {
 					$id = intval( $_POST['id'] );
-				}
+				}  
+
+
 
 				$experiment = new BURST_EXPERIMENT( $id );
 				$value  = ! empty( $experiment->{$fieldname} )

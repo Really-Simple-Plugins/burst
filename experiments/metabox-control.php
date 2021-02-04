@@ -35,15 +35,18 @@ if (intval($experiment_id)) {
 					?>			
 				</p>
 
-			<?php } else { ?>
+			<?php } 
+
+
+			 //{ ?>
+
 				<!-- Experiment does NOT exist -->
 
 				<input type="hidden" value="1" name="burst_create_experiment">
 
 				<input type="hidden" value="<?php echo $post_id ?>" name="burst_original_post_id">
 				<?php
-				BURST::$field->get_fields( 'BURST_EXPERIMENT',
-								'general' );
+				BURST::$field->get_fields( 'BURST_EXPERIMENT','general' );
 				?>
 				
 				<div class="burst-label">
@@ -69,7 +72,7 @@ if (intval($experiment_id)) {
 						_e( "Over there you can continue the setup and start the experiment! Happy experimenting!", "burst"); 
 					?>			
 				</p>
-			<?php } ?>
+			<?php// } ?>
 
 		</div>
 	</form>
