@@ -137,7 +137,12 @@ if ( ! class_exists( 'BURST' ) ) {
 		}
 
 		private function hooks() {
-			//add early hooks
+			$plugin = plugin_basename(__FILE__);
+
+			/**
+			 * Tell the consent API we're following the api
+			 */
+			add_filter("wp_consent_api_registered_$plugin", function(){return true;});
 		}
 	}
 
