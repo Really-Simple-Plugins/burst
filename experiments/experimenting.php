@@ -34,13 +34,20 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 
 		public function enqueue_assets( $hook ) {
 			$minified = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+			$track_type = 'visit';
+			$identifier = 'my-class';
 			wp_enqueue_script( 'burst',
 				burst_url . "assets/js/burst$minified.js", array(),
 				burst_version, true );
 			wp_localize_script(
 				'burst',
 				'burst',
-				array( 'url' => site_url('wp-json/burst/v1/hit'))
+				array( 
+					'url' => site_url('wp-json/burst/v1/hit'),
+					'track_type' => $track_type,
+					'identifier' => $identifier 
+
+				)
 			);
 			
 		}
@@ -72,15 +79,14 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			//if has variant
 			//get content
 			$post_id = $post->ID;
-			$burst_variant_child_id = get_post_meta($post_id, 'burst_variant_child', true);
-			if (!intval($burst_variant_child_id)) return;
+			$burst_variant_id = burst_get_variant_id_for_post($post_id);
+			error_log("variant id ".$burst_variant_id);
+			if (!intval($burst_variant_id)) return;
 
 			$burst_uid = isset( $_COOKIE['burst_uid']) ? $_COOKIE['burst_uid'] : false;
 			$page_url = burst_get_current_url();
-			error_log('page url');
-			error_log($page_url);
-			$latest_visit = false;
 			$test_version = false;
+
 			if ($burst_uid) {
 				$test_version = burst_get_latest_visit_data($burst_uid, $page_url, 'test_version');
 			}
@@ -88,7 +94,6 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			if (!$test_version) {
 				$choice = rand(0,1);
 				if ($choice === 1) {
-					
 					$test_version = 'Variation';
 
 				} else {
@@ -99,7 +104,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			error_log('end');
 			if ($test_version == 'Variation') {
 				error_log('Variation');
-				$content = get_the_content(null, false, $burst_variant_child_id);
+				$content = get_the_content(null, false, $burst_variant_id);
 				// $content = apply_filters( 'the_content', $content ); 
 				// Causes inifinte loop
 				$content = str_replace( ']]>', ']]&gt;', $content );
@@ -148,15 +153,19 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 	 	function add_variant_status_add_in_quick_edit() {
 	        echo "	<script>
 				        jQuery(document).ready( function() {
-				            jQuery( 'select[name=\"_status\"]' ).append( '<option value=\"experiment\">Experiment</option>' );      
+				            jQuery( 'select[name=\"_status\"]' ).append( '<option value=\"experiment\">". __('Experiment',"burst")."</option>' );      
 				        }); 
 			        </script>";
 	    }
 	    
 	    function add_variant_status_add_in_post_page() {
 	        echo "	<script>
-				        jQuery(document).ready( function() {        
-				            jQuery( 'select[name=\"post_status\"]' ).append( '<option value=\"experiment\">Experiment</option>' );
+				        jQuery(document).ready( function($) {        
+				            $( 'select[name=\"post_status\"]' ).append( '<option value=\"experiment\">". __('Experiment',"burst")."</option>' );
+				            if ($('#hidden_post_status').val()=== 'experiment') {
+				            	$('#post_status').val('experiment');
+				            }
+
 				        });
 			        </script>";
 	    }
