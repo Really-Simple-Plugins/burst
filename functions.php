@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) or die( "you do not have acces to this page!" );
 
+
 if ( ! function_exists( 'burst_uses_google_analytics' ) ) {
 
 	/**
