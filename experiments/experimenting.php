@@ -43,10 +43,9 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 				'burst',
 				'burst',
 				array( 
-					'url' => site_url('wp-json/burst/v1/hit'),
+					'url' => get_rest_url() . 'burst/v1/hit',
 					'track_type' => $track_type,
 					'identifier' => $identifier 
-
 				)
 			);
 			
