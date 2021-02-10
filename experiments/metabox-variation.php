@@ -13,8 +13,8 @@ if (intval($experiment_id)) {
 		<div id='burst-metabox-experiment-settings'>
 				<div class="burst-experiment-settings-info">
 					<h4><?php echo $experiment->title; ?></h4>
-					<p class="control"><span class="burst-experiment-dot control"></span><?php echo get_the_title($experiment->control_id); ?></p>
-					<p class="variant"><span class="burst-experiment-dot variant"></span><?php echo get_the_title($experiment->variant_id); ?></p>
+					<a href="<?php echo get_permalink($experiment->control_id) ?>" class="control"><span class="burst-experiment-dot control"></span><?php echo get_the_title($experiment->control_id); ?></a>
+					<a href="<?php echo get_permalink($experiment->variant_id) ?>" class="variant"><span class="burst-experiment-dot variant"></span><?php echo get_the_title($experiment->variant_id); ?></a>
 				</div>
 				<!-- <p>Fill in a name and select the type of experiment. Choose which page you want to use as a variant. Then choose the weight of your experiment. When your done click on 'Save and setup variant'. This will take you to the variant page and over there you can change the variant, choose your goal and start experimenting! </p> -->
 				<?php wp_nonce_field( 'burst_start_experiment', 'burst_nonce' ); ?>

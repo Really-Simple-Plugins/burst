@@ -17,8 +17,8 @@ if (intval($experiment_id)) {
 				<!-- Experiment exists -->
 				<div class="burst-experiment-settings-info">
 					<h4><?php echo $experiment->title; ?></h4>
-					<p class="control"><span class="burst-experiment-dot control"></span><?php echo get_the_title($experiment->control_id); ?></p>
-					<p class="variant"><span class="burst-experiment-dot variant"></span><?php echo get_the_title($experiment->variant_id); ?></p>
+					<a href="<?php echo get_permalink($experiment->control_id) ?>" class="control"><span class="burst-experiment-dot control"></span><?php echo get_the_title($experiment->control_id); ?></a>
+					<a href="<?php echo get_permalink($experiment->variant_id) ?>" class="variant"><span class="burst-experiment-dot variant"></span><?php echo get_the_title($experiment->variant_id); ?></a>
 				</div>
 
 				<input type="hidden" value="<?php echo $experiment->variant_id ?>" name="burst_redirect_to_variant">
@@ -38,10 +38,7 @@ if (intval($experiment_id)) {
 					?>			
 				</p>
 
-			<?php } 
-
-
-			 //{ ?>
+			<?php } else { ?>
 
 				<!-- Experiment does NOT exist -->
 
@@ -75,7 +72,7 @@ if (intval($experiment_id)) {
 						_e( "Over there you can continue the setup and start the experiment! Happy experimenting!", "burst"); 
 					?>			
 				</p>
-			<?php// } ?>
+			<?php } ?>
 
 		</div>
 	</form>
