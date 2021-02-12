@@ -129,6 +129,94 @@ class burst_experiment_Table extends WP_List_Table {
 		return __( 'Name', 'burst' );
 	}
 
+
+    /**
+     * Output the checkbox column
+     *
+     * @access      private
+     * @since       7.1.2
+     * @return      void
+     */
+
+    function column_cb( $item ) {
+    	error_log('column_cb');
+        error_log(print_r($item, true));
+
+        return sprintf(
+            '<input type="checkbox" name="%1$s_id[]" value="%2$s" />',
+            'Experiment',
+            esc_attr( $item['ID'] ),
+        );
+
+
+    }
+
+        /**
+     * Setup available bulk actions
+     *
+     * @access      private
+     * @since       7.1.2
+     * @return      array
+     */
+
+    function get_bulk_actions() {
+
+        $actions = array(
+            'delete'     => __( 'Delete', 'zip-recipes' ),
+        );
+
+        return $actions;
+
+    }
+
+    /**
+     * Process bulk actions
+     *
+     * @access      private
+     * @since       7.1.2
+     * @return      void
+     */
+    function process_bulk_action() {
+        // if (!zip_user_can_manage()) {
+        //     return;
+        // }
+
+        // if( !isset($_GET['_wpnonce']) || ! wp_verify_nonce( $_GET['_wpnonce'], '_wpnonce' ) ) {
+        //     error_log('process_bulk_action nonce');
+        //     return;
+        // }
+        $ids = isset( $_GET['recipe_id'] ) ? $_GET['recipe_id'] : false;
+
+        if( ! $ids ) {
+            return;
+        }
+
+        if ( ! is_array( $ids ) ) {
+            $ids = array( $ids );
+        }
+
+        foreach ( $ids as $id ) {
+            if ( 'delete' === $this->current_action() ) {
+                $recipe = new Recipe(intval($id));
+                $recipe->delete();
+            }
+            if ( 'monetize' === $this->current_action() ) {
+                $recipe = new Recipe(intval($id));
+                $recipe->share_this_recipe = true;
+                $recipe->save();
+            }
+            if ( 'disable-monetize' === $this->current_action() ) {
+                $recipe = new Recipe(intval($id));
+                $recipe->share_this_recipe = false;
+                $recipe->save();
+            }
+
+        }
+
+
+    }
+
+
 	public function column_name( $item ) {
 		$name = ! empty( $item['name'] ) ? $item['name']
 			: '<em>' . __( 'Unnamed experiment', 'burst' )
@@ -136,10 +224,10 @@ class burst_experiment_Table extends WP_List_Table {
 		$name = apply_filters( 'burst_experiment_name', $name );
 
 		$actions = array(
-			'edit'   => '<a href="'
-			            . admin_url( 'admin.php?page=burst-experiments&id='
-			                         . $item['ID'] ) . '&action=edit">' . __( 'Edit',
-					'burst' ) . '</a>',
+			// 'edit'   => '<a href="'
+			//             . admin_url( 'admin.php?page=burst-experiments&id='
+			//                          . $item['ID'] ) . '&action=edit">' . __( 'Edit',
+			// 		'burst' ) . '</a>',
 			'delete' => '<a class="burst-delete-experiment" data-id="' . $item['ID']
 			            . '" href="#">' . __( 'Delete', 'burst' )
 			            . '</a>'
@@ -162,13 +250,13 @@ class burst_experiment_Table extends WP_List_Table {
 		return $test_running;
 	}
 
-	public function column_kpi( $item ) {
-		$kpi = ! empty( $item['kpi'] ) ? $item['kpi']
+	public function column_goals( $item ) {
+		$goals = ! empty( $item['goals'] ) ? $item['goals']
 			: '<em>' . __( 'No KPI selected', 'burst' )
 			  . '</em>';
-		$kpi = apply_filters( 'burst_experiment_kpi', $kpi );
+		$goals = apply_filters( 'burst_experiment_goals', $goals );
 
-		return $kpi;
+		return $goals;
 	}
 
 	public function column_control_id( $item ) {
@@ -211,17 +299,18 @@ class burst_experiment_Table extends WP_List_Table {
 	 */
 	public function get_columns() {
 		$columns = array(
+			'cb'        => '<input type="checkbox"/>',
 			'name' => __( 'Name', 'burst' ),
 			'control_id' => __( 'Control', 'burst' ),
 			'variant_id' => __( 'Variant', 'burst' ),
-			'kpi' => __( 'Key performance indicator', 'burst' ),
+			'goals' => __( 'Key performance indicator', 'burst' ),
 			'test_running' => __( 'Active', 'burst' ),
 		);
 
 		if ( ! $this->show_default_only ) {
 			$columns['control_id'] = __( 'Control', 'burst' );
 			$columns['variant_id'] = __( 'Variant', 'burst' );
-			$columns['kpi'] = __( 'Goal', 'burst' );
+			$columns['goals'] = __( 'Goal', 'burst' );
 			$columns['test_running'] = __( 'Active', 'burst' );
 		}
 
@@ -238,8 +327,8 @@ class burst_experiment_Table extends WP_List_Table {
 	public function get_sortable_columns() {
 		$columns = array(
 			'name' => array( 'name', true ),
-			'kpi' => array( 'kpi', true),
-			'active' => array( 'active', true),
+			'goals' => array( 'goals', true),
+			'active' => array( 'test_running', true),
 		);
 
 		return $columns;
@@ -252,7 +341,44 @@ class burst_experiment_Table extends WP_List_Table {
 	 * @since 1.5
 	 */
 	public function bulk_actions( $which = '' ) {
-		// These aren't really bulk actions but this outputs the markup in the right place
+		if ( is_null( $this->_actions ) ) {
+			$this->_actions = $this->get_bulk_actions();
+
+			/**
+			 * Filters the list table bulk actions drop-down.
+			 *
+			 * The dynamic portion of the hook name, `$this->screen->id`, refers
+			 * to the ID of the current screen, usually a string.
+			 *
+			 * @since 3.1.0
+			 *
+			 * @param string[] $actions An array of the available bulk actions.
+			 */
+			$this->_actions = apply_filters( "bulk_actions-{$this->screen->id}", $this->_actions ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
+
+			$two = '';
+		} else {
+			$two = '2';
+		}
+
+		if ( empty( $this->_actions ) ) {
+			return;
+		}
+
+		echo '<label for="bulk-action-selector-' . esc_attr( $which ) . '" class="screen-reader-text">' . __( 'Select bulk action' ) . '</label>';
+		echo '<select name="action' . $two . '" id="bulk-action-selector-' . esc_attr( $which ) . "\">\n";
+		echo '<option value="-1">' . __( 'Bulk actions' ) . "</option>\n";
+
+		foreach ( $this->_actions as $name => $title ) {
+			$class = 'edit' === $name ? ' class="hide-if-no-js"' : '';
+
+			echo "\t" . '<option value="' . $name . '"' . $class . '>' . $title . "</option>\n";
+		}
+
+		echo "</select>\n";
+
+		submit_button( __( 'Apply' ), 'action', '', false, array( 'id' => "doaction$two" ) );
+		echo "\n";
 	}
 
 	/**
@@ -331,7 +457,7 @@ class burst_experiment_Table extends WP_List_Table {
 					'name' => $experiment->title,
 					'control_id' => $experiment->control_id,
 					'variant_id' => $experiment->variant_id,
-					'kpi' => $experiment->kpi,
+					'goals' => $experiment->goals,
 					'test_running' => $experiment->test_running,
 				);
 			}
