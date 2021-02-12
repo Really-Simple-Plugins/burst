@@ -29,6 +29,7 @@ if (intval($experiment_id)) {
 						<div class="burst-experiment-settings-info_title">
 							<p><?php echo get_the_title($experiment->variant_id); ?></p>
 							<a href="<?php echo get_permalink($experiment->variant_id) ?>"><?php _e('View', 'burst') ?></a>
+							 | 
 							<a href="<?php echo get_edit_post_link($experiment->variant_id) ?>"><?php _e('Edit', 'burst') ?></a>
 						</div>
 					</div>

@@ -335,8 +335,8 @@
 }
 .burst-experiment-dot:before{
 	content: ' ';
-	height: 15px;
-	width: 15px;
+	height: 17px;
+	width: 17px;
 	background-color: @grey;
 	border-radius: 50%;
 	display: inline-block;
@@ -345,8 +345,8 @@
 	margin-top: 2px;
 	text-align: center;
     color: #fff;
-    line-height: 1.4;
-    font-size: 10px;
+    line-height: 1.45;
+    font-size: 12px;
 }
 .burst-experiment-dot.dot-large:before{
 	height: 23px;
@@ -374,7 +374,6 @@
 .burst-accompanied-text{
 	color: @grey-dark;
 	font-size: 12px;
-	//font-weight: 300;
 }
 .burst-experiment-info-below-title{
 	padding: 10px 14px;
@@ -382,16 +381,18 @@
 	align-items: center;
 	font-size: 15px;
 	font-weight: 500;
-	min-width: 150px;
 	margin: 4px 0;
-	padding: 5px 7px;
+	padding: 5px 10px;
 	border-radius: 5px;
+	color: @rsp-black;
 	
 	&.control{
 		background-color: lighten(@rsp-blue, 70%, relative);
+		border: 1px solid @rsp-blue;
 	}
 	&.variant{
 		background-color: lighten(@rsp-yellow, 63%, relative);
+		border: 1px solid @rsp-yellow;
 	}
 }
 
