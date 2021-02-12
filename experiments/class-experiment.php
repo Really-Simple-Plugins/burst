@@ -25,9 +25,8 @@ function burst_install_experiments_table() {
             `date_modified` varchar(255) NOT NULL,
             `date_started` varchar(255) NOT NULL,
             `date_end` varchar(255) NOT NULL,
-            `kpi` text NOT NULL,
+            `goal` text NOT NULL,
             `statistics` text NOT NULL,
-            `percentage_included` int(11) NOT NULL,
               PRIMARY KEY  (ID)
             ) $charset_collate;";
 		dbDelta( $sql );
@@ -48,7 +47,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		public $date_modified = false;
 		public $date_started = false;
 		public $date_end = false;
-		public $kpi = false;
+		public $goal = false;
 		public $statistics = false;
 		public $percentage_included = 100;
 
@@ -144,7 +143,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				$this->date_modified 		= $experiment->date_modified;
 				$this->date_started 		= $experiment->date_started;
 				$this->date_end 			= $experiment->date_end;
-				$this->kpi 					= $experiment->kpi;
+				$this->goal 				= $experiment->goal;
 				$this->statistics 			= $experiment->statistics;
 				$this->percentage_included 	= $experiment->percentage_included;
 
@@ -287,7 +286,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				'date_modified'             => sanitize_text_field( $this->date_modified ),
 				'date_started'              => sanitize_text_field( $this->date_started ),
 				'date_end'                	=> sanitize_text_field( $this->date_end ),
-				'kpi'                		=> sanitize_text_field( $this->kpi ),
+				'goal'                		=> sanitize_text_field( $this->goal ),
 				'statistics'                => $this->statistics,
 				'percentage_included'		=> intval( $this->percentage_included ),
 			);
