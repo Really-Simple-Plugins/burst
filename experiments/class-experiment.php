@@ -49,7 +49,6 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		public $date_end = false;
 		public $goal = false;
 		public $statistics = false;
-		public $percentage_included = 100;
 
 		function __construct( $id = false, $set_defaults = true ) {
 
@@ -145,7 +144,6 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				$this->date_end 			= $experiment->date_end;
 				$this->goal 				= $experiment->goal;
 				$this->statistics 			= $experiment->statistics;
-				$this->percentage_included 	= $experiment->percentage_included;
 
 
 
@@ -288,7 +286,6 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				'date_end'                	=> sanitize_text_field( $this->date_end ),
 				'goal'                		=> sanitize_text_field( $this->goal ),
 				'statistics'                => $this->statistics,
-				'percentage_included'		=> intval( $this->percentage_included ),
 			);
 			global $wpdb;
 			$updated = $wpdb->update( $wpdb->prefix . 'burst_experiments',
