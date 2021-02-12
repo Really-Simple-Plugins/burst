@@ -248,12 +248,12 @@ if ( ! function_exists( 'burst_add_admin_bar_item' ) ) {
 		    }
 	    }
 
-		$admin_bar->add_menu(array(
-			'id'     	=> 'burst-add-experiment',
-			'parent' 	=> 'burst',
-			'title'  	=> __( 'Add experiment', 'burst' ),
-			'href'   	=> admin_url( 'admin.php?page=burst-experiments&action=new' ),
-		) );
+		// $admin_bar->add_menu(array(
+		// 	'id'     	=> 'burst-add-experiment',
+		// 	'parent' 	=> 'burst',
+		// 	'title'  	=> __( 'Add experiment', 'burst' ),
+		// 	'href'   	=> admin_url( 'admin.php?page=burst-experiments&action=new' ),
+		// ) );
 
 		
 	}

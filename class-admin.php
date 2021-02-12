@@ -184,6 +184,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			$experiment->variant_id = $new_post_id;
 			$experiment->test_running = false;
 			$experiment->date_created = time();
+			$experiment->date_modified = time();
 			$experiment->save();
 
 			update_post_meta( $post_id,'burst_experiment_id', $experiment->id );
@@ -209,18 +210,23 @@ if ( ! class_exists( "burst_admin" ) ) {
 			/*
 			* create experiment entry
 			*/
-		
-			$experiment = new BURST_EXPERIMENT();
+			$experiment_id = burst_get_experiment_id_for_post();
+
+			error_log(print_r($_POST, true));
+			//$goal = empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : 'Unnamed experiment';
+
+			$timeline = empty($_POST['timeline_select']) ? sanitize_text_field($_POST['timeline_select']) : false;
+			if ($timeline === 'custom') {
+				$timeline = intval($_POST['timeline_custom']);
+			}
+
+			$experiment = new BURST_EXPERIMENT($experiment_id);
 			$experiment->test_running = true;
 			$experiment->date_modified = time();
-			$experiment->date_modified = time();
-			$experiment->date_modified = time();
+			$experiment->date_started = time();
+			$experiment->date_end = strtotime("+ ".$timeline." days");
+			//$experiment->goal = $goal;
 			$experiment->save();
-
-			update_post_meta( $post_id,'burst_experiment_id', $experiment->id );
-
-			update_post_meta( $new_post_id,'burst_experiment_id', $experiment->id );
-			update_post_meta( $new_post_id,'post_status', 'experiment' );
 
 			return $new_post_id;
 		}
@@ -635,8 +641,8 @@ if ( ! class_exists( "burst_admin" ) ) {
 				<div class="wrap experiment">
 					<h1><?php _e( "Your experiments", 'burst' ) ?>
 						<?php //do_action( 'burst_after_experiment_title' ); ?>
-						<a href="<?php echo admin_url('admin.php?page=burst-experiments&action=new'); ?>"
-		                   class="page-title-action"><?php _e('Add experiment', 'burst') ?></a>
+						<!-- <a href="<?php //echo admin_url('admin.php?page=burst-experiments&action=new'); ?>"
+		                   class="page-title-action"><?php //_e('Add experiment', 'burst') ?></a> -->
 					</h1>
 
 					<form id="burst-experiment-filter" method="get"
