@@ -31,8 +31,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 			add_action('admin_init', array($this, 'init_grid') );
 			add_action('wp_ajax_burst_get_datatable', array($this, 'ajax_get_datatable'));
 
+			add_action( 'edit_form_top', array( $this, 'add_experiment_info_below_title' ));
 
-			add_action( 'admin_init',array( $this, 'process_burst_metaboxes' ) );
+			add_action( 'admin_init', array( $this, 'process_burst_metaboxes' ) );
 			add_action ( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
             add_action( 'add_meta_boxes', array( $this, 'add_burst_metabox_to_classic_editor' ) );
 
@@ -41,6 +42,20 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 		static function this() {
 			return self::$_this;
+		}
+
+		public function add_experiment_info_below_title( $post ) {
+		    if (!burst_user_can_manage()) return;
+
+			$post = isset($_GET['post']) ? $_GET['post'] : false;
+			$post_status = get_post_status($post);
+			if (burst_post_has_experiment($post)) {
+				if ($post_status == 'experiment') {
+					echo '<p class="burst-experiment-info-below-title variant"><span class="burst-experiment-dot variant dot-large"></span>'. __('Variant', 'burst') . '</p>';
+			    } else {
+			    	echo '<p class="burst-experiment-info-below-title control"><span class="burst-experiment-dot control dot-large"></span>'. __('Control', 'burst') . '</p>';
+			    }
+			}
 		}
 
         public function hide_publish_button_on_experiments(){
@@ -459,14 +474,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 				'burst',
 				array( $this, 'dashboard' )
 			);
-			add_submenu_page(
-				'burst',
-				__( 'Insights', 'burst' ),
-				__( 'Insights', 'burst' ),
-				'manage_options',
-				'burst-insights',
-				array( $this, 'insights' )
-			);
 
 			add_submenu_page(
 				'burst',
@@ -592,27 +599,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 			}
 			$args = array(
 				'page' => 'dashboard',
-				'content' => burst_grid_container($grid_html),
-			);
-			echo burst_get_template('admin_wrap.php', $args );
-		}
-
-		/**
-		 * Insights page
-		 */
-		public function insights() {
-
-			$grid_items = $this->grid_items;
-			//give each item the key as index
-			array_walk($grid_items, function(&$a, $b) { $a['index'] = $b; });
-
-			$grid_html = '';
-			foreach ($grid_items as $index => $grid_item) {
-				if($grid_item['page'] !== 'insights') continue;
-				$grid_html .= burst_grid_element($grid_item);
-			}
-			$args = array(
-				'page' => 'insights',
 				'content' => burst_grid_container($grid_html),
 			);
 			echo burst_get_template('admin_wrap.php', $args );

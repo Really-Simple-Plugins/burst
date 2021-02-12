@@ -17,27 +17,30 @@
 	.burst-experiment-save-button{
 		margin-top: @default-margin;
 	}
-	p.control{
-		margin-top: 4px;
-	}
 	.burst-experiment-settings-info{
 		//padding: 10px;
 		//border-radius: 5px;
 
-		a{
+		.burst-experiment-settings-info_container{
 			display: flex;
 			margin: 6px 0;
 			font-weight: 400;
 			font-size: 12px;
 			padding: 5px 7px;
 			border-radius: 5px;
+			//flex-wrap: wrap;
 			&.control{
 				background-color: lighten(@rsp-blue, 70%, relative);
 			}
 			&.variant{
 				background-color: lighten(@rsp-yellow, 63%, relative);
 			}
+			a, p{
+				width: 100%;
+				margin: 0;
+			}
 		}
+		
 		h4{
 			font-size: 13px;
 			margin: 15px 0 6px 0;

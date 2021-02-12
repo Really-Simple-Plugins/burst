@@ -17,10 +17,7 @@
 #burst-metabox-experiment-settings .burst-experiment-save-button {
   margin-top: 15px;
 }
-#burst-metabox-experiment-settings p.control {
-  margin-top: 4px;
-}
-#burst-metabox-experiment-settings .burst-experiment-settings-info a {
+#burst-metabox-experiment-settings .burst-experiment-settings-info .burst-experiment-settings-info_container {
   display: flex;
   margin: 6px 0;
   font-weight: 400;
@@ -28,11 +25,16 @@
   padding: 5px 7px;
   border-radius: 5px;
 }
-#burst-metabox-experiment-settings .burst-experiment-settings-info a.control {
+#burst-metabox-experiment-settings .burst-experiment-settings-info .burst-experiment-settings-info_container.control {
   background-color: #eaf8fe;
 }
-#burst-metabox-experiment-settings .burst-experiment-settings-info a.variant {
+#burst-metabox-experiment-settings .burst-experiment-settings-info .burst-experiment-settings-info_container.variant {
   background-color: #fefbf4;
+}
+#burst-metabox-experiment-settings .burst-experiment-settings-info .burst-experiment-settings-info_container a,
+#burst-metabox-experiment-settings .burst-experiment-settings-info .burst-experiment-settings-info_container p {
+  width: 100%;
+  margin: 0;
 }
 #burst-metabox-experiment-settings .burst-experiment-settings-info h4 {
   font-size: 13px;
