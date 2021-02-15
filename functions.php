@@ -139,18 +139,32 @@ if ( ! function_exists( 'burst_get_experiments' ) ) {
 	 */
 
 	function burst_get_experiments( $args = array() ) {
-		$args = wp_parse_args( $args, array( 'status' => 'active' ) );
+		$defaults = array(
+			'status' => 'active',
+			'order'  => 'DESC',
+			'orderby' => 'date_started',
+		);
+		$args = wp_parse_args( $args, $defaults );
 		$sql  = '';
+
+		$orderby = sanitize_title($args['orderby']);
+		$order = $args['order'] === 'DESC' ? 'DESC' : 'ASC';
 		global $wpdb;
 		if ( $args['status'] === 'archived' ) {
-			$sql = 'AND cdb.archived = true';
+			$sql .= ' AND cdb.archived = true';
 		}
 		if ( $args['status'] === 'active' ) {
-			$sql = 'AND cdb.archived = false';
+			$sql .= ' AND cdb.archived = false';
 		}
 
-		$experiments
-			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments as cdb where 1=1 $sql" );
+		if ( isset($args['test_running']) ) {
+			$test_running = boolval($args['test_running']) ? 'true' : 'false';
+			$sql .= " AND cdb.archived = $test_running";
+		}
+
+		$sql .= " ORDER BY $orderby $order";
+
+		$experiments = $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments as cdb where 1=1 $sql" );
 
 		return $experiments;
 	}
@@ -317,35 +331,6 @@ if ( ! function_exists( 'burst_random_str' ) ) {
 	        $pieces []= $keyspace[random_int(0, $max)];
 	    }
 	    return implode('', $pieces);
-	}
-}
-
-if ( ! function_exists( 'burst_get_active_experiments_id' ) ) {
-
-	/**
-	 * Get array of banner objects
-	 *
-	 * @param array $args
-	 *
-	 * @return stdClass Object
-	 */
-
-	function burst_get_active_experiments_id( $args = array() ) {
-		// $args = wp_parse_args( $args, array( 'status' => 'active' ) );
-		$sql  = '';
-		global $wpdb;
-		// if ( $args['status'] === 'archived' ) {
-		// 	$sql = 'AND cdb.archived = true and cdb.test_running = true';
-		// }
-
-		$experiments
-			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments where test_running = 1" );
-		if (!empty($experiments)){
-			return $experiments;	
-		} else {
-			return array();
-		}
-		
 	}
 }
 

@@ -4,64 +4,146 @@ defined( 'ABSPATH' ) or die( "you do not have acces to this page!" );
 add_action( 'wp_ajax_burst_get_experiment_statistics', 'burst_get_experiment_statistics' );
 /**
  * Function for getting statistics for display with Chart JS
- * @param  integer $experiment_id   Experiment ID, if no experiment ID is found get active experiments
- * @param  array   $data   			Select the data you want to display
  * @return json                     Returns a JSON that is compatible with Chart JS
  *
  * @todo  Real data should be displayed here
  */
-function burst_get_experiment_statistics($experiment_id = false, $data = array('visits', 'conversions', 'conversionrate') ){
-	if ( ! burst_user_can_manage() ) {
-		return;
-	}
-	if (!$experiment_id) {
-		error_log('No experiment id');
-		$experiment_id = burst_get_active_experiments_id();
-		error_log('experiment ID');
-		error_log(print_r($experiment_id, true));
-	}
-	$experiment_id[0]->ID;
-	$data = array(
-	    'labels' => array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
-	    'datasets' => array( array(
-	        'data' =>[8, 13, 8, 9, 6, 0, false],
-	        'backgroundColor' => 'rgba(231, 126, 35, 0.2)',
-	        'borderColor' => 'rgba(231, 126, 35, 1)',
-	        'label' => 'Original'
-	    ),
-	    array(
-	        'data' => array(8, 9, 12, 20, 6, 2.5 ,3),
-	        'backgroundColor' => 'rgba(51, 152, 219, 0.2)',
-	        'borderColor' => 'rgba(51, 152, 219, 1)',
-	        'label' => 'Variation'
-	    ))
-	);
-	// // we will pass post IDs and titles to this array
-	// $return = array();
+function burst_get_experiment_statistics(){
+	$error = false;
+//	if ( ! burst_user_can_manage() ) {
+//		$error = true;
+//	}
+//
+//	if ( !isset($_GET['experiment_id'])) {
+//		$error = true;
+//	}
+//
+//	if ( !$error ) {
+//		$experiment_id = intval( $_GET['experiment_id'] );
+//	}
 
-	// // you can use WP_Query, query_posts() or get_posts() here - it doesn't matter
-	// $search_results = new WP_Query( array( 
-	// 	's'=> $_GET['q'], // the search query
-	// 	'post_status' => 'publish', // if you don't want drafts to be returned
-	// 	'ignore_sticky_posts' => 1,
-	// 	'posts_per_page' => 50 // how much to show at once
-	// ) );
-	// if( $search_results->have_posts() ) :
-	// 	while( $search_results->have_posts() ) : $search_results->the_post();	
-	// 		// shorten the title a little
-	// 		$title = ( mb_strlen( $search_results->post->post_title ) > 50 ) ? mb_substr( $search_results->post->post_title, 0, 49 ) . '...' : $search_results->post->post_title;
-	// 		$return[] = array( $search_results->post->ID, $title ); // array( Post ID, Post Title )
-	// 	endwhile;
-	// endif;
+	if ( !$error ) {
+//		$consenttype = sanitize_title($_GET['consenttype']);
+//		$cat = sanitize_title($_GET['category']);
+//		$range = apply_filters('cmplz_ab_testing_duration', cmplz_get_value('a_b_testing_duration')) * DAY_IN_SECONDS;
+//
+//		//for each day, counting back from "now" to the first day, get the date.
+//		$now = time();
+//		$start_time = $now - $range;
+//		$nr_of_periods = $this->get_nr_of_periods('DAY', $start_time );
+//		$data = array();
+//		for ($i = $nr_of_periods; $i >= 0; $i--) {
+//			$unix_day = strtotime("-$i days");
+//			$date = date( get_option( 'date_format' ), $unix_day);
+//			$data['labels'][] = $date;
+//		}
+
+		//generate a dataset for each category
+//		$cookiebanners = cmplz_get_cookiebanners();
+//		$i=0;
+//		$ab_testing_enabled = cmplz_ab_testing_enabled();
+//		foreach ($cookiebanners as $cookiebanner ) {
+//			//when not ab testing, show only default banner.
+//			if ( !$ab_testing_enabled && !$cookiebanner->default ) continue;
+//
+//			$cookiebanner = new CMPLZ_COOKIEBANNER( $cookiebanner->ID);
+//			$borderDash = array(0,0);
+//			$title = empty($cookiebanner->title) ? 'banner_'.$cookiebanner->position.'_'.$i : $cookiebanner->title;
+//
+//			if (!$cookiebanner->default) {
+//				$borderDash = array(10,10);
+//			} else {
+//				$title .= " (".__("default", "burst").")";
+//			}
+//
+//			//get hits grouped per timeslot. default day
+//			$hits = $this->get_grouped_consent_array($cookiebanner->id, $cat, $consenttype, $start_time );
+//			$data['datasets'][] = array(
+//				'data' => $hits,
+//				'backgroundColor' => $this->get_graph_color($i, 'background'),
+//				'borderColor' => $this->get_graph_color($i),
+//				'label' => $title,
+//				'fill' => 'false',
+//				'borderDash' => $borderDash,
+//			);
+//			$i++;
+//		}
+
+		$data = array(
+			'labels' => array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
+			'datasets' => array( array(
+				'data' =>[8, 13, 8, 9, 6, 0, false],
+				'backgroundColor' => 'rgba(231, 126, 35, 0.2)',
+				'borderColor' => 'rgba(231, 126, 35, 1)',
+				'label' => 'Original'
+			),
+				array(
+					'data' => array(8, 9, 12, 20, 6, 2.5 ,3),
+					'backgroundColor' => 'rgba(51, 152, 219, 0.2)',
+					'borderColor' => 'rgba(51, 152, 219, 1)',
+					'label' => 'Variation'
+				))
+		);
+
+	}
+
+	if (isset($data['datasets'])) {
+		//get highest hit count for max value
+		$max = max(array_map('max',array_column( $data['datasets'], 'data' )));
+		$data['max'] = $max > 5 ? $max : 5;
+	} else {
+		$data['datasets'][] = array(
+			'data' => array(0),
+			'backgroundColor' => burst_get_graph_color(0, 'background'),
+			'borderColor' => burst_get_graph_color(0),
+			'label' => __("No data for this selection", "burst"),
+			'fill' => 'false',
+		);
+		$data['max'] = 5;
+	}
+
 	$return  = array(
-		'success' => true,
-		'message' => 'success',
+		'success' => !$error,
 		'data'    => $data,
+		'title'    => __('Experiment', "burst"),
 	);
 	echo json_encode( $return );
-	error_log(print_r($return, true));
 	die;
 }
+
+
+
+/**
+ * Get color for a graph
+ * @param int     $index
+ * @param string $type
+ *
+ * @return string
+ */
+
+function burst_get_graph_color( $index , $type = 'default' ) {
+	$o = $type = 'background' ? '1' : '1';
+	switch ($index) {
+		case 0:
+			return "rgba(255, 99, 132, $o)";
+		case 1:
+			return "rgba(255, 159, 64, $o)";
+		case 2:
+			return "rgba(255, 205, 86, $o)";
+		case 3:
+			return "rgba(75, 192, 192, $o)";
+		case 4:
+			return "rgba(54, 162, 235, $o)";
+		case 5:
+			return "rgba(153, 102, 255, $o)";
+		case 6:
+			return "rgba(201, 203, 207, $o)";
+		default:
+			return "rgba(238, 126, 35, $o)";
+
+	}
+}
+
 /**
  * Get the latest visit for a UID for a specific page. 
  * Specify a data_variable if you just want the result for a specific parameter

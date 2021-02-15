@@ -519,7 +519,7 @@ if ( ! class_exists( "burst_admin" ) ) {
             $this->grid_items = array(
                 1 => array(
                     'title' => __("Your last experiment", "burst"),
-                    'content' => '<div class="burst-skeleton burst-skeleton-statistics"></div><canvas class="burst-chartjs-stats" width="400" height="400"></canvas>',
+                    'content' => '<canvas class="burst-chartjs-stats" width="400" height="400"></canvas>',
                     'class' => 'table-overview burst-load-ajax',
                     'type' => 'no-type',
                     'controls' => sprintf(__("Remaining tasks (%s)", "burst"), count( $this->get_warnings() )),

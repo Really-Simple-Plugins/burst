@@ -196,7 +196,7 @@ if ( ! function_exists( 'burst_add_admin_bar_item' ) ) {
 	        return;
 	    }
 	    $test_running = false;
-	    $active_experiments = burst_get_active_experiments_id();
+	    $active_experiments = burst_get_experiments(array( 'test_running' => true ));
 	    $count = count($active_experiments);
 	    $color = $count > 0 ? 'burst-green' : 'grey';
 	    $icon = '<span class="burst-bullet '. $color .'"></span>';

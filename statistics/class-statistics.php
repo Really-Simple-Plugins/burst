@@ -48,9 +48,6 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 		}
 
 
-
-
-
 		/**
 		 * Add a new statistic database entry
 		 */
