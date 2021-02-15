@@ -177,12 +177,15 @@ jQuery(document).ready(function ($) {
         burstInitChartJS()
     }
 
+    $(document).on('change', 'select[name=burst_selected_experiment_id]', function(){
+        burstInitChartJS();
+    });
+
     function burstInitChartJS() {
         var XscaleLabelDisplay = true;
         var YscaleLabelDisplay = true;
         var titleDisplay = true;
         var legend = true;
-        var chartTitle = 'loading....';
         var config = {
             type: 'line',
             data: {

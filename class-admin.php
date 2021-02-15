@@ -14,10 +14,8 @@ if ( ! class_exists( "burst_admin" ) ) {
 			}
 
 			self::$_this = $this;
-			add_action( 'admin_enqueue_scripts',
-				array( $this, 'enqueue_assets' ) );
-			add_action( 'admin_menu', array( $this, 'register_admin_page' ),
-				20 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+			add_action( 'admin_menu', array( $this, 'register_admin_page' ), 20 );
 
 			$plugin = burst_plugin;
 			add_filter( "plugin_action_links_$plugin",
@@ -30,7 +28,10 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			add_action('admin_init', array($this, 'init_grid') );
 			add_action('wp_ajax_burst_get_datatable', array($this, 'ajax_get_datatable'));
-
+			$is_wpsi_page = isset($_GET['page']) && $_GET['page'] === 'burst' ? true : false;
+			if ($is_wpsi_page) {
+				add_action('admin_head', array($this, 'inline_styles'));
+			}
 
 			add_action( 'admin_init',array( $this, 'process_burst_metaboxes' ) );
 			add_action ( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
@@ -327,14 +328,19 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 
 		public function enqueue_assets( $hook ) {
-			// if ( strpos( $hook, 'burst' ) === false
-			// ) {
-			// 	return;
-			// }
+			 if ( strpos( $hook, 'burst' ) === false
+			 ) {
+			 	return;
+			 }
 			wp_register_style( 'burst',
 				trailingslashit( burst_url ) . 'assets/css/admin.css', "",
 				burst_version );
 			wp_enqueue_style( 'burst' );
+
+			//datapicker
+			wp_enqueue_style( 'burst-datepicker' , trailingslashit(burst_url) . 'assets/datepicker/datepicker.css', "", burst_version);
+			wp_enqueue_script('burst-moment', trailingslashit(burst_url) . 'assets/datepicker/moment.js', array("jquery"), burst_version);
+			wp_enqueue_script('burst-datepicker', trailingslashit(burst_url) . 'assets/datepicker/datepicker.js', array("jquery", "burst-moment"), burst_version);
 
 			//select2
 			wp_register_style( 'select2',
@@ -515,14 +521,19 @@ if ( ! class_exists( "burst_admin" ) ) {
 			            'capability' => 'manage_options',
 		            ),
             ));
-
+            $date_control =
+            '<div class="burst-date-container burst-date-range">
+                <i class="dashicons dashicons-calendar-alt"></i>&nbsp;
+                <span></span>
+                <i class="dashicons dashicons-arrow-down-alt2"></i>
+            </div>';
             $this->grid_items = array(
                 1 => array(
                     'title' => __("Your last experiment", "burst"),
                     'content' => '<canvas class="burst-chartjs-stats" width="400" height="400"></canvas>',
                     'class' => 'table-overview burst-load-ajax',
                     'type' => 'no-type',
-                    'controls' => sprintf(__("Remaining tasks (%s)", "burst"), count( $this->get_warnings() )),
+                    'controls' => $date_control,
                     'can_hide' => true,
                     'page' => 'dashboard',
                     'body' => 'admin_wrap',
@@ -595,6 +606,99 @@ if ( ! class_exists( "burst_admin" ) ) {
 				'content' => burst_grid_container($grid_html),
 			);
 			echo burst_get_template('admin_wrap.php', $args );
+		}
+
+		public function inline_styles()
+		{
+			?>
+            <script type="text/javascript">
+                jQuery(document).ready(function ($) {
+                    "use strict";
+
+                    var unixStart = localStorage.getItem('wpsi_range_start');
+                    var unixEnd = localStorage.getItem('wpsi_range_end');
+
+                    if (unixStart === null || unixEnd === null ) {
+                        unixStart = moment().endOf('day').subtract(1, 'week').unix();
+                        unixEnd = moment().endOf('day').unix();
+                        localStorage.setItem('wpsi_range_start', unixStart);
+                        localStorage.setItem('wpsi_range_end', unixEnd);
+                    }
+
+                    unixStart = parseInt(unixStart);
+                    unixEnd = parseInt(unixEnd);
+                    burstUpdateDate(moment.unix(unixStart), moment.unix(unixEnd));
+
+                    function burstUpdateDate(start, end) {
+                        $('.wpsi-date-container span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                        localStorage.setItem('wpsi_range_start', start.add( moment().utcOffset(), 'm' ).unix());
+                        localStorage.setItem('wpsi_range_end', end.add( moment().utcOffset(), 'm' ).unix());
+                    }
+                    var todayStart = moment().endOf('day').subtract(1, 'days').add(1, 'minutes');
+                    var todayEnd = moment().endOf('day');
+                    var yesterdayStart = moment().endOf('day').subtract(2, 'days').add(1, 'minutes');
+
+                    var yesterdayEnd = moment().endOf('day').subtract(1, 'days');
+                    var lastWeekStart = moment().endOf('day').subtract(8, 'days').add(1, 'minutes');
+                    var lastWeekEnd = moment().endOf('day').subtract(1, 'days');
+
+                    $('.wpsi-date-container.burst-date-range').daterangepicker(
+                        {
+                            ranges: {
+                                'Today': [todayStart, todayEnd],
+                                'Yesterday': [yesterdayStart, yesterdayEnd],
+                                'Last 7 Days': [lastWeekStart, lastWeekEnd],
+                                'Last 30 Days': [moment().subtract(31, 'days'), yesterdayEnd],
+                                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                            },
+                            "locale": {
+                                "format": "<?php _e( 'MM/DD/YYYY', 'burst' );?>",
+                                "separator": " - ",
+                                "applyLabel": "<?php _e("Apply","burst")?>",
+                                "cancelLabel": "<?php _e("Cancel","burst")?>",
+                                "fromLabel": "<?php _e("From","burst")?>",
+                                "toLabel": "<?php _e("To","burst")?>",
+                                "customRangeLabel": "<?php _e("Custom","burst")?>",
+                                "weekLabel": "<?php _e("W","burst")?>",
+                                "daysOfWeek": [
+                                    "<?php _e("Mo","burst")?>",
+                                    "<?php _e("Tu","burst")?>",
+                                    "<?php _e("We","burst")?>",
+                                    "<?php _e("Th","burst")?>",
+                                    "<?php _e("Fr","burst")?>",
+                                    "<?php _e("Sa","burst")?>",
+                                    "<?php _e("Su","burst")?>",
+
+                                ],
+                                "monthNames": [
+                                    "<?php _e("January")?>",
+                                    "<?php _e("February")?>",
+                                    "<?php _e("March")?>",
+                                    "<?php _e("April")?>",
+                                    "<?php _e("May")?>",
+                                    "<?php _e("June")?>",
+                                    "<?php _e("July")?>",
+                                    "<?php _e("August")?>",
+                                    "<?php _e("September")?>",
+                                    "<?php _e("October")?>",
+                                    "<?php _e("November")?>",
+                                    "<?php _e("December")?>"
+                                ],
+                                "firstDay": 1
+                            },
+                            "alwaysShowCalendars": true,
+                            startDate: moment.unix(unixStart),
+                            endDate: moment.unix(unixEnd),
+                            "opens": "left",
+                        }, function (start, end, label) {
+                            burstUpdateDate(start, end);
+                            window.burstInitChartJS();
+                        });
+
+                });
+            </script>
+			<?php
 		}
 
 		/**
