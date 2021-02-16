@@ -52,7 +52,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			if (burst_post_has_experiment($post)) {
 				if ($post_status == 'experiment') {
 					echo '<p class="burst-experiment-info-below-title variant"><span class="burst-experiment-dot variant dot-large"></span>'. __('Variant', 'burst') . '</p>';
-			    } else {
+			    } elseif ($post_status == 'publish'){
 			    	echo '<p class="burst-experiment-info-below-title control"><span class="burst-experiment-dot control dot-large"></span>'. __('Control', 'burst') . '</p>';
 			    }
 			}
@@ -84,13 +84,15 @@ if ( ! class_exists( "burst_admin" ) ) {
 			if (!burst_user_can_manage()) return;
 
 			$post = isset($_GET['post']) ? $_GET['post'] : false;
+			if (!$post) return;
+
 			$post_status = get_post_status($post);
 			
 			if ($post_status == 'experiment') {
 				add_meta_box('burst_edit_meta_box', __('Setup experiment', 'burst'), array($this, 'show_burst_variant_metabox'), null, 'side', 'high', array(
 					//'__block_editor_compatible_meta_box' => true,
 				));			
-			} else {
+			} elseif ($post_status == 'publish') {
 				add_meta_box('burst_edit_meta_box', __('Create experiment', 'burst'), array($this, 'show_burst_control_metabox'), null, 'side', 'high', array(
 					//'__block_editor_compatible_meta_box' => true,
 				));
@@ -139,15 +141,22 @@ if ( ! class_exists( "burst_admin" ) ) {
 				$redirect_id = $_POST["burst_redirect_to_variant"];
 			} elseif ( isset( $_POST["burst_start_experiment_button"] ) ){
 				$redirect_id = $this->start_experiment();
+			} elseif ( isset( $_POST["burst_stop_experiment_button"] ) ){
+				$redirect_id = $this->stop_experiment();
 			}
 			
 			/**
 			* redirect to duplicated post also known as the variant
 			*/ 
-			if (isset($redirect_id)) {
+			if (isset($redirect_id) && intval($redirect_id)) {
 				error_log('redirect');
 				$url = get_admin_url().'post.php?post='.$redirect_id.'&action=edit';
 				error_log($url);
+				if ( wp_redirect( $url ) ) {
+				    exit;
+				}
+			} elseif (isset($redirect_id) && $redirect_id === 'dashboard') {
+				$url = get_admin_url().'admin.php?page=burst';
 				if ( wp_redirect( $url ) ) {
 				    exit;
 				}
@@ -175,7 +184,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			* create experiment entry
 			*/
 			error_log('burst title' . $_POST['burst_title']);
-			$experiment_title = empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : 'Unnamed experiment';
+			$experiment_title = !empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : 'Unnamed experiment';
 		
 			$experiment = new BURST_EXPERIMENT();
 			$experiment->archived = false;
@@ -206,29 +215,82 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 		public function start_experiment(){
 			if (!burst_user_can_manage()) return;
-
+			error_log('Start experiment');
 			/*
 			* create experiment entry
 			*/
-			$experiment_id = burst_get_experiment_id_for_post();
+		
+			$post_id = intval( $_POST['burst_original_post_id'] ) ? $_POST['burst_original_post_id'] : false;
+			error_log('post_id: '. $post_id);
+			if (!$post_id) return;
+
+			$experiment_id = burst_get_experiment_id_for_post($post_id);
+			if (!$experiment_id) return;
+			// error_log('Experiment id for post: ' . $experiment_id);
 
 			error_log(print_r($_POST, true));
-			//$goal = empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : 'Unnamed experiment';
+			// //$goal = empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : 'Unnamed experiment';
 
-			$timeline = empty($_POST['timeline_select']) ? sanitize_text_field($_POST['timeline_select']) : false;
+			$timeline = !empty($_POST['burst_timeline_select']) ? sanitize_text_field($_POST['burst_timeline_select']) : 'false';
+			error_log($timeline);
 			if ($timeline === 'custom') {
-				$timeline = intval($_POST['timeline_custom']);
+				$timeline = intval($_POST['burst_timeline_custom']);
+			}
+			error_log('timeline: ' . print_r($timeline, true));
+
+			$goal = !empty($_POST['burst_goal']) ? sanitize_text_field($_POST['burst_goal']) : false;
+			if ($goal === 'click-on-element') {
+				$goal = sanitize_text_field($_POST['burst_goal_element_id_or_class']);
+			} elseif ($goal === 'page-visit') {
+				$goal = intval($_POST['burst_goal_url']);
 			}
 
 			$experiment = new BURST_EXPERIMENT($experiment_id);
+
+			error_log('experiment in start experiment');
+			error_log(print_r($experiment, true));
+
 			$experiment->test_running = true;
 			$experiment->date_modified = time();
 			$experiment->date_started = time();
 			$experiment->date_end = strtotime("+ ".$timeline." days");
-			//$experiment->goal = $goal;
+			$experiment->goal = $goal;
 			$experiment->save();
 
-			return $new_post_id;
+
+			$url_refer = 'dashboard?experiment_id='.$experiment_id;
+
+			return $url_refer;
+		}
+
+		public function stop_experiment(){
+			if (!burst_user_can_manage()) return;
+
+			/*
+			* create experiment entry
+			*/
+		
+			$post_id = intval( $_POST['burst_original_post_id'] ) ? $_POST['burst_original_post_id'] : false;
+			if (!$post_id) return;
+
+			$experiment_id = burst_get_experiment_id_for_post($post_id);
+			if (!$experiment_id) return;
+
+			$experiment = new BURST_EXPERIMENT($experiment_id);
+
+			error_log('experiment in start experiment');
+			error_log(print_r($experiment, true));
+
+			$experiment->test_running = false;
+			$experiment->date_modified = time();
+			$experiment->date_end = time();
+			$experiment->archived = true;
+			$experiment->save();
+
+
+			$url_refer = 'dashboard?experiment_id='.$experiment_id;
+
+			return $url_refer;
 		}
 
 		/**
