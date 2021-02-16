@@ -10,80 +10,75 @@ add_action( 'wp_ajax_burst_get_experiment_statistics', 'burst_get_experiment_sta
  */
 function burst_get_experiment_statistics(){
 	$error = false;
-//	if ( ! burst_user_can_manage() ) {
-//		$error = true;
-//	}
-//
-//	if ( !isset($_GET['experiment_id'])) {
-//		$error = true;
-//	}
-//
-//	if ( !$error ) {
-//		$experiment_id = intval( $_GET['experiment_id'] );
-//	}
+	if ( ! burst_user_can_manage() ) {
+		$error = true;
+	}
+
+	if ( !isset($_GET['experiment_id'])) {
+		$error = true;
+	}
 
 	if ( !$error ) {
-//		$consenttype = sanitize_title($_GET['consenttype']);
-//		$cat = sanitize_title($_GET['category']);
-//		$range = apply_filters('cmplz_ab_testing_duration', cmplz_get_value('a_b_testing_duration')) * DAY_IN_SECONDS;
-//
-//		//for each day, counting back from "now" to the first day, get the date.
-//		$now = time();
-//		$start_time = $now - $range;
-//		$nr_of_periods = $this->get_nr_of_periods('DAY', $start_time );
-//		$data = array();
-//		for ($i = $nr_of_periods; $i >= 0; $i--) {
-//			$unix_day = strtotime("-$i days");
-//			$date = date( get_option( 'date_format' ), $unix_day);
-//			$data['labels'][] = $date;
-//		}
+		$experiment_id = intval( $_GET['experiment_id'] );
+	}
+
+	if ( !$error ) {
+		$date_start = intval( $_GET['date_start'] );
+		$date_end = intval( $_GET['date_end'] );
+		//for each day, counting back from "now" to the first day, get the date.
+		$nr_of_periods = burst_get_nr_of_periods('DAY', $date_start , $date_end);
+		$end_date_days_ago = burst_nr_of_periods_ago('DAY', $date_end);
+
+		$data = array();
+		for ($i = $nr_of_periods-1; $i >= 0; $i--) {
+			$days = $i + $end_date_days_ago;
+			$unix_day = strtotime("-$days days");
+			$date = date( get_option( 'date_format' ), $unix_day);
+			$data['labels'][] = $date;
+		}
 
 		//generate a dataset for each category
-//		$cookiebanners = cmplz_get_cookiebanners();
-//		$i=0;
-//		$ab_testing_enabled = cmplz_ab_testing_enabled();
-//		foreach ($cookiebanners as $cookiebanner ) {
-//			//when not ab testing, show only default banner.
-//			if ( !$ab_testing_enabled && !$cookiebanner->default ) continue;
-//
-//			$cookiebanner = new CMPLZ_COOKIEBANNER( $cookiebanner->ID);
-//			$borderDash = array(0,0);
-//			$title = empty($cookiebanner->title) ? 'banner_'.$cookiebanner->position.'_'.$i : $cookiebanner->title;
-//
-//			if (!$cookiebanner->default) {
-//				$borderDash = array(10,10);
-//			} else {
-//				$title .= " (".__("default", "burst").")";
-//			}
-//
-//			//get hits grouped per timeslot. default day
-//			$hits = $this->get_grouped_consent_array($cookiebanner->id, $cat, $consenttype, $start_time );
-//			$data['datasets'][] = array(
-//				'data' => $hits,
-//				'backgroundColor' => $this->get_graph_color($i, 'background'),
-//				'borderColor' => $this->get_graph_color($i),
-//				'label' => $title,
-//				'fill' => 'false',
-//				'borderDash' => $borderDash,
-//			);
-//			$i++;
-//		}
-
-		$data = array(
-			'labels' => array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
-			'datasets' => array( array(
-				'data' =>[8, 13, 8, 9, 6, 0, false],
-				'backgroundColor' => 'rgba(231, 126, 35, 0.2)',
-				'borderColor' => 'rgba(231, 126, 35, 1)',
-				'label' => 'Original'
-			),
-				array(
-					'data' => array(8, 9, 12, 20, 6, 2.5 ,3),
-					'backgroundColor' => 'rgba(51, 152, 219, 0.2)',
-					'borderColor' => 'rgba(51, 152, 219, 1)',
-					'label' => 'Variation'
-				))
+		$i=0;
+		$test_versions = array(
+			'control',
+			'variant',
 		);
+		foreach ($test_versions as $test_version ) {
+			$borderDash = array(0,0);
+			$title = ucfirst($test_version);
+			if ( $test_version === 'variant' ) {
+				$borderDash = array(10,10);
+			}
+
+			//get hits grouped per timeslot. default day
+			$hits = burst_get_grouped_statistics_array($experiment_id, 'control', $date_start, $date_end);
+
+			$data['datasets'][] = array(
+				'data' => $hits,
+				'backgroundColor' => burst_get_graph_color($i, 'background'),
+				'borderColor' => burst_get_graph_color($i),
+				'label' => $title,
+				'fill' => 'false',
+				'borderDash' => $borderDash,
+			);
+			$i++;
+		}
+		//test data
+		//		$data = array(
+		//			'labels' => array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
+		//			'datasets' => array( array(
+		//				'data' =>[8, 13, 8, 9, 6, 0, false],
+		//				'backgroundColor' => 'rgba(231, 126, 35, 0.2)',
+		//				'borderColor' => 'rgba(231, 126, 35, 1)',
+		//				'label' => 'Original'
+		//			),
+		//				array(
+		//					'data' => array(8, 9, 12, 20, 6, 2.5 ,3),
+		//					'backgroundColor' => 'rgba(51, 152, 219, 0.2)',
+		//					'borderColor' => 'rgba(51, 152, 219, 1)',
+		//					'label' => 'Variation'
+		//				))
+		//		);
 
 	}
 
@@ -111,7 +106,73 @@ function burst_get_experiment_statistics(){
 	die;
 }
 
+/**
+ * @param int $experiment_id
+ * @param string $test_version
+ * @param int $start
+ * @param int $end
+ *
+ * @return array
+ */
 
+function burst_get_grouped_statistics_array($experiment_id, $test_version, $start, $end ) {
+	global $wpdb;
+
+	$test_version = ( $test_version === 'variant') ? 'variant' : 'control';
+	$sql = "SELECT COUNT(*) as hit_count, CONCAT(YEAR(from_unixtime(time)),'-',DAYOFYEAR(from_unixtime(time)) ) as period
+					FROM {$wpdb->prefix}burst_statistics where experiment_id = $experiment_id AND test_version='$test_version' AND time>$start AND time<$end
+					GROUP BY CONCAT(YEAR(from_unixtime(time)),'-',DAYOFYEAR(from_unixtime(time)) ) order by period asc";
+
+	$results = $wpdb->get_results($sql);
+	error_log(print_r($results, true));
+	$nr_of_periods = burst_get_nr_of_periods('DAY', $start, $end );
+	error_log("periods $nr_of_periods");
+	$end_date_days_ago = burst_nr_of_periods_ago('DAY', $end );
+
+	$data = array();
+
+	//count back from end until zero days.
+	for ($i = $nr_of_periods-1; $i >= 0; $i--) {
+		$days = $i + $end_date_days_ago;
+		$unix_day = strtotime("-$days days");
+		$day_of_year = date("z", $unix_day ) + 1;
+		$year = date('Y', $unix_day);
+		$index = array_search( $year.'-'.$day_of_year, array_column( $results, 'period' ) );
+		if ( $index === false ) {
+			$data[$nr_of_periods-$i] = false;
+		} else {
+			$data[$nr_of_periods-$i] = $results[$index]->hit_count;
+		}
+	}
+
+	return $data;
+}
+
+/**
+ * @param string $period
+ * @param int $start_time
+ * @param int $end_time
+ *
+ * @return float
+ */
+
+function burst_get_nr_of_periods($period, $start_time, $end_time ){
+	$range_in_seconds = $end_time - $start_time;
+	$period_in_seconds = constant(strtoupper($period).'_IN_SECONDS' );
+	return ROUND($range_in_seconds/$period_in_seconds);
+}
+
+/**
+ * @param string $period
+ * @param int $time
+ *
+ * @return float
+ */
+function burst_nr_of_periods_ago($period, $time ){
+	$range_in_seconds = time() - $time;
+	$period_in_seconds = constant(strtoupper($period).'_IN_SECONDS' );
+	return ROUND($range_in_seconds/$period_in_seconds);
+}
 
 /**
  * Get color for a graph

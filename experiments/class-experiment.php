@@ -16,11 +16,10 @@ function burst_install_experiments_table() {
 		$table_name = $wpdb->prefix . 'burst_experiments';
 		$sql        = "CREATE TABLE $table_name (
             `ID` int(11) NOT NULL AUTO_INCREMENT,
-            `archived` int(11) NOT NULL,
             `title` varchar(255) NOT NULL,
             `variant_id` int(11) NOT NULL,
             `control_id` int(11) NOT NULL,
-            `test_running` boolean NOT NULL,
+            `status` varchar(255) NOT NULL,
             `date_created` varchar(255) NOT NULL,
             `date_modified` varchar(255) NOT NULL,
             `date_started` varchar(255) NOT NULL,
@@ -39,11 +38,10 @@ function burst_install_experiments_table() {
 if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 	class BURST_EXPERIMENT {
 		public $id = false;
-		public $archived = false;
 		public $title;
 		public $variant_id = false;
 		public $control_id = false;
-		public $test_running = false;
+		public $status = 'draft';
 		public $date_created = false;
 		public $date_modified = false;
 		public $date_started = false;
@@ -52,9 +50,14 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		public $statistics = false;
 		public $percentage_included = 100;
 
-		function __construct( $id = false, $set_defaults = true ) {
+		function __construct( $id = false, $post_id = false ) {
 
-			$this->id = $id;
+			//if a post id is passed, use the post id to find the linked experiment
+			if ( !$id && is_numeric($post_id) ) {
+				$this->id = burst_get_experiment_id_for_post($post_id);
+			} else {
+				$this->id = $id;
+			}
 
 			if ( $this->id !== false ) {
 				//initialize the experiment settings with this id.
@@ -62,9 +65,6 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			}
 
 		}
-
-
-
 
 
 		/**
@@ -129,17 +129,15 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				return;
 			}
 
-			$experiments
-				= $wpdb->get_results( $wpdb->prepare( "select * from {$wpdb->prefix}burst_experiments where ID = %s",
-				intval( $this->id ) ) );
+			error_log("#1");
+			$experiment = $wpdb->get_row( $wpdb->prepare( "select * from {$wpdb->prefix}burst_experiments where ID = %s", intval( $this->id ) ) );
+			error_log("#2");
 
-			if ( isset( $experiments[0] ) ) {
-				$experiment         		= $experiments[0];
-				$this->archived       		= $experiment->archived;
+			if ( $experiment ) {
 				$this->title          		= $experiment->title;
 				$this->variant_id 			= $experiment->variant_id;
 				$this->control_id 			= $experiment->control_id;
-				$this->test_running 		= $experiment->test_running;
+				$this->status 		        = $experiment->status;
 				$this->date_created 		= $experiment->date_created;
 				$this->date_modified 		= $experiment->date_modified;
 				$this->date_started 		= $experiment->date_started;
@@ -148,113 +146,29 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				$this->statistics 			= $experiment->statistics;
 				$this->percentage_included 	= $experiment->percentage_included;
 
-
-
-
-		
-
-				/**
-				 * Fallback if upgrade didn't complete successfully
-				 */
-
-				// if ( $this->set_defaults ) {
-				// 	if ($this->use_categories === true ) {
-				// 		$this->use_categories = 'legacy';
-				// 	} elseif ( $this->use_categories === false ) {
-				// 		$this->use_categories = 'no';
-				// 	}
-				// 	if ($this->use_categories_optinstats  === true) {
-				// 		$this->use_categories_optinstats = 'legacy';
-				// 	} elseif ( $this->use_categories_optinstats === false ) {
-				// 		$this->use_categories_optinstats = 'no';
-				// 	}
-				// }
-
 			}
 
 		}
 
 		/**
-		 * Check if this field is translatable
-		 *
-		 * @param $fieldname
-		 *
-		 * @return bool
+		 * Start the experiment
 		 */
 
-		private function translate( $value, $fieldname ) {
-			$key = $this->translation_id;
-
-			if ( function_exists( 'pll__' ) ) {
-				$value = pll__( $value );
-			}
-
-			if ( function_exists( 'icl_translate' ) ) {
-				$value = icl_translate( 'burst', $fieldname . $key,
-					$value );
-			}
-
-			$value = apply_filters( 'wpml_translate_single_string', $value,
-				'burst', $fieldname . $key );
-
-			return $value;
-
-		}
-
-		private function register_translation( $string, $fieldname ) {
-			$key = $this->translation_id;
-			//polylang
-			if ( function_exists( "pll_register_string" ) ) {
-				pll_register_string( $fieldname . $key, $string, 'burst' );
-			}
-
-			//wpml
-			if ( function_exists( 'icl_register_string' ) ) {
-				icl_register_string( 'burst', $fieldname . $key, $string );
-			}
-
-			do_action( 'wpml_register_single_string', 'burst', $fieldname,
-				$string );
-
+		public function start(){
+			$this->status = 'active';
+			$this->date_modified = time();
+			$this->save();
 		}
 
 		/**
-		 * Get a prefix for translation registration
-		 * For backward compatibility we don't use a key when only one banner, or when the lowest.
-		 * If we don't use this, all field names from each banner will be the same, registering won't work.
-		 *
-		 * @return string
+		 * Start the experiment
 		 */
 
-		public function get_translation_id() {
-			//if this is the banner with the lowest ID's, no ID
-			global $wpdb;
-			$lowest = $wpdb->get_var( "select min(ID) from {$wpdb->prefix}burst_experiments" );
-			if ( $lowest == $this->id ) {
-				return '';
-			} else {
-				return $this->id;
-			}
+		public function stop(){
+			$this->status = 'completed';
+			$this->date_modified = time();
+			$this->save();
 		}
-
-		/**
-		 * Get a default value
-		 *
-		 * @param $fieldname
-		 *
-		 * @return string
-		 */
-
-		private function get_default( $fieldname ) {
-			if (!$this->set_defaults) return false;
-
-			$default
-				= ( isset( burst::$config->fields[ $fieldname ]['default'] ) )
-				? burst::$config->fields[ $fieldname ]['default'] : '';
-
-			return $default;
-		}
-
 
 		/**
 		 * Save the edited data in the object
@@ -273,16 +187,11 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				$this->add();
 			}
 
-			if ( ! is_array( $this->statistics ) ) {
-				$this->statistics = array();
-			}
-			$statistics   = serialize( $this->statistics );
 			$update_array = array(
-				'archived'            		=> intval( $this->archived ),
 				'title'                     => sanitize_text_field( $this->title ),
 				'variant_id'                => intval( $this->variant_id ),
 				'control_id'                => intval( $this->control_id ),
-				'test_running'              => boolval( $this->test_running ),
+				'status'                    => burst_sanitize_experiment_status( $this->status ),
 				'date_created'              => sanitize_text_field( $this->date_created ),
 				'date_modified'             => sanitize_text_field( $this->date_modified ),
 				'date_started'              => sanitize_text_field( $this->date_started ),
@@ -299,9 +208,8 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 
 		}
 
-
 		/**
-		 * Delete a cookie variation
+		 * Delete an experiment
 		 *
 		 * @return bool $success
 		 * @since 2.0
@@ -343,7 +251,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				return;
 			}
       
-			$this->archived = true;
+			$this->status = 'archived';
 
 			$this->save();
 		}
@@ -359,95 +267,9 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				return;
 			}
 
-			$this->archived = false;
+			$this->status = 'draft';
 			$this->save();
 		}
-
-		/**
-		 * Get the conversion to marketing for a experiment
-		 *
-		 * @return float percentage
-		 *
-		 * @todo  Aanpassen of verwijderen
-		 */
-
-		public function conversion_percentage( $filter_consenttype ) {
-			if ( $this->archived ) {
-				if ( ! isset( $this->statistics[ $filter_consenttype ] ) ) {
-					return 0;
-				}
-				$total = 0;
-				$all   = 0;
-				foreach (
-					$this->statistics[ $filter_consenttype ] as $status =>
-					$count
-				) {
-					$total += $count;
-					if ( $status === 'all' ) {
-						$all = $count;
-					}
-				}
-
-				$total = ( $total == 0 ) ? 1 : $total;
-				$score = ROUND( 100 * ( $all / $total ) );
-			} else {
-
-				$total = 0;
-				$all   = 0;
-				foreach ( $statuses as $status ) {
-					$count = $this->get_count( $status, $filter_consenttype );
-
-					$total += $count;
-					if ( $status === 'all' ) {
-						$all = $count;
-					}
-				}
-
-				$total = ( $total == 0 ) ? 1 : $total;
-
-				$score = ROUND( 100 * ( $all / $total ) );
-
-				return $score;
-			}
-
-			return $score;
-		}
-
-		/**
-		 * Get the count for this status and consenttype.
-		 *
-		 * @param $status
-		 * @param $consenttype
-		 *
-		 * @return int $count
-		 *
-		 * @todo  Aanpassen of verwijderen
-		 */
-
-		public function get_count( $status, $consenttype = false ) {
-			global $wpdb;
-			$status          = sanitize_title( $status );
-			$consenttype_sql = " AND consenttype='$consenttype'";
-
-			if ( $consenttype === 'all' ) {
-				$consenttypes    = burst_get_used_consenttypes();
-				$consenttype_sql = " AND (consenttype='"
-				                   . implode( "' OR consenttype='",
-						$consenttypes ) . "')";
-			}
-
-			$sql
-				= $wpdb->prepare( "SELECT count(*) from {$wpdb->prefix}burst_statistics WHERE status = %s "
-				                  . $consenttype_sql, $status );
-			if ( burst::$cookie_admin->experimenting_enabled() ) {
-				$sql = $wpdb->prepare( $sql . " AND experiment_id=%s",
-					$this->id );
-			}
-			$count = $wpdb->get_var( $sql );
-
-			return $count;
-		}
-		
 
 	}
 

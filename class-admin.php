@@ -28,15 +28,13 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			add_action('admin_init', array($this, 'init_grid') );
 			add_action('wp_ajax_burst_get_datatable', array($this, 'ajax_get_datatable'));
-			$is_wpsi_page = isset($_GET['page']) && $_GET['page'] === 'burst' ? true : false;
-			if ($is_wpsi_page) {
-				add_action('admin_head', array($this, 'inline_styles'));
+			$is_burst_page = isset($_GET['page']) && $_GET['page'] === 'burst' ? true : false;
+			if ($is_burst_page) {
+				add_action('admin_footer', array($this, 'inline_styles'), 999);
 			}
-
 			add_action( 'admin_init',array( $this, 'process_burst_metaboxes' ) );
 			add_action ( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
             add_action( 'add_meta_boxes', array( $this, 'add_burst_metabox_to_classic_editor' ) );
-
 			add_action( 'admin_head', array( $this, 'hide_publish_button_on_experiments' ) );
 		}
 
@@ -69,23 +67,62 @@ if ( ! class_exists( "burst_admin" ) ) {
 		{	
 			if (!burst_user_can_manage()) return;
 
-			$post = isset($_GET['post']) ? $_GET['post'] : false;
-			$post_status = get_post_status($post);
-			
+			$post_id = isset($_GET['post']) ? intval($_GET['post']) : false;
+			$post_status = get_post_status($post_id);
+
 			if ($post_status == 'experiment') {
-				add_meta_box('burst_edit_meta_box', __('Setup experiment', 'burst'), array($this, 'show_burst_variant_metabox'), null, 'side', 'high', array(
+				add_meta_box('burst_edit_meta_box', __('Setup experiment', 'burst'), array($this, 'show_burst_variant_metabox'), null, 'side', 'default', array(
 					//'__block_editor_compatible_meta_box' => true,
 				));			
 			} else {
-				add_meta_box('burst_edit_meta_box', __('Create experiment', 'burst'), array($this, 'show_burst_control_metabox'), null, 'side', 'high', array(
+				add_meta_box('burst_edit_meta_box', __('Create experiment', 'burst'), array($this, 'show_burst_control_metabox'), null, 'side', 'default', array(
 					//'__block_editor_compatible_meta_box' => true,
 				));
 			}
+
+            $this->maybe_sort_metabox('burst_edit_meta_box');
+
 			wp_register_style( 'burst-metabox-css',
 				trailingslashit( burst_url ) . 'assets/css/metabox.css', "",
 				burst_version );
 			wp_enqueue_style( 'burst-metabox-css' );
-			
+		}
+
+
+		/**
+         * Put our metabox right below the publish post box
+		 * @param string $key
+		 */
+		public function maybe_sort_metabox($key) {
+			$user_id = get_current_user_id();
+			//only do this once
+		    if ( get_user_meta( $user_id, 'burst_sorted_metaboxes', true) ){
+		        return;
+		    }
+
+		    global $post;
+		    $post_type = get_post_type($post);
+
+			$order = get_user_option("meta-box-order_$post_type", get_current_user_id() );
+			if ( !$order['side'] ) {
+				$new_order = array(
+                    'submitdiv',
+                    $key,
+                );
+			} else  {
+				$new_order = explode(",", $order['side'] );
+				for( $i=0 ; $i < count ($new_order) ; $i++ ){
+					$temp = $new_order[$i];
+					if ( $new_order[$i] == $key && $i != 1) {
+						$new_order[$i] = $new_order[1];
+						$new_order[1] = $temp;
+					}
+				}
+			}
+
+			$order['side'] = implode(",",$new_order);
+			update_user_option( $user_id, "meta-box-order_".$post_type, $order, true);
+			update_user_meta( $user_id, 'burst_sorted_metaboxes', true);
 		}
 
 		
@@ -105,110 +142,93 @@ if ( ! class_exists( "burst_admin" ) ) {
 		 * 
 		 */
 		public function show_burst_variant_metabox(){
-
 		    if (!burst_user_can_manage()) return;
 			include( dirname( __FILE__ ) . "/experiments/metabox-variation.php" );
-			
 		}
-		
+
 		/**
-		 * Function for post duplication. Dups appear as drafts. User is redirected to the edit screen
-		 *
+         * Function for post duplication. Dups appear as drafts. User is redirected to the edit screen
 		 */
+
 		public function process_burst_metaboxes()
 		{
 			if (!burst_user_can_manage()) return;
-
+			if (!isset($_POST['post_ID'])) return;
+			error_log(print_r($_POST, true));
+            $post_id = intval($_POST['post_ID']);
 			if ( isset( $_POST["burst_create_experiment_button"] ) ){
-				$redirect_id = $this->create_experiment();
+				$redirect_id = $this->create_experiment($post_id);
 			} elseif ( isset( $_POST["burst_go_to_setup_experiment_button"] ) ){
-				$redirect_id = $_POST["burst_redirect_to_variant"];
+				$redirect_id = intval($_POST["burst_redirect_to_variant"]);
 			} elseif ( isset( $_POST["burst_start_experiment_button"] ) ){
-				$redirect_id = $this->start_experiment();
+				$redirect_id = $post_id;
+				$experiment = new BURST_EXPERIMENT(false, $post_id );
+				$experiment->start();
+			} elseif ( isset( $_POST["burst_stop_experiment_button"] ) ){
+				$redirect_id = $post_id;
+				$experiment = new BURST_EXPERIMENT(false, $post_id );
+				$experiment->stop();
 			}
-			
-			/**
+
+			/*
 			* redirect to duplicated post also known as the variant
-			*/ 
+			*/
+
 			if (isset($redirect_id)) {
 				error_log('redirect');
-				$url = get_admin_url().'post.php?post='.$redirect_id.'&action=edit';
+				$url = add_query_arg(array( 'post' => $redirect_id, 'action' => 'edit'), admin_url('post.php') );
 				error_log($url);
 				if ( wp_redirect( $url ) ) {
 				    exit;
 				}
-			} else {
-				error_log('no redirect');
 			}
+
 		}
 
-		public function create_experiment(){
-			if (!burst_user_can_manage()) return;
-
-			$post_id = intval( $_POST['burst_original_post_id'] ) ? $_POST['burst_original_post_id'] : false;
-			error_log('post_id: '. $post_id);
-			if (!$post_id) return;
-			
-				
-			if ($_POST["burst_duplicate_or_choose_existing"] === 'duplicate') {
-				error_log('duplicate');
-				$new_post_id = $this->duplicate_post($post_id);
-			} elseif($_POST["burst_duplicate_or_choose_existing"] === 'existing-page'){
-				$new_post_id = intval($_POST["burst_variant_id"]);
+		/**
+         * Create a new experiment for this post
+		 * @param int $post_ID
+		 *
+		 * @return false|int
+		 */
+		public function create_experiment( $post_id ){
+			if (!burst_user_can_manage()) {
+			    return false;
 			}
 
-			/*
+			error_log('post_id: '. $post_id);
+			if (!$post_id) return false;
+
+			if ($_POST["burst_duplicate_or_choose_existing"] === 'duplicate') {
+				error_log('duplicate');
+				$variant_id = $this->duplicate_post($post_id);
+			} else {
+				error_log('existing');
+				$variant_id = intval($_POST["burst_variant_id"]);
+				$args = array(
+					'ID'           => $variant_id,
+					'post_status' => 'experiment',
+					'hidden_post_status' => 'experiment',
+				);
+				wp_update_post($args);
+			}
+
+			/**
 			* create experiment entry
 			*/
 			error_log('burst title' . $_POST['burst_title']);
-			$experiment_title = empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : 'Unnamed experiment';
-		
+			$experiment_title = !empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : __('Unnamed experiment', 'burst');
 			$experiment = new BURST_EXPERIMENT();
-			$experiment->archived = false;
 			$experiment->title = $experiment_title;
 			$experiment->control_id = $post_id;
-			$experiment->variant_id = $new_post_id;
-			$experiment->test_running = false;
+			$experiment->variant_id = $variant_id;
 			$experiment->date_created = time();
 			$experiment->save();
 
 			update_post_meta( $post_id,'burst_experiment_id', $experiment->id );
+			update_post_meta( $variant_id,'burst_experiment_id', $experiment->id );
 
-			update_post_meta( $new_post_id,'burst_experiment_id', $experiment->id );
-
-			$args = array(
-				'ID'           => $new_post_id,
-				'post_status' => 'experiment',
-				'hidden_post_status' => 'experiment',
-			);
-
-			$new_post_id = wp_update_post($args);
-
-			update_post_meta( $new_post_id,'post_status', 'experiment' );
-
-			return $new_post_id;
-		}
-
-		public function start_experiment(){
-			if (!burst_user_can_manage()) return;
-
-			/*
-			* create experiment entry
-			*/
-		
-			$experiment = new BURST_EXPERIMENT();
-			$experiment->test_running = true;
-			$experiment->date_modified = time();
-			$experiment->date_modified = time();
-			$experiment->date_modified = time();
-			$experiment->save();
-
-			update_post_meta( $post_id,'burst_experiment_id', $experiment->id );
-
-			update_post_meta( $new_post_id,'burst_experiment_id', $experiment->id );
-			update_post_meta( $new_post_id,'post_status', 'experiment' );
-
-			return $new_post_id;
+			return $variant_id;
 		}
 
 		/**
@@ -217,38 +237,23 @@ if ( ! class_exists( "burst_admin" ) ) {
 		 */
 		public function duplicate_post($post_id)
 		{
-			if (!burst_user_can_manage()) return;
+			if (!burst_user_can_manage()) return false;
 			global $wpdb;
 
-			error_log('duplicate');
-			/*
-			 *  all the original post data then
-			 */
 			$post = get_post($post_id);
-
 			$current_user = wp_get_current_user();
 			$new_post_author = $current_user->ID;
-
-			/*
-			 * if post data exists, create the post duplicate
-			 */
-			error_log('clicked');
-
 			if (isset($post) && $post != null) {
-				error_log('isset');
+//
+//				/*
+//				 * create new slug
+//				 */
+//				if (isset($post->post_name)) {
+//					$slug = $post->post_name . '_' . __( "experiment", 'burst' );
+//				} else {
+//					$slug = __( "experiment", 'burst' );
+//				}
 
-				/*
-				 * create new slug
-				 */
-				if (isset($post->post_name)) { 
-					$slug = $post->post_name . '_' . __( "experiment", 'burst' );
-				} else {
-					$slug = __( "experiment", 'burst' );
-				}
-
-				/*
-				 * new post data array
-				 */
 				$args = array(
 					'comment_status' => $post->comment_status,
 					'post_status' => 'experiment',
@@ -256,20 +261,14 @@ if ( ! class_exists( "burst_admin" ) ) {
 					'post_author' => $new_post_author,
 					'post_content' => $post->post_content,
 					'post_excerpt' => $post->post_excerpt,
-					'post_name' => $slug,
 					'post_parent' => $post->post_parent,
 					'post_password' => $post->post_password,
-					'post_title' => __('Duplicate:', 'burst') . ' ' . $post->post_title,
+					'post_title' => __('Variant:', 'burst') . ' ' . $post->post_title,
 					'post_slug' => $post->post_title,
 					'post_type' => $post->post_type,
 					'to_ping' => $post->to_ping,
 					'menu_order' => $post->menu_order
 				);
-
-				/*
-				 * insert the post by wp_insert_post() function
-				 */
-
 				$new_post_id = wp_insert_post($args);
 
 				/*
@@ -370,7 +369,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			wp_enqueue_script( 'burst-admin',
 				burst_url . "assets/js/admin$minified.js",
-				array( 'jquery' ), burst_version, true );
+				array( 'jquery' ), burst_version, false );
 
 			wp_localize_script(
 				'burst-admin',
@@ -465,14 +464,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 				'burst',
 				array( $this, 'dashboard' )
 			);
-			add_submenu_page(
-				'burst',
-				__( 'Insights', 'burst' ),
-				__( 'Insights', 'burst' ),
-				'manage_options',
-				'burst-insights',
-				array( $this, 'insights' )
-			);
 
 			add_submenu_page(
 				'burst',
@@ -527,6 +518,7 @@ if ( ! class_exists( "burst_admin" ) ) {
                 <span></span>
                 <i class="dashicons dashicons-arrow-down-alt2"></i>
             </div>';
+
             $this->grid_items = array(
                 1 => array(
                     'title' => __("Your last experiment", "burst"),
@@ -608,31 +600,143 @@ if ( ! class_exists( "burst_admin" ) ) {
 			echo burst_get_template('admin_wrap.php', $args );
 		}
 
+		/**
+		 * Some scripts to load the graph
+		 */
 		public function inline_styles()
 		{
 			?>
             <script type="text/javascript">
                 jQuery(document).ready(function ($) {
+                    function burstInitChartJS() {
+                        var XscaleLabelDisplay = true;
+                        var YscaleLabelDisplay = true;
+                        var titleDisplay = true;
+                        var legend = true;
+                        var config = {
+                            type: 'line',
+                            data: {
+                                labels: ['...', '...', '...', '...', '...', '...', '...'],
+                                datasets: [{
+                                    label: '...',
+                                    backgroundColor: 'rgb(255, 99, 132)',
+                                    borderColor: 'rgb(255, 99, 132)',
+                                    data: [
+                                        0, 0, 0, 0, 0, 0, 0,
+                                    ],
+                                    fill: false,
+                                }
+
+                                ]
+                            },
+                            options: {
+                                legend:{
+                                    display:legend,
+                                },
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                title: {
+                                    display: titleDisplay,
+                                    text: 'Select an experiment'
+                                },
+                                tooltips: {
+                                    mode: 'index',
+                                    intersect: false,
+                                },
+                                hover: {
+                                    mode: 'nearest',
+                                    intersect: true
+                                },
+                                scales: {
+                                    xAxes: [{
+                                        display: XscaleLabelDisplay,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: 'Date'
+                                        }
+                                    }],
+                                    yAxes: [{
+                                        display: YscaleLabelDisplay,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: 'Count'
+                                        },
+                                        ticks: {
+                                            beginAtZero: true,
+                                            min: 0,
+                                            max: 1,
+                                            stepSize: 5
+                                        }
+                                    }]
+                                }
+                            }
+                        };
+
+                        var ctx = document.getElementsByClassName('burst-chartjs-stats');
+                        window.conversionGraph = new Chart(ctx, config);
+                        var date_start = localStorage.getItem('burst_range_start');
+                        var date_end = localStorage.getItem('burst_range_end');
+
+                        var experiment_id = $('select[name=burst_selected_experiment_id]').val();
+                        if (experiment_id>0) {
+                            $.ajax({
+                                type: "get",
+                                dataType: "json",
+                                url: ajaxurl,
+                                data: {
+                                    action: "burst_get_experiment_statistics",
+                                    experiment_id: experiment_id,
+                                    date_start: date_start,
+                                    date_end: date_end,
+                                },
+                                success: function (response) {
+                                    console.log(response);
+                                    if (response.success == true) {
+                                        var i = 0;
+                                        response.data.datasets.forEach(function (dataset) {
+                                            if (config.data.datasets.hasOwnProperty(i)) {
+                                                config.data.datasets[i] = dataset;
+                                            } else {
+                                                var newDataset = dataset;
+                                                config.data.datasets.push(newDataset);
+                                            }
+
+                                            i++;
+                                        });
+                                        config.data.labels = response.data.labels;
+                                        config.options.title.text = response.title;
+                                        config.options.scales.yAxes[0].ticks.max = parseInt(response.data.max);
+                                        window.conversionGraph.update();
+                                    } else {
+                                        alert("Your experiment data could not be loaded")
+                                    }
+                                }
+                            })
+                        }
+                    }
+
                     "use strict";
 
-                    var unixStart = localStorage.getItem('wpsi_range_start');
-                    var unixEnd = localStorage.getItem('wpsi_range_end');
+                    var unixStart = localStorage.getItem('burst_range_start');
+                    var unixEnd = localStorage.getItem('burst_range_end');
 
                     if (unixStart === null || unixEnd === null ) {
                         unixStart = moment().endOf('day').subtract(1, 'week').unix();
                         unixEnd = moment().endOf('day').unix();
-                        localStorage.setItem('wpsi_range_start', unixStart);
-                        localStorage.setItem('wpsi_range_end', unixEnd);
+                        localStorage.setItem('burst_range_start', unixStart);
+                        localStorage.setItem('burst_range_end', unixEnd);
                     }
 
                     unixStart = parseInt(unixStart);
                     unixEnd = parseInt(unixEnd);
                     burstUpdateDate(moment.unix(unixStart), moment.unix(unixEnd));
+                    console.log("run init chart js");
+                    burstInitChartJS();
 
                     function burstUpdateDate(start, end) {
-                        $('.wpsi-date-container span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-                        localStorage.setItem('wpsi_range_start', start.add( moment().utcOffset(), 'm' ).unix());
-                        localStorage.setItem('wpsi_range_end', end.add( moment().utcOffset(), 'm' ).unix());
+                        $('.burst-date-container span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                        localStorage.setItem('burst_range_start', start.add( moment().utcOffset(), 'm' ).unix());
+                        localStorage.setItem('burst_range_end', end.add( moment().utcOffset(), 'm' ).unix());
                     }
                     var todayStart = moment().endOf('day').subtract(1, 'days').add(1, 'minutes');
                     var todayEnd = moment().endOf('day');
@@ -641,8 +745,7 @@ if ( ! class_exists( "burst_admin" ) ) {
                     var yesterdayEnd = moment().endOf('day').subtract(1, 'days');
                     var lastWeekStart = moment().endOf('day').subtract(8, 'days').add(1, 'minutes');
                     var lastWeekEnd = moment().endOf('day').subtract(1, 'days');
-
-                    $('.wpsi-date-container.burst-date-range').daterangepicker(
+                    $('.burst-date-container.burst-date-range').daterangepicker(
                         {
                             ranges: {
                                 'Today': [todayStart, todayEnd],
@@ -693,10 +796,17 @@ if ( ! class_exists( "burst_admin" ) ) {
                             "opens": "left",
                         }, function (start, end, label) {
                             burstUpdateDate(start, end);
-                            window.burstInitChartJS();
+                            burstInitChartJS();
                         });
 
+
+                        $(document).on('change', 'select[name=burst_selected_experiment_id]', function(){
+                            console.log('change');
+                            burstInitChartJS();
+                        });
                 });
+
+
             </script>
 			<?php
 		}

@@ -1,6 +1,21 @@
 .burst-noticed-hook-element {
   display: none;
 }
+.burst-date-container {
+  background: #fff;
+  cursor: pointer;
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  white-space: nowrap;
+  color: #333;
+}
+@media screen and (max-width: 480px) {
+  .burst-date-container {
+    width: 18px;
+    overflow: hidden;
+  }
+}
 #burst {
   margin: 0 0 0 -20px;
   font-size: 14px;
@@ -37,8 +52,9 @@
   display: flex;
   align-items: center;
 }
-#burst #burst-header .burst-header-right a {
-  margin-right: 15px;
+#burst #burst-header .burst-header-right a,
+#burst #burst-header .burst-header-right button {
+  margin-left: 15px;
 }
 #burst #burst-content-area {
   margin: 10px;

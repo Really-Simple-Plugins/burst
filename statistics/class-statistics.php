@@ -1,7 +1,7 @@
 <?php
 defined( 'ABSPATH' ) or die( "you do not have acces to this page!" );
 
-/*
+/**
  * Install statistic table
  * */
 
@@ -17,6 +17,7 @@ function burst_install_statistics_table() {
 		$sql        = "CREATE TABLE $table_name (
 			`ID` int(11) NOT NULL AUTO_INCREMENT ,
             `page_id` int(11) NOT NULL,
+            `experiment_id` int(11) NOT NULL,
             `page_url` varchar(255) NOT NULL,
             `time` varchar(255) NOT NULL,
             `uid` varchar(255) NOT NULL,
@@ -47,16 +48,11 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 
 		}
 
-
 		/**
 		 * Add a new statistic database entry
 		 */
 
 		private function add() {
-			// if ( ! current_user_can( 'manage_options' ) ) {
-			// 	return false;
-			// }
-
 			$array = array(
 				'page_url' => $this->page_url,
 				'uid' => $this->uid,

@@ -105,9 +105,6 @@ class burst_experiment_Table extends WP_List_Table {
 				<option value="active" <?php if ( $status === 'active' )
 					echo "selected" ?>><?php _e( 'Active Experiments',
 						'burst' ) ?></option>
-				<option value="archived" <?php if ( $status === 'archived' )
-					echo "selected" ?>><?php _e( 'Archived Experiments',
-						'burst' ) ?></option>
 			</select>
 			<?php submit_button( $text, 'button', false, false,
 				array( 'ID' => 'search-submit' ) ); ?>
@@ -150,16 +147,24 @@ class burst_experiment_Table extends WP_List_Table {
 		return $name . $this->row_actions( $actions );
 	}
 
-	public function column_test_running( $item ) {
-		error_log('test running');
-		error_log(print_r($item, true));
-		$test_running = ! empty( $item['test_running'] ) 
-			? '<span class="burst-bullet burst-green"></span> <b>' . __( 'Active', 'burst' ) . '</b>'
-			: '<em>' . __( 'Not set', 'burst' ) . '</em>';
-
-		$test_running = apply_filters( 'burst_experiment_test_running', $test_running );
-
-		return $test_running;
+	public function column_status( $item ) {
+		switch( $item['status'] ) {
+			case 'archived':
+				$status = __( 'Archived', 'burst' );
+				break;
+			case 'active':
+				$status = __( 'Active', 'burst' );
+				break;
+			case 'completed':
+				$status = __( 'Completed', 'burst' );
+				break;
+			case 'draft':
+			default:
+				$status = __( 'Draft', 'burst' );
+				break;
+		}
+		$status =  '<span class="burst-bullet burst-green"></span> <b>' . $status . '</b>';
+		return apply_filters( 'burst_experiment_status', $status );
 	}
 
 	public function column_kpi( $item ) {
@@ -215,17 +220,18 @@ class burst_experiment_Table extends WP_List_Table {
 			'control_id' => __( 'Control', 'burst' ),
 			'variant_id' => __( 'Variant', 'burst' ),
 			'kpi' => __( 'Key performance indicator', 'burst' ),
-			'test_running' => __( 'Active', 'burst' ),
+			'status' => __( 'Active', 'burst' ),
 		);
 
-		if ( ! $this->show_default_only ) {
-			$columns['control_id'] = __( 'Control', 'burst' );
-			$columns['variant_id'] = __( 'Variant', 'burst' );
-			$columns['kpi'] = __( 'Goal', 'burst' );
-			$columns['test_running'] = __( 'Active', 'burst' );
-		}
+//not sure what this should do @hessel
+//		if ( ! $this->show_default_only ) {
+//			$columns['control_id'] = __( 'Control', 'burst' );
+//			$columns['variant_id'] = __( 'Variant', 'burst' );
+//			$columns['kpi'] = __( 'Goal', 'burst' );
+//			$columns['status'] = __( 'Active', 'burst' );
+//		}
 
-		return apply_filters( 'burst_report_customer_columns', $columns );
+		return apply_filters( 'burst_experiment_columns', $columns );
 
 	}
 

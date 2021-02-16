@@ -172,120 +172,6 @@ jQuery(document).ready(function ($) {
         });
     }
 
-    //chartJS dropdown
-    if ($('.burst-chartjs-stats').length) {
-        burstInitChartJS()
-    }
-
-    $(document).on('change', 'select[name=burst_selected_experiment_id]', function(){
-        burstInitChartJS();
-    });
-
-    function burstInitChartJS() {
-        var XscaleLabelDisplay = true;
-        var YscaleLabelDisplay = true;
-        var titleDisplay = true;
-        var legend = true;
-        var config = {
-            type: 'line',
-            data: {
-                labels: ['...', '...', '...', '...', '...', '...', '...'],
-                datasets: [{
-                    label: '...',
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    borderColor: 'rgb(255, 99, 132)',
-                    data: [
-                        0, 0, 0, 0, 0, 0, 0,
-                    ],
-                    fill: false,
-                }
-
-                ]
-            },
-            options: {
-                legend:{
-                    display:legend,
-                },
-                responsive: true,
-                maintainAspectRatio: false,
-                title: {
-                    display: titleDisplay,
-                    text: 'Select an experiment'
-                },
-                tooltips: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                hover: {
-                    mode: 'nearest',
-                    intersect: true
-                },
-                scales: {
-                    xAxes: [{
-                        display: XscaleLabelDisplay,
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Date'
-                        }
-                    }],
-                    yAxes: [{
-                        display: YscaleLabelDisplay,
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Count'
-                        },
-                        ticks: {
-                            beginAtZero: true,
-                            min: 0,
-                            max: 1,
-                            stepSize: 5
-                        }
-                    }]
-                }
-            }
-        };
-
-        var ctx = document.getElementsByClassName('burst-chartjs-stats');
-        window.conversionGraph = new Chart(ctx, config);
-        var date_start = '';
-        var date_end = '';
-        var experiment_id = $('select[name=burst_selected_experiment_id]').val();
-        if (experiment_id>0) {
-            $.ajax({
-                type: "get",
-                dataType: "json",
-                url: ajaxurl,
-                data: {
-                    action: "burst_get_experiment_statistics",
-                    experiment_id: experiment_id,
-                    date_start: date_start,
-                    date_end: date_end,
-                },
-                success: function (response) {
-                    console.log(response);
-                    if (response.success == true) {
-                        var i = 0;
-                        response.data.datasets.forEach(function (dataset) {
-                            if (config.data.datasets.hasOwnProperty(i)) {
-                                config.data.datasets[i] = dataset;
-                            } else {
-                                var newDataset = dataset;
-                                config.data.datasets.push(newDataset);
-                            }
-
-                            i++;
-                        });
-                        config.data.labels = response.data.labels;
-                        config.options.title.text = response.title;
-                        config.options.scales.yAxes[0].ticks.max = parseInt(response.data.max);
-                        window.conversionGraph.update();
-                    } else {
-                        alert("Your experiment data could not be loaded")
-                    }
-                }
-            })
-        }
-    }
 
     /**
      * Ajax loading of tables
@@ -299,6 +185,7 @@ jQuery(document).ready(function ($) {
         });
     };
 
+    var lastSelectedPage;
     window.burstLoadAjaxTables();
     function burstInitSingleDataTable(container) {
         var table = container.find('.burst-table');
@@ -432,3 +319,4 @@ jQuery(document).ready(function ($) {
     }
 
 });
+

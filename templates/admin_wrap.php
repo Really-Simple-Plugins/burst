@@ -20,7 +20,6 @@
                     ?>
 
                 </select>
-                <a href="https://wpburst.com/docs/" class="link-black" target="_blank"><?php _e("Documentation", "burst")?></a>
                 <a href="https://wpburst.com/support" class="button button-black" target="_blank"><?php _e("Support", "burst") ?></a>
             </div>
 		</div>

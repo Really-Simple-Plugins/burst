@@ -72,7 +72,7 @@ if ( ! function_exists( 'burst_get_value' ) ) {
 				: $default;
 		}
 
-		/*
+		/**
          * Translate output
          *
          * */
@@ -135,7 +135,7 @@ if ( ! function_exists( 'burst_get_experiments' ) ) {
 	 *
 	 * @param array $args
 	 *
-	 * @return stdClass Object
+	 * @return array
 	 */
 
 	function burst_get_experiments( $args = array() ) {
@@ -150,23 +150,37 @@ if ( ! function_exists( 'burst_get_experiments' ) ) {
 		$orderby = sanitize_title($args['orderby']);
 		$order = $args['order'] === 'DESC' ? 'DESC' : 'ASC';
 		global $wpdb;
-		if ( $args['status'] === 'archived' ) {
-			$sql .= ' AND cdb.archived = true';
-		}
-		if ( $args['status'] === 'active' ) {
-			$sql .= ' AND cdb.archived = false';
-		}
 
-		if ( isset($args['test_running']) ) {
-			$test_running = boolval($args['test_running']) ? 'true' : 'false';
-			$sql .= " AND cdb.archived = $test_running";
+		if ( isset($args['status']) ) {
+			$status = burst_sanitize_experiment_status($args['status']);
+			$sql .= " AND cdb.status = '$status'";
 		}
 
 		$sql .= " ORDER BY $orderby $order";
 
-		$experiments = $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments as cdb where 1=1 $sql" );
+		return  $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments as cdb where 1=1 $sql" );
+	}
+}
 
-		return $experiments;
+if ( !function_exists( 'burst_sanitize_experiment_status' )) {
+	/**
+	 * Sanitize the status
+	 * @param string $status
+	 *
+	 * @return string
+	 */
+	function burst_sanitize_experiment_status($status) {
+		$statuses = array(
+			'draft',
+			'active',
+			'completed',
+			'archived',
+		);
+		if ( in_array( $status, $statuses )) {
+			return $status;
+		} else {
+			return 'draft';
+		}
 	}
 }
 
@@ -338,13 +352,13 @@ if ( ! function_exists( 'burst_post_has_experiment' ) ) {
 
 	/**
 	 * Check if post has experiment attached
-	 * @param $post_id
+	 * @param int|bool $post_id
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
 	
 	function burst_post_has_experiment($post_id = false){
-		if (!$post_id) return;
+		if (!$post_id) return false;
 
 		$experiment_id = get_post_meta($post_id, 'burst_experiment_id');
 		$has_experiment = intval($experiment_id) ? true : false;
@@ -358,18 +372,15 @@ if ( ! function_exists( 'burst_get_experiment_id_for_post' ) ) {
 
 	/**
 	 * Check if post has experiment attached
-	 * @param $post_id
+	 * @param int|bool $post_id
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
 	
-	function burst_get_experiment_id_for_post($post_id = false){
-
+	function burst_get_experiment_id_for_post( $post_id = false){
 		if (!$post_id) return false;
 
-		$experiment_id = get_post_meta($post_id, 'burst_experiment_id', true);
-
-		return $experiment_id;
+		return get_post_meta($post_id, 'burst_experiment_id', true);
 	}
 
 }
@@ -378,9 +389,9 @@ if ( ! function_exists( 'burst_get_variant_id_for_post' ) ) {
 
 	/**
 	 * Check if post has experiment attached
-	 * @param $post_id
+	 * @param int|bool $post_id
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
 	
 	function burst_get_variant_id_for_post($post_id = false){
