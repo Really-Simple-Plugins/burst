@@ -146,6 +146,7 @@ jQuery(document).ready(function ($) {
                     data: function (params) {
                         return {
                             q: params.term, // search query
+                            query: query_settings,
                             action: 'burst_get_posts' // AJAX action for admin-ajax.php
                         };
                     },
@@ -167,7 +168,7 @@ jQuery(document).ready(function ($) {
                 cache: true
             },
             minimumInputLength: 2, // the minimum of symbols to input before perform a search
-            debug: true,
+            debug: true, //@todo remove debug
             width:'100%',
         });
     }

@@ -259,8 +259,10 @@ function burst_get_posts_ajax_callback(){
 	$return = array();
  
 	$search_results = new WP_Query( array( 
-		's'=> $_GET['q'], 
-		'posts_per_page' => 100
+		's'=> $_GET['q'],
+		'post_status'=> $_GET['post_status'],
+		'post_type'=> $_GET['post_type'],
+		'posts_per_page' => 25
 	) );
 	if( $search_results->have_posts() ) :
 		while( $search_results->have_posts() ) : $search_results->the_post();	
@@ -359,6 +361,9 @@ if ( ! function_exists( 'burst_post_has_experiment' ) ) {
 	 */
 	
 	function burst_post_has_experiment($post_id = false){
+		if (!$post_id) {
+			$post_id = burst_get_current_post_id();			
+		}
 		if (!$post_id) return;
 
 		$experiment_id = get_post_meta($post_id, 'burst_experiment_id');
@@ -379,11 +384,10 @@ if ( ! function_exists( 'burst_get_experiment_id_for_post' ) ) {
 	 */
 	
 	function burst_get_experiment_id_for_post($post_id = false){
-
-		if (!$post_id){
-			$post_id = get_the_ID();
+		if (!$post_id) {
+			$post_id = burst_get_current_post_id();			
 		}
-		if (!$post_id) return false;
+		if (!$post_id) return;
 
 		$experiment_id = get_post_meta($post_id, 'burst_experiment_id', true);
 
@@ -402,11 +406,12 @@ if ( ! function_exists( 'burst_get_variant_id_for_post' ) ) {
 	 */
 	
 	function burst_get_variant_id_for_post($post_id = false){
+		if (!$post_id) {
+			$post_id = burst_get_current_post_id();			
+		}
+		if (!$post_id) return;
 
-		if (!$post_id) return false;
-		error_log("post id ".$post_id);
 		$experiment_id = burst_get_experiment_id_for_post( $post_id);
-		error_log("experiment_id id ".$experiment_id);
 
 		$experiment = new BURST_EXPERIMENT($experiment_id);
 
@@ -415,3 +420,46 @@ if ( ! function_exists( 'burst_get_variant_id_for_post' ) ) {
 
 }
 
+if ( ! function_exists( 'burst_get_current_post_type' ) ) {
+
+	/**
+	 * Get the current post type
+	 * @param $post_id
+	 *
+	 * @return string
+	 */
+	
+	function burst_get_current_post_type($post_id = false){
+		if (!$post_id) {
+			$post_id = burst_get_current_post_id();			
+		}
+		if (!$post_id) return;
+
+		$post = get_post($post_id);
+
+		return $post->post_type;
+	}
+
+}
+
+if ( ! function_exists( 'burst_get_current_post_id' ) ) {
+
+	/**
+	 * Get the current post type
+	 * @param $post_id
+	 *
+	 * @return string
+	 */
+	
+	function burst_get_current_post_id(){
+		$post_id = get_the_ID();
+		
+		if (!$post_id){
+			$post_id = $_GET['post'];
+		}
+		if (!intval($post_id)) return false;
+
+		return $post_id;
+	}
+
+}
