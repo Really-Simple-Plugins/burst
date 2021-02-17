@@ -91,7 +91,7 @@ function burst_add_experiment_settings($fields){
 				'step'               => 'goal',
 				'type'               => 'select2',
 				'query_settings'	 => array(
-						'post_type' 	=> any, //get_current_post_type();
+						'post_type' 	=> 'any', //get_current_post_type();
 						'post_status' 	=> 'publish',
 				),
 				'condition' => array(
