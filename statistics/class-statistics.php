@@ -118,7 +118,7 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 		}
 
 		/**
-		 * Delete a cookie variation
+		 * Delete a statistics
 		 *
 		 * @return bool $success
 		 * @since 2.0

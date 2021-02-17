@@ -165,7 +165,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 		 */
 		public function show_burst_variant_metabox(){
 		    if (!burst_user_can_manage()) return;
-			include( dirname( __FILE__ ) . "/experiments/metabox-variation.php" );
+			include( dirname( __FILE__ ) . "/experiments/metabox-variant.php" );
 		}
 
 		/**
@@ -924,7 +924,7 @@ if ( ! class_exists( "burst_admin" ) ) {
         {
             $items = array(
                 1 => array(
-                    'title' => '<div class="rsssl-yellow burst-bullet"></div>',
+                    'title' => '<div class="rsp-yellow burst-bullet"></div>',
                     'content' => __("Really Simple SSL - Easily migrate your website to SSL"),
                     'link' => 'https://wordpress.org/plugins/really-simple-ssl/',
                     'class' => 'rsssl',
@@ -934,7 +934,7 @@ if ( ! class_exists( "burst_admin" ) ) {
                     'search' => 'Really+Simple+SSL+Mark+Wolters',
                 ),
                 2 => array(
-                    'title' => '<div class="cmplz-blue burst-bullet"></div>',
+                    'title' => '<div class="rsp-blue burst-bullet"></div>',
                     'content' => __("Complianz Privacy Suite - Cookie Consent Management as it should be ", "burst"),
                     'link' => 'https://wordpress.org/plugins/complianz-gdpr/',
                     'class' => 'cmplz',
@@ -944,7 +944,7 @@ if ( ! class_exists( "burst_admin" ) ) {
                     'search' => 'complianz',
                 ),
                 3 => array(
-                    'title' => '<div class="zip-pink burst-bullet"></div>',
+                    'title' => '<div class="rsp-pink burst-bullet"></div>',
                     'content' => __("Zip Recipes - Beautiful recipes optimized for Google ", "burst"),
                     'link' => 'https://wordpress.org/plugins/zip-recipes/',
                     'class' => 'zip',

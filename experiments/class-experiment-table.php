@@ -213,7 +213,8 @@ class burst_experiment_Table extends WP_List_Table {
 			//                          . $item['ID'] ) . '&action=edit">' . __( 'Edit',
 			// 		'burst' ) . '</a>',
 			'delete' => '<a class="burst-delete-experiment" data-id="' . $item['ID']
-			            . '" href="#">' . __( 'Delete', 'burst' )
+			            . '" href="'. admin_url( 'admin.php?page=burst-experiments&id='
+			                         . $item['ID'] ) . '&action=delete"">' . __( 'Delete', 'burst' )
 			            . '</a>'
 		);
 
