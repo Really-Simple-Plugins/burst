@@ -131,7 +131,7 @@ if ( ! function_exists( 'burst_get_value' ) ) {
 if ( ! function_exists( 'burst_get_experiments' ) ) {
 
 	/**
-	 * Get array of banner objects
+	 * Get array of experiment objects
 	 *
 	 * @param array $args
 	 *
@@ -141,7 +141,7 @@ if ( ! function_exists( 'burst_get_experiments' ) ) {
 	function burst_get_experiments( $args = array() ) {
 		$defaults = array(
 			'order'  => 'DESC',
-			'orderby' => 'date_started',
+			'orderby' => 'date_modified',
 		);
 		$args = wp_parse_args( $args, $defaults );
 		$sql  = '';

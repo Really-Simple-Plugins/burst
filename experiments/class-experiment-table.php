@@ -251,7 +251,7 @@ class burst_experiment_Table extends WP_List_Table {
 				$status = __( 'Draft', 'burst' );
 				break;
 		}
-		$status =  '<span class="burst-bullet burst-green"></span> <b>' . $status . '</b>';
+		$status =  '<span class="burst-bullet burst-green"></span><b>' . $status . '</b>';
 		return apply_filters( 'burst_experiment_status', $status );
 	}
 
@@ -406,7 +406,7 @@ class burst_experiment_Table extends WP_List_Table {
 	 */
 	public function get_status() {
 		return isset( $_GET['status'] ) ? sanitize_title( $_GET['status'] )
-			: 'active';
+			: false;
 	}
 
 	/**
@@ -448,8 +448,8 @@ class burst_experiment_Table extends WP_List_Table {
 			'offset'  => $offset,
 			'order'   => $order,
 			'orderby' => $orderby,
-			'status'  => $status,
 		);
+		if ($status) $args['status'] = $status;
 
 		$args['name'] = $search;
 
@@ -463,7 +463,7 @@ class burst_experiment_Table extends WP_List_Table {
 					'name' => $experiment->title,
 					'control_id' => $experiment->control_id,
 					'variant_id' => $experiment->variant_id,
-					'goals' => $experiment->goals,
+					'goals' => $experiment->goal,
 					'status' => $experiment->status,
 				);
 			}
