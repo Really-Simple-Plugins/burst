@@ -5,13 +5,11 @@ if ( ! class_exists( "burst_review" ) ) {
 	class burst_review {
 		private static $_this;
 
-
 		function __construct() {
 			if ( isset( self::$_this ) ) {
 				wp_die( sprintf( '%s is a singleton class and you cannot create a second instance.',
 					get_class( $this ) ) );
 			}
-
 			self::$_this = $this;
 
 			//uncomment for testing
@@ -51,7 +49,16 @@ if ( ! class_exists( "burst_review" ) ) {
 		public function show_leave_review_notice() {
 			if (isset( $_GET['burst_dismiss_review'] ) ) return;
 
-				/**
+			$completed_experiment_count = 0;
+			$active_experiment_count = 0;
+			$completed_experiments = burst_get_experiments(array('status' => 'completed'));
+			$active_experiments = burst_get_experiments(array('status' => 'active'));
+
+			if ($completed_experiments && is_array($completed_experiments)) $completed_experiment_count = count($completed_experiments );
+			if ($active_experiments && is_array($active_experiments)) $active_experiment_count = count($active_experiments );
+
+
+			/**
 			 * Prevent notice from being shown on Gutenberg page, as it strips off the class we need for the ajax callback.
 			 *
 			 * */
@@ -90,10 +97,21 @@ if ( ! class_exists( "burst_review" ) ) {
 					                                     alt="review-logo">
 					</div>
 					<div style="margin-left:30px">
-						<p><?php printf( __( 'Hi, you have been using Burst for a month now, awesome! If you have a moment, please consider leaving a review on WordPress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %smessage%s.',
-								'burst' ),
-								'<a href="https://wpburst.com/contact" target="_blank">',
-								'</a>' ); ?></p>
+                        <p>
+                            <?php if ($completed_experiment_count==1){?>
+                                <?php __( 'Hi, you have already completed one experiment, awewome!','burst') ?>&nbsp;
+                            <?php } else if ($completed_experiment_count>1) {?>
+                                <?php printf(__( 'Hi, you have already completed %s experiment, awewome!','burst'),$completed_experiment_count) ?>&nbsp;
+                            <?php } else if ($active_experiment_count==1) {?>
+                                <?php __( 'Hi, you have already one experiment running, awewome!','burst') ?>&nbsp;
+                            <?php } else if ($active_experiment_count>1) {?>
+                                <?php printf(__( 'Hi, you have already completed one experiment, awewome!','burst'), $active_experiment_count) ?>&nbsp;
+                            <?php } else {?>
+                                <?php __( 'Hi, you have been using Burst for a month now, awewome!','burst') ?>&nbsp;
+                            <?php }?>
+                            <?php printf( __('If you have a moment, please consider leaving a review on WordPress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %smessage%s.', 'burst' ), '<a href="https://wpburst.com/contact" target="_blank">', '</a>' );?>
+                        </p>
+                        '<a href="https://wpburst.com/contact" target="_blank">', '</a>' );
 						<i>- Hessel</i>
 						<div class="burst-buttons-row">
 							<a class="button button-primary" target="_blank"
