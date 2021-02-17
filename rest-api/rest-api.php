@@ -42,18 +42,15 @@ function burst_track_hit(WP_REST_Request $request){
 
 	$data = $request->get_json_params();
 	$url = $data['url'];
-	$test_version = $data['test_version'];
 
 	error_log('data');
 	error_log(print_r($data, true));
 	
 	$statistics = new BURST_STATISTICS($url, $burst_uid);
-
 	$statistics->page_id = url_to_postid($url);
-
-	$statistics->test_version = $test_version;
-
-	$statistics->save();
+	$statistics->test_version = $data['test_version'];
+	$statistics->experiment_id = $data['experiment_id'];
+	$statistics->add();
 
 	error_log(print_r($statistics, true));
 

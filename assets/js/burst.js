@@ -1,5 +1,4 @@
-
-if ( cmplz_wp_has_consent() ) {
+if ( burst_wp_has_consent() ) {
 	var request = new XMLHttpRequest();
 	request.open('POST', burst.url, true);
 	console.log(burst.url);
@@ -17,7 +16,7 @@ if ( cmplz_wp_has_consent() ) {
 /**
  * wrapper to check consent for wp consent API. If consent API is not active, do nothing
  */
-function cmplz_wp_has_consent() {
+function burst_wp_has_consent() {
 	if (typeof wp_has_consent == 'function') {
 		return wp_has_consent('statistics-anonymous');
 	}
