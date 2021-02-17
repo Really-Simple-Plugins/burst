@@ -101,11 +101,11 @@ if ( ! class_exists( "burst_review" ) ) {
                             <?php if ($completed_experiment_count==1){?>
                                 <?php __( 'Hi, you have already completed one experiment, awewome!','burst') ?>&nbsp;
                             <?php } else if ($completed_experiment_count>1) {?>
-                                <?php printf(__( 'Hi, you have already completed %s experiment, awewome!','burst'),$completed_experiment_count) ?>&nbsp;
+                                <?php printf(__( 'Hi, you have already completed %s experiments, awewome!','burst'),$completed_experiment_count) ?>&nbsp;
                             <?php } else if ($active_experiment_count==1) {?>
                                 <?php __( 'Hi, you have already one experiment running, awewome!','burst') ?>&nbsp;
                             <?php } else if ($active_experiment_count>1) {?>
-                                <?php printf(__( 'Hi, you have already completed one experiment, awewome!','burst'), $active_experiment_count) ?>&nbsp;
+                                <?php printf(__( 'Hi, you have already %s active experiments running, awewome!','burst'), $active_experiment_count) ?>&nbsp;
                             <?php } else {?>
                                 <?php __( 'Hi, you have been using Burst for a month now, awewome!','burst') ?>&nbsp;
                             <?php }?>
