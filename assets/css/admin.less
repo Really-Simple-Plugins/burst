@@ -347,20 +347,38 @@
 	margin-right: 10px;
 	display: inline-block;
 }
-.rsssl-yellow {
+
+.rsp-yellow {
 	background-color: @rsp-yellow;
 }
 
-.cmplz-blue  {
+.rsp-blue  {
 	background-color: @rsp-blue;
 }
 
-.zip-pink {
+.rsp-pink {
 	background-color: @rsp-pink;
 }
 
-.burst-green {
+.rsp-green {
 	background-color: @rsp-green;
+}
+.rsp-blue-yellow{
+	background: @rsp-blue;
+	background: linear-gradient(77deg, rgba(41,182,246,1) 0%, rgba(41,182,246,1) 30%, rgba(244,191,62,1) 70%, rgba(244,191,62,1) 100%);
+	animation: gradient 10s ease infinite;
+	background-size: 200% 200%;
+}
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
 
 .grey {

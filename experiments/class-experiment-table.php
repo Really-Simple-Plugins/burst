@@ -136,12 +136,10 @@ class burst_experiment_Table extends WP_List_Table {
      */
 
     function column_cb( $item ) {
-    	error_log('column_cb');
-        error_log(print_r($item, true));
 
         return sprintf(
             '<input type="checkbox" name="%1$s_id[]" value="%2$s" />',
-            'Experiment',
+            'experiment',
             esc_attr( $item['ID'] ),
         );
 
@@ -159,7 +157,7 @@ class burst_experiment_Table extends WP_List_Table {
     function get_bulk_actions() {
 
         $actions = array(
-            'delete'     => __( 'Delete', 'zip-recipes' ),
+            'delete'     => __( 'Delete', 'burst' ),
         );
 
         return $actions;
@@ -182,7 +180,7 @@ class burst_experiment_Table extends WP_List_Table {
         //     error_log('process_bulk_action nonce');
         //     return;
         // }
-        $ids = isset( $_GET['recipe_id'] ) ? $_GET['recipe_id'] : false;
+        $ids = isset( $_GET['experiment_id'] ) ? $_GET['experiment_id'] : false;
 
         if( ! $ids ) {
             return;
@@ -194,20 +192,9 @@ class burst_experiment_Table extends WP_List_Table {
 
         foreach ( $ids as $id ) {
             if ( 'delete' === $this->current_action() ) {
-                $recipe = new Recipe(intval($id));
-                $recipe->delete();
+                $experiment = new BURST_EXPERIMENT(intval($id));
+                $experiment->delete();
             }
-            if ( 'monetize' === $this->current_action() ) {
-                $recipe = new Recipe(intval($id));
-                $recipe->share_this_recipe = true;
-                $recipe->save();
-            }
-            if ( 'disable-monetize' === $this->current_action() ) {
-                $recipe = new Recipe(intval($id));
-                $recipe->share_this_recipe = false;
-                $recipe->save();
-            }
-
         }
 
 
@@ -239,19 +226,23 @@ class burst_experiment_Table extends WP_List_Table {
 		switch( $item['status'] ) {
 			case 'archived':
 				$status = __( 'Archived', 'burst' );
+				$color = 'grey';
 				break;
 			case 'active':
+				$color = 'rsp-blue-yellow';
 				$status = __( 'Active', 'burst' );
 				break;
 			case 'completed':
 				$status = __( 'Completed', 'burst' );
+				$color = 'rsp-green';
 				break;
 			case 'draft':
 			default:
 				$status = __( 'Draft', 'burst' );
+				$color = 'grey';
 				break;
 		}
-		$status =  '<span class="burst-bullet burst-green"></span><b>' . $status . '</b>';
+		$status =  '<span class="burst-bullet ' . $color . '"></span><span>' . $status . '</span>';
 		return apply_filters( 'burst_experiment_status', $status );
 	}
 
@@ -306,9 +297,9 @@ class burst_experiment_Table extends WP_List_Table {
 		$columns = array(
 			'cb'        => '<input type="checkbox"/>',
 			'name' => __( 'Name', 'burst' ),
-			'control_id' => __( 'Control', 'burst' ),
-			'variant_id' => __( 'Variant', 'burst' ),
-			'goals' => __( 'Key performance indicator', 'burst' ),
+			'control_id' => '<span class="burst-experiment-dot control"></span>'. __( 'Control', 'burst' ),
+			'variant_id' => '<span class="burst-experiment-dot variant"></span>'. __( 'Variant', 'burst' ),
+			'goals' => __( 'Goal', 'burst' ),
 			'status' => __( 'Active', 'burst' ),
 		);
 
@@ -333,8 +324,7 @@ class burst_experiment_Table extends WP_List_Table {
 	public function get_sortable_columns() {
 		$columns = array(
 			'name' => array( 'name', true ),
-			'goals' => array( 'goals', true),
-			'active' => array( 'active', true),
+			'status' => array( 'status', true),
 		);
 
 		return $columns;

@@ -297,17 +297,34 @@
   margin-right: 10px;
   display: inline-block;
 }
-.rsssl-yellow {
+.rsp-yellow {
   background-color: #f4bf3e;
 }
-.cmplz-blue {
+.rsp-blue {
   background-color: #29b6f6;
 }
-.zip-pink {
+.rsp-pink {
   background-color: #E35899;
 }
-.burst-green {
+.rsp-green {
   background-color: #22932e;
+}
+.rsp-blue-yellow {
+  background: #29b6f6;
+  background: linear-gradient(77deg, #29b6f6 0%, #29b6f6 30%, #f4bf3e 70%, #f4bf3e 100%);
+  animation: gradient 10s ease infinite;
+  background-size: 200% 200%;
+}
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 .grey {
   background-color: #c6c6c6;
