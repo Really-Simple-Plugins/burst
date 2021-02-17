@@ -65,52 +65,49 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		 * Load variant content by filtering the_content
 		 * @param string $content
 		 *
-		 * @return mixed
+		 * @return string
 		 */
 		public function load_experiment_content($content){
 			error_log('load_variant_content');
 			global $post;
-			global $experimenting_enabled;
-			//if ab enabled
-			$experimenting_enabled = true;
-			if (!$experimenting_enabled) return $content;
-			
-			//if has variant
-			//get content
-			$post_id = $post->ID;
-			$burst_variant_id = burst_get_variant_id_for_post($post_id);
-			error_log("variant id ".$burst_variant_id);
-			if (!intval($burst_variant_id)) return;
 
-			$burst_uid = isset( $_COOKIE['burst_uid']) ? $_COOKIE['burst_uid'] : false;
-			$page_url = burst_get_current_url();
-			$test_version = false;
+			$control_id = $post->ID;
+			$experiment = new BURST_EXPERIMENT(false, $control_id);
 
-			if ($burst_uid) {
-				$test_version = burst_get_latest_visit_data($burst_uid, $page_url, 'test_version');
-			}
+			if ( !$experiment->variant_id ||
+			     $experiment->id ) {
 
-			if (!$test_version) {
-				$choice = rand(0,1);
-				if ($choice === 1) {
-					$test_version = 'Variation';
+				$variant_id = $experiment->variant_id;
+				$experiment_id = $experiment->id;
+				$burst_uid    = isset( $_COOKIE['burst_uid'] ) ? sanitize_text_field( $_COOKIE['burst_uid'] ) : false;
+				$page_url     = burst_get_current_url();
+				$test_version = false;
 
-				} else {
-					// update_post_meta($parent_post_id, 'burst_hits', get_post_meta($parent_post_id,'burst_hits')+1);
-					$test_version = 'Original';
+				if ( $burst_uid ) {
+					$test_version = burst_get_latest_visit_data( $burst_uid, $page_url, 'test_version' );
 				}
-			}
-			error_log('end');
-			if ($test_version == 'Variation') {
-				error_log('Variation');
-				$content = get_the_content(null, false, $burst_variant_id);
-				// $content = apply_filters( 'the_content', $content ); 
-				// Causes inifinte loop
-				$content = str_replace( ']]>', ']]&gt;', $content );
-			}
-			
-			echo '<script type="text/javascript"> var test_version = "'. $test_version.'"; </script>';
 
+				if ( ! $test_version ) {
+					$choice = rand( 0, 1 );
+					if ( $choice === 1 ) {
+						$test_version = 'variant';
+					} else {
+						$test_version = 'control';
+					}
+				}
+
+				if ( $test_version == 'variant' ) {
+					$content = get_the_content( null, false, $variant_id );
+					// $content = apply_filters( 'the_content', $content );
+					// Causes inifinte loop
+					$content = str_replace( ']]>', ']]&gt;', $content );
+				}
+
+				$content .= '<script type="text/javascript">
+					var test_version = "' . $test_version . '";
+					var experiment_id = "' . $experiment_id . '";
+					</script>';
+			}
 			return $content;
 		}
 

@@ -18,6 +18,7 @@ function burst_install_statistics_table() {
 			`ID` int(11) NOT NULL AUTO_INCREMENT ,
             `page_id` int(11) NOT NULL,
             `experiment_id` int(11) NOT NULL,
+            `test_version` varchar(255) NOT NULL,
             `page_url` varchar(255) NOT NULL,
             `time` varchar(255) NOT NULL,
             `uid` varchar(255) NOT NULL,
@@ -38,6 +39,7 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 		public $time; //timestamp(seconds from 01-01-1970);
 		public $uid;
 		public $test_version;
+		public $experiment_id;
 		//public $clicked; //array('timestamp(seconds from 01-01-1970)' => clicked on url );
 		//public $referer; //array('timestamp(seconds from 01-01-1970)' => previous URL );
 
@@ -45,25 +47,28 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 			error_log('constuct statistics');
 			$this->uid = $uid;
 			$this->page_url = $page_url;
-
 		}
 
 		/**
 		 * Add a new statistic database entry
 		 */
 
-		private function add() {
-			$array = array(
-				'page_url' => $this->page_url,
-				'uid' => $this->uid,
-				'time' => time(),
-			);
-
+		public function add() {
 			global $wpdb;
+			$update_array = array(
+				'page_url'            		=> sanitize_text_field( $this->page_url ),
+				'page_id'                   => intval( $this->page_id ),
+				'time'               		=> time(),
+				'uid'               		=> sanitize_title($this->uid),
+				'test_version'				=> $this->sanitize_test_version($this->test_version),
+				'experiment_id'				=> intval($this->experiment_id),
+			);
+			error_log('update array');
+			error_log(print_r($update_array, true));
 
 			$wpdb->insert(
 				$wpdb->prefix . 'burst_statistics',
-				$array
+				$update_array
 			);
 			$this->id = $wpdb->insert_id;
 		}
@@ -93,34 +98,24 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 		}
 
 		/**
-		 * Save the edited data in the object
+		 * Sanitize the test version
+		 * @param string $str
 		 *
-		 * @param bool $is_default
-		 *
-		 * @return void
+		 * @return string
 		 */
 
-		public function save() {
-			
-			$this->add();
+		private function sanitize_test_version( $str){
+			$test_versions = array(
+				'variant',
+				'control'
+				);
 
-			$update_array = array(
-				'page_url'            		=> esc_attr( $this->page_url ),
-				'page_id'                   => intval( $this->page_id ),
-				'time'               		=> time(),
-				'uid'               		=> $this->uid,
-				'test_version'				=> $this->test_version,
-			);
-			error_log('update array');
-			error_log(print_r($update_array, true));
-			global $wpdb;
-			$updated = $wpdb->update( $wpdb->prefix . 'burst_statistics',
-				$update_array,
-				array( 'ID' => $this->id )
-			);
-
+			if ( in_array( $str, $test_versions)) {
+				return $str;
+			} else {
+				return 'control';
+			}
 		}
-
 
 		/**
 		 * Delete a cookie variation

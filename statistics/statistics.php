@@ -51,7 +51,7 @@ function burst_get_experiment_statistics(){
 			}
 
 			//get hits grouped per timeslot. default day
-			$hits = burst_get_grouped_statistics_array($experiment_id, 'control', $date_start, $date_end);
+			$hits = burst_get_grouped_statistics_array($experiment_id, $test_version, $date_start, $date_end);
 
 			$data['datasets'][] = array(
 				'data' => $hits,
@@ -214,7 +214,7 @@ function burst_get_graph_color( $index , $type = 'default' ) {
  * @param  string  $page_url      The page URL you want the latest visit from
  * @param  string  $data_variable Specify which data you want, if left empty you'll 
  *                                get an object with everything
- * @return object                 Returns the latest visit data        
+ * @return object|bool                 Returns the latest visit data
  */
 function burst_get_latest_visit_data($burst_uid = false, $page_url = false, $data_variable = false){
 	error_log('burst_get_latest_visit');
@@ -224,13 +224,12 @@ function burst_get_latest_visit_data($burst_uid = false, $page_url = false, $dat
 	$sql = "";
 	if ($page_url) {
 		$sql = " AND page_url ='" . esc_attr($page_url) . "' ";
-
 	}
 
 	global $wpdb;
 	if ($burst_uid) {
 		$statistics
-		= $wpdb->get_results( $wpdb->prepare( "select * from {$wpdb->prefix}burst_statistics where uid = %s". $sql ." ORDER BY time DESC LIMIT 1 ",
+		= $wpdb->get_row( $wpdb->prepare( "select * from {$wpdb->prefix}burst_statistics where uid = %s". $sql ." ORDER BY time DESC LIMIT 1 ",
 		esc_attr( $burst_uid) ) );
 	}
 	error_log('stats');
@@ -238,9 +237,8 @@ function burst_get_latest_visit_data($burst_uid = false, $page_url = false, $dat
 	if (empty($statistics)){
 		return false;
 	} else {
-
 		if ($data_variable) {
-			return $statistics[0]->$data_variable;
+			return $statistics->$data_variable;
 		} else {
 			return $statistics;	
 		}
