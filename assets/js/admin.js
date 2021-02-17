@@ -174,49 +174,6 @@ jQuery(document).ready(function ($) {
     }
 
 
-    //chartJS dropdown
-    if ($('.burst-chartjs-stats').length) {
-        burstInitChartJS()
-    }
-
-    function burstInitChartJS() {
-
-        jQuery.ajax({
-            type : "get",
-            dataType : "json",
-            url : ajaxurl,
-            data : {action: "burst_get_experiment_statistics"},
-            success: function(response) {
-                if(response.success == true) {
-                    console.log(response)
-                    jQuery( ".burst-skeleton-statistics" ).remove();
-                    
-                    var ctx = document.getElementsByClassName('burst-chartjs-stats');
-                    var myChart = new Chart(ctx, {
-                        type: 'line',
-                        data: response.data,
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            spanGaps: true,
-                            scales: {
-                                yAxes: [{
-                                    ticks: {
-                                        beginAtZero: true
-                                    }
-                                }]
-                            }
-                        }
-                    });
-                    console.log(response)
-                }
-                else {
-                   alert("Your experiment data could not be loaded")
-                }
-            }
-        })
-    }
-
     /**
      * Ajax loading of tables
      */
@@ -229,6 +186,7 @@ jQuery(document).ready(function ($) {
         });
     };
 
+    var lastSelectedPage;
     window.burstLoadAjaxTables();
     function burstInitSingleDataTable(container) {
         var table = container.find('.burst-table');
@@ -362,3 +320,4 @@ jQuery(document).ready(function ($) {
     }
 
 });
+

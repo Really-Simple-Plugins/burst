@@ -4,64 +4,207 @@ defined( 'ABSPATH' ) or die( "you do not have acces to this page!" );
 add_action( 'wp_ajax_burst_get_experiment_statistics', 'burst_get_experiment_statistics' );
 /**
  * Function for getting statistics for display with Chart JS
- * @param  integer $experiment_id   Experiment ID, if no experiment ID is found get active experiments
- * @param  array   $data   			Select the data you want to display
  * @return json                     Returns a JSON that is compatible with Chart JS
  *
  * @todo  Real data should be displayed here
  */
-function burst_get_experiment_statistics($experiment_id = false, $data = array('visits', 'conversions', 'conversionrate') ){
+function burst_get_experiment_statistics(){
+	$error = false;
 	if ( ! burst_user_can_manage() ) {
-		return;
+		$error = true;
 	}
-	if (!$experiment_id) {
-		error_log('No experiment id');
-		$experiment_id = burst_get_active_experiments_id();
-		error_log('experiment ID');
-		error_log(print_r($experiment_id, true));
-	}
-	$experiment_id[0]->ID;
-	$data = array(
-	    'labels' => array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
-	    'datasets' => array( array(
-	        'data' =>[8, 13, 8, 9, 6, 0, false],
-	        'backgroundColor' => 'rgba(231, 126, 35, 0.2)',
-	        'borderColor' => 'rgba(231, 126, 35, 1)',
-	        'label' => 'Original'
-	    ),
-	    array(
-	        'data' => array(8, 9, 12, 20, 6, 2.5 ,3),
-	        'backgroundColor' => 'rgba(51, 152, 219, 0.2)',
-	        'borderColor' => 'rgba(51, 152, 219, 1)',
-	        'label' => 'Variation'
-	    ))
-	);
-	// // we will pass post IDs and titles to this array
-	// $return = array();
 
-	// // you can use WP_Query, query_posts() or get_posts() here - it doesn't matter
-	// $search_results = new WP_Query( array( 
-	// 	's'=> $_GET['q'], // the search query
-	// 	'post_status' => 'publish', // if you don't want drafts to be returned
-	// 	'ignore_sticky_posts' => 1,
-	// 	'posts_per_page' => 50 // how much to show at once
-	// ) );
-	// if( $search_results->have_posts() ) :
-	// 	while( $search_results->have_posts() ) : $search_results->the_post();	
-	// 		// shorten the title a little
-	// 		$title = ( mb_strlen( $search_results->post->post_title ) > 50 ) ? mb_substr( $search_results->post->post_title, 0, 49 ) . '...' : $search_results->post->post_title;
-	// 		$return[] = array( $search_results->post->ID, $title ); // array( Post ID, Post Title )
-	// 	endwhile;
-	// endif;
+	if ( !isset($_GET['experiment_id'])) {
+		$error = true;
+	}
+
+	if ( !$error ) {
+		$experiment_id = intval( $_GET['experiment_id'] );
+	}
+
+	if ( !$error ) {
+		$date_start = intval( $_GET['date_start'] );
+		$date_end = intval( $_GET['date_end'] );
+		//for each day, counting back from "now" to the first day, get the date.
+		$nr_of_periods = burst_get_nr_of_periods('DAY', $date_start , $date_end);
+		$end_date_days_ago = burst_nr_of_periods_ago('DAY', $date_end);
+
+		$data = array();
+		for ($i = $nr_of_periods-1; $i >= 0; $i--) {
+			$days = $i + $end_date_days_ago;
+			$unix_day = strtotime("-$days days");
+			$date = date( get_option( 'date_format' ), $unix_day);
+			$data['labels'][] = $date;
+		}
+
+		//generate a dataset for each category
+		$i=0;
+		$test_versions = array(
+			'control',
+			'variant',
+		);
+		foreach ($test_versions as $test_version ) {
+			$borderDash = array(0,0);
+			$title = ucfirst($test_version);
+			if ( $test_version === 'variant' ) {
+				$borderDash = array(10,10);
+			}
+
+			//get hits grouped per timeslot. default day
+			$hits = burst_get_grouped_statistics_array($experiment_id, 'control', $date_start, $date_end);
+
+			$data['datasets'][] = array(
+				'data' => $hits,
+				'backgroundColor' => burst_get_graph_color($i, 'background'),
+				'borderColor' => burst_get_graph_color($i),
+				'label' => $title,
+				'fill' => 'false',
+				'borderDash' => $borderDash,
+			);
+			$i++;
+		}
+		//test data
+		//		$data = array(
+		//			'labels' => array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
+		//			'datasets' => array( array(
+		//				'data' =>[8, 13, 8, 9, 6, 0, false],
+		//				'backgroundColor' => 'rgba(231, 126, 35, 0.2)',
+		//				'borderColor' => 'rgba(231, 126, 35, 1)',
+		//				'label' => 'Original'
+		//			),
+		//				array(
+		//					'data' => array(8, 9, 12, 20, 6, 2.5 ,3),
+		//					'backgroundColor' => 'rgba(51, 152, 219, 0.2)',
+		//					'borderColor' => 'rgba(51, 152, 219, 1)',
+		//					'label' => 'Variation'
+		//				))
+		//		);
+
+	}
+
+	if (isset($data['datasets'])) {
+		//get highest hit count for max value
+		$max = max(array_map('max',array_column( $data['datasets'], 'data' )));
+		$data['max'] = $max > 5 ? $max : 5;
+	} else {
+		$data['datasets'][] = array(
+			'data' => array(0),
+			'backgroundColor' => burst_get_graph_color(0, 'background'),
+			'borderColor' => burst_get_graph_color(0),
+			'label' => __("No data for this selection", "burst"),
+			'fill' => 'false',
+		);
+		$data['max'] = 5;
+	}
+
 	$return  = array(
-		'success' => true,
-		'message' => 'success',
+		'success' => !$error,
 		'data'    => $data,
+		'title'    => __('Experiment', "burst"),
 	);
 	echo json_encode( $return );
-	error_log(print_r($return, true));
 	die;
 }
+
+/**
+ * @param int $experiment_id
+ * @param string $test_version
+ * @param int $start
+ * @param int $end
+ *
+ * @return array
+ */
+
+function burst_get_grouped_statistics_array($experiment_id, $test_version, $start, $end ) {
+	global $wpdb;
+
+	$test_version = ( $test_version === 'variant') ? 'variant' : 'control';
+	$sql = "SELECT COUNT(*) as hit_count, CONCAT(YEAR(from_unixtime(time)),'-',DAYOFYEAR(from_unixtime(time)) ) as period
+					FROM {$wpdb->prefix}burst_statistics where experiment_id = $experiment_id AND test_version='$test_version' AND time>$start AND time<$end
+					GROUP BY CONCAT(YEAR(from_unixtime(time)),'-',DAYOFYEAR(from_unixtime(time)) ) order by period asc";
+
+	$results = $wpdb->get_results($sql);
+	error_log(print_r($results, true));
+	$nr_of_periods = burst_get_nr_of_periods('DAY', $start, $end );
+	error_log("periods $nr_of_periods");
+	$end_date_days_ago = burst_nr_of_periods_ago('DAY', $end );
+
+	$data = array();
+
+	//count back from end until zero days.
+	for ($i = $nr_of_periods-1; $i >= 0; $i--) {
+		$days = $i + $end_date_days_ago;
+		$unix_day = strtotime("-$days days");
+		$day_of_year = date("z", $unix_day ) + 1;
+		$year = date('Y', $unix_day);
+		$index = array_search( $year.'-'.$day_of_year, array_column( $results, 'period' ) );
+		if ( $index === false ) {
+			$data[$nr_of_periods-$i] = false;
+		} else {
+			$data[$nr_of_periods-$i] = $results[$index]->hit_count;
+		}
+	}
+
+	return $data;
+}
+
+/**
+ * @param string $period
+ * @param int $start_time
+ * @param int $end_time
+ *
+ * @return float
+ */
+
+function burst_get_nr_of_periods($period, $start_time, $end_time ){
+	$range_in_seconds = $end_time - $start_time;
+	$period_in_seconds = constant(strtoupper($period).'_IN_SECONDS' );
+	return ROUND($range_in_seconds/$period_in_seconds);
+}
+
+/**
+ * @param string $period
+ * @param int $time
+ *
+ * @return float
+ */
+function burst_nr_of_periods_ago($period, $time ){
+	$range_in_seconds = time() - $time;
+	$period_in_seconds = constant(strtoupper($period).'_IN_SECONDS' );
+	return ROUND($range_in_seconds/$period_in_seconds);
+}
+
+/**
+ * Get color for a graph
+ * @param int     $index
+ * @param string $type
+ *
+ * @return string
+ */
+
+function burst_get_graph_color( $index , $type = 'default' ) {
+	$o = $type = 'background' ? '1' : '1';
+	switch ($index) {
+		case 0:
+			return "rgba(255, 99, 132, $o)";
+		case 1:
+			return "rgba(255, 159, 64, $o)";
+		case 2:
+			return "rgba(255, 205, 86, $o)";
+		case 3:
+			return "rgba(75, 192, 192, $o)";
+		case 4:
+			return "rgba(54, 162, 235, $o)";
+		case 5:
+			return "rgba(153, 102, 255, $o)";
+		case 6:
+			return "rgba(201, 203, 207, $o)";
+		default:
+			return "rgba(238, 126, 35, $o)";
+
+	}
+}
+
 /**
  * Get the latest visit for a UID for a specific page. 
  * Specify a data_variable if you just want the result for a specific parameter

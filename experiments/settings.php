@@ -19,8 +19,7 @@ function burst_add_experiment_settings($fields){
 				'source'             => 'BURST_EXPERIMENT',
 				'step'               => 'create',
 				'type'               => 'radio',
-				'label'              => '<span class="burst-experiment-dot variant">'. __( "Variant" . '</span>',
-					'burst' ),
+				'label'              => '<span class="burst-experiment-dot variant">'. __( "Variant" , 'burst' ).'</span>',
 				'options' => array(
 					'duplicate'       => __( "Duplicate this page and edit", 'burst' ),
 					'existing-page'  => __( "Choose existing page", 'burst' ),

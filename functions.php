@@ -72,7 +72,7 @@ if ( ! function_exists( 'burst_get_value' ) ) {
 				: $default;
 		}
 
-		/*
+		/**
          * Translate output
          *
          * */
@@ -135,24 +135,52 @@ if ( ! function_exists( 'burst_get_experiments' ) ) {
 	 *
 	 * @param array $args
 	 *
-	 * @return stdClass Object
+	 * @return array
 	 */
 
 	function burst_get_experiments( $args = array() ) {
-		$args = wp_parse_args( $args, array( 'status' => 'active' ) );
+		$defaults = array(
+			'status' => 'active',
+			'order'  => 'DESC',
+			'orderby' => 'date_started',
+		);
+		$args = wp_parse_args( $args, $defaults );
 		$sql  = '';
+
+		$orderby = sanitize_title($args['orderby']);
+		$order = $args['order'] === 'DESC' ? 'DESC' : 'ASC';
 		global $wpdb;
-		if ( $args['status'] === 'archived' ) {
-			$sql = 'AND cdb.archived = true';
-		}
-		if ( $args['status'] === 'active' ) {
-			$sql = 'AND cdb.archived = false';
+
+		if ( isset($args['status']) ) {
+			$status = burst_sanitize_experiment_status($args['status']);
+			$sql .= " AND cdb.status = '$status'";
 		}
 
-		$experiments
-			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments as cdb where 1=1 $sql" );
+		$sql .= " ORDER BY $orderby $order";
 
-		return $experiments;
+		return  $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments as cdb where 1=1 $sql" );
+	}
+}
+
+if ( !function_exists( 'burst_sanitize_experiment_status' )) {
+	/**
+	 * Sanitize the status
+	 * @param string $status
+	 *
+	 * @return string
+	 */
+	function burst_sanitize_experiment_status($status) {
+		$statuses = array(
+			'draft',
+			'active',
+			'completed',
+			'archived',
+		);
+		if ( in_array( $status, $statuses )) {
+			return $status;
+		} else {
+			return 'draft';
+		}
 	}
 }
 
@@ -322,49 +350,20 @@ if ( ! function_exists( 'burst_random_str' ) ) {
 	}
 }
 
-if ( ! function_exists( 'burst_get_active_experiments_id' ) ) {
-
-	/**
-	 * Get array of banner objects
-	 *
-	 * @param array $args
-	 *
-	 * @return stdClass Object
-	 */
-
-	function burst_get_active_experiments_id( $args = array() ) {
-		// $args = wp_parse_args( $args, array( 'status' => 'active' ) );
-		$sql  = '';
-		global $wpdb;
-		// if ( $args['status'] === 'archived' ) {
-		// 	$sql = 'AND cdb.archived = true and cdb.test_running = true';
-		// }
-
-		$experiments
-			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments where test_running = 1" );
-		if (!empty($experiments)){
-			return $experiments;	
-		} else {
-			return array();
-		}
-		
-	}
-}
-
 if ( ! function_exists( 'burst_post_has_experiment' ) ) {
 
 	/**
 	 * Check if post has experiment attached
-	 * @param $post_id
+	 * @param int|bool $post_id
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
 	
 	function burst_post_has_experiment($post_id = false){
 		if (!$post_id) {
 			$post_id = burst_get_current_post_id();			
 		}
-		if (!$post_id) return;
+		if (!$post_id) return false;
 
 		$experiment_id = get_post_meta($post_id, 'burst_experiment_id');
 		$has_experiment = intval($experiment_id) ? true : false;
@@ -378,20 +377,19 @@ if ( ! function_exists( 'burst_get_experiment_id_for_post' ) ) {
 
 	/**
 	 * Check if post has experiment attached
-	 * @param $post_id
+	 * @param int|bool $post_id
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
 	
-	function burst_get_experiment_id_for_post($post_id = false){
+
+	function burst_get_experiment_id_for_post( $post_id = false ){
 		if (!$post_id) {
 			$post_id = burst_get_current_post_id();			
 		}
-		if (!$post_id) return;
+		if (!$post_id) return false;
 
-		$experiment_id = get_post_meta($post_id, 'burst_experiment_id', true);
-
-		return $experiment_id;
+		return get_post_meta($post_id, 'burst_experiment_id', true);
 	}
 
 }
@@ -400,9 +398,9 @@ if ( ! function_exists( 'burst_get_variant_id_for_post' ) ) {
 
 	/**
 	 * Check if post has experiment attached
-	 * @param $post_id
+	 * @param int|bool $post_id
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
 	
 	function burst_get_variant_id_for_post($post_id = false){
@@ -455,7 +453,7 @@ if ( ! function_exists( 'burst_get_current_post_id' ) ) {
 		$post_id = get_the_ID();
 		
 		if (!$post_id){
-			$post_id = $_GET['post'];
+			$post_id = isset($_GET['post']) ? $_GET['post'] : false;
 		}
 		if (!intval($post_id)) return false;
 

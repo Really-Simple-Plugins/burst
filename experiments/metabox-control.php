@@ -1,5 +1,11 @@
 <?php
-$post_id = get_the_ID();
+$post_id = isset($_GET['post']) ? intval($_GET['post']) : false;
+if (!$post_id ) {
+    ?>
+    <p><?php _e('Save your post to get the experiment options', 'burst')?></p>
+        <?php
+} else {
+
 $experiment_id = burst_get_experiment_id_for_post($post_id);
 
 if (intval($experiment_id)) { 
@@ -56,11 +62,8 @@ if (intval($experiment_id)) {
 			<?php } else { ?>
 
 				<!-- Experiment does NOT exist -->
-
 				<input type="hidden" value="1" name="burst_create_experiment">
-
-				<input type="hidden" value="<?php echo $post_id ?>" name="burst_original_post_id">
-				<?php
+                <?php
 				BURST::$field->get_fields( 'BURST_EXPERIMENT','general' );
 				?>
 				
@@ -91,3 +94,5 @@ if (intval($experiment_id)) {
 
 		</div>
 	</form>
+<?php
+}
