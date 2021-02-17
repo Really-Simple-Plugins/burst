@@ -348,18 +348,26 @@
 }
 .burst-experiment-dot:before{
 	content: ' ';
-	height: 15px;
-	width: 15px;
+	height: 17px;
+	width: 17px;
 	background-color: @grey;
 	border-radius: 50%;
 	display: inline-block;
 	vertical-align: text-bottom;
 	margin-right: 5px;
+	margin-top: 2px;
 	text-align: center;
     color: #fff;
-    line-height: 1.4;
-    font-size: 10px;
+    line-height: 1.45;
+    font-size: 12px;
 }
+.burst-experiment-dot.dot-large:before{
+	height: 23px;
+	width: 23px;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
 .burst-experiment-dot.control:before{
 	background-color: @rsp-blue;
 	content: 'A';
@@ -368,6 +376,7 @@
 	background-color: @rsp-yellow;
     content: 'B';
 }
+
 .burst-info-box{
 	padding: 10px;
     border-radius: 5px;
@@ -378,7 +387,26 @@
 .burst-accompanied-text{
 	color: @grey-dark;
 	font-size: 12px;
-	//font-weight: 300;
+}
+.burst-experiment-info-below-title{
+	padding: 10px 14px;
+	display: inline-flex;
+	align-items: center;
+	font-size: 15px;
+	font-weight: 500;
+	margin: 4px 0;
+	padding: 5px 10px;
+	border-radius: 5px;
+	color: @rsp-black;
+	
+	&.control{
+		background-color: lighten(@rsp-blue, 70%, relative);
+		border: 1px solid @rsp-blue;
+	}
+	&.variant{
+		background-color: lighten(@rsp-yellow, 63%, relative);
+		border: 1px solid @rsp-yellow;
+	}
 }
 
 .toplevel_page_burst, .burst-1_page_burst-experiments, .burst-1_page_burst-settings{

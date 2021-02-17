@@ -298,17 +298,24 @@
 }
 .burst-experiment-dot:before {
   content: ' ';
-  height: 15px;
-  width: 15px;
+  height: 17px;
+  width: 17px;
   background-color: #c6c6c6;
   border-radius: 50%;
   display: inline-block;
   vertical-align: text-bottom;
   margin-right: 5px;
+  margin-top: 2px;
   text-align: center;
   color: #fff;
-  line-height: 1.4;
-  font-size: 10px;
+  line-height: 1.45;
+  font-size: 12px;
+}
+.burst-experiment-dot.dot-large:before {
+  height: 23px;
+  width: 23px;
+  line-height: 1.6;
+  font-size: 14px;
 }
 .burst-experiment-dot.control:before {
   background-color: #29b6f6;
@@ -329,9 +336,27 @@
   color: #737373;
   font-size: 12px;
 }
+.burst-experiment-info-below-title {
+  padding: 10px 14px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 500;
+  margin: 4px 0;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: #333;
+}
+.burst-experiment-info-below-title.control {
+  background-color: #eaf8fe;
+  border: 1px solid #29b6f6;
+}
+.burst-experiment-info-below-title.variant {
+  background-color: #fefbf4;
+  border: 1px solid #f4bf3e;
+}
 .toplevel_page_burst #wpbody-content,
 .burst-1_page_burst-experiments #wpbody-content,
 .burst-1_page_burst-settings #wpbody-content {
   padding-bottom: 20px;
 }
-/*# sourceMappingURL=admin.css.map */

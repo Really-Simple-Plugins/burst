@@ -28,6 +28,10 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			add_action('admin_init', array($this, 'init_grid') );
 			add_action('wp_ajax_burst_get_datatable', array($this, 'ajax_get_datatable'));
+
+
+			add_action( 'edit_form_top', array( $this, 'add_experiment_info_below_title' ));
+
 			$is_burst_page = isset($_GET['page']) && $_GET['page'] === 'burst' ? true : false;
 			if ($is_burst_page) {
 				add_action('admin_footer', array($this, 'inline_styles'), 999);
@@ -40,6 +44,20 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 		static function this() {
 			return self::$_this;
+		}
+
+		public function add_experiment_info_below_title( $post ) {
+		    if (!burst_user_can_manage()) return;
+
+			$post = isset($_GET['post']) ? $_GET['post'] : false;
+			$post_status = get_post_status($post);
+			if (burst_post_has_experiment($post)) {
+				if ($post_status == 'experiment') {
+					echo '<p class="burst-experiment-info-below-title variant"><span class="burst-experiment-dot variant dot-large"></span>'. __('Variant', 'burst') . '</p>';
+			    } elseif ($post_status == 'publish'){
+			    	echo '<p class="burst-experiment-info-below-title control"><span class="burst-experiment-dot control dot-large"></span>'. __('Control', 'burst') . '</p>';
+			    }
+			}
 		}
 
         public function hide_publish_button_on_experiments(){
@@ -74,6 +92,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 				add_meta_box('burst_edit_meta_box', __('Setup experiment', 'burst'), array($this, 'show_burst_variant_metabox'), null, 'side', 'default', array(
 					//'__block_editor_compatible_meta_box' => true,
 				));			
+
 			} else {
 				add_meta_box('burst_edit_meta_box', __('Create experiment', 'burst'), array($this, 'show_burst_control_metabox'), null, 'side', 'default', array(
 					//'__block_editor_compatible_meta_box' => true,
@@ -81,6 +100,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 			}
 
             $this->maybe_sort_metabox('burst_edit_meta_box');
+
+            //@rogier is dit een handige manier? Voor de metabox is select2, de admin.js en admin.css nodig. 
+            $this->enqueue_assets('burst');
 
 			wp_register_style( 'burst-metabox-css',
 				trailingslashit( burst_url ) . 'assets/css/metabox.css', "",
@@ -181,6 +203,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 				if ( wp_redirect( $url ) ) {
 				    exit;
 				}
+
 			}
 
 		}
@@ -217,16 +240,20 @@ if ( ! class_exists( "burst_admin" ) ) {
 			* create experiment entry
 			*/
 			error_log('burst title' . $_POST['burst_title']);
+
 			$experiment_title = !empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : __('Unnamed experiment', 'burst');
+
 			$experiment = new BURST_EXPERIMENT();
 			$experiment->title = $experiment_title;
 			$experiment->control_id = $post_id;
 			$experiment->variant_id = $variant_id;
 			$experiment->date_created = time();
+			$experiment->date_modified = time();
 			$experiment->save();
 
 			update_post_meta( $post_id,'burst_experiment_id', $experiment->id );
 			update_post_meta( $variant_id,'burst_experiment_id', $experiment->id );
+
 
 			return $variant_id;
 		}
@@ -331,10 +358,10 @@ if ( ! class_exists( "burst_admin" ) ) {
 			 ) {
 			 	return;
 			 }
-			wp_register_style( 'burst',
-				trailingslashit( burst_url ) . 'assets/css/admin.css', "",
-				burst_version );
-			wp_enqueue_style( 'burst' );
+			// wp_register_style( 'burst',
+			// 	trailingslashit( burst_url ) . 'assets/css/admin.css', "",
+			// 	burst_version );
+			// wp_enqueue_style( 'burst' );
 
 			//datapicker
 			wp_enqueue_style( 'burst-datepicker' , trailingslashit(burst_url) . 'assets/datepicker/datepicker.css', "", burst_version);
@@ -863,8 +890,8 @@ if ( ! class_exists( "burst_admin" ) ) {
 				<div class="wrap experiment">
 					<h1><?php _e( "Your experiments", 'burst' ) ?>
 						<?php //do_action( 'burst_after_experiment_title' ); ?>
-						<a href="<?php echo admin_url('admin.php?page=burst-experiments&action=new'); ?>"
-		                   class="page-title-action"><?php _e('Add experiment', 'burst') ?></a>
+						<!-- <a href="<?php //echo admin_url('admin.php?page=burst-experiments&action=new'); ?>"
+		                   class="page-title-action"><?php //_e('Add experiment', 'burst') ?></a> -->
 					</h1>
 
 					<form id="burst-experiment-filter" method="get"

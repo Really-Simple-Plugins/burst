@@ -4,8 +4,6 @@ $experiment_id = burst_get_experiment_id_for_post($post_id);
 
 if (intval($experiment_id)) { 
 	$experiment = new BURST_EXPERIMENT($experiment_id);
-	error_log('experiment in metabox');
-	error_log(print_r($experiment, true));
 	?>
 
 <?php } ?>
@@ -13,9 +11,23 @@ if (intval($experiment_id)) {
 		<div id='burst-metabox-experiment-settings'>
 				<div class="burst-experiment-settings-info">
 					<h4><?php echo $experiment->title; ?></h4>
-					<p class="control"><span class="burst-experiment-dot control"></span><?php echo get_the_title($experiment->control_id); ?></p>
-					<p class="variant"><span class="burst-experiment-dot variant"></span><?php echo get_the_title($experiment->variant_id); ?></p>
+					<div class="burst-experiment-settings-info_container control">
+						<span class="burst-experiment-dot control"></span>
+						<div class="burst-experiment-settings-info_title">
+							<p><?php echo get_the_title($experiment->control_id); ?></p>
+							<a href="<?php echo get_permalink($experiment->control_id) ?>"><?php _e('View', 'burst') ?></a> | 
+							<a href="<?php echo get_edit_post_link($experiment->control_id) ?>"><?php _e('Edit', 'burst') ?></a>
+						</div>
+					</div>
+					<div class="burst-experiment-settings-info_container variant">
+						<span class="burst-experiment-dot variant"></span>
+						<div class="burst-experiment-settings-info_title">
+							<p><?php echo get_the_title($experiment->variant_id); ?></p>
+							<a href="<?php echo get_permalink($experiment->variant_id) ?>"><?php _e('View', 'burst') ?></a>
+						</div>
+					</div>
 				</div>
+
 				<?php wp_nonce_field( 'burst_start_experiment', 'burst_nonce' ); ?>
 
 				<?php	
@@ -37,5 +49,6 @@ if (intval($experiment_id)) {
 					        type="submit" value="<?php _e( 'Stop the experiment', 'burst' ) ?>">
                     <?php } ?>
 				</div>
+				
 			</div>
 	</form>

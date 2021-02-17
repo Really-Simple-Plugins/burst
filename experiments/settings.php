@@ -31,6 +31,11 @@ function burst_add_experiment_settings($fields){
 				'source'             => 'BURST_EXPERIMENT',
 				'step'               => 'create',
 				'type'               => 'select2',
+				'query_settings'	 => array(
+						'post_type' 	=> burst_get_current_post_type(), //get_current_post_type();
+						'post_status' 	=> 'experiment',
+						'exclude' 		=> burst_get_current_post_id(),
+				),
 				'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
 					'burst' ),
 				'condition' => array(
@@ -85,6 +90,10 @@ function burst_add_experiment_settings($fields){
 				'source'             => 'BURST_EXPERIMENT',
 				'step'               => 'goal',
 				'type'               => 'select2',
+				'query_settings'	 => array(
+						'post_type' 	=> 'any', //get_current_post_type();
+						'post_status' 	=> 'publish',
+				),
 				'condition' => array(
 					'goal' => 'page-visit',
 				),
