@@ -93,7 +93,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 					//'__block_editor_compatible_meta_box' => true,
 				));			
 
-			} elseif ($post_status == 'publish') {
+			} else {
 				add_meta_box('burst_edit_meta_box', __('Create experiment', 'burst'), array($this, 'show_burst_control_metabox'), null, 'side', 'default', array(
 					//'__block_editor_compatible_meta_box' => true,
 				));

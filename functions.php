@@ -394,30 +394,6 @@ if ( ! function_exists( 'burst_get_experiment_id_for_post' ) ) {
 
 }
 
-if ( ! function_exists( 'burst_get_variant_id_for_post' ) ) {
-
-	/**
-	 * Check if post has experiment attached
-	 * @param int|bool $post_id
-	 *
-	 * @return bool
-	 */
-	
-	function burst_get_variant_id_for_post($post_id = false){
-		if (!$post_id) {
-			$post_id = burst_get_current_post_id();			
-		}
-		if (!$post_id) return;
-
-		$experiment_id = burst_get_experiment_id_for_post( $post_id);
-
-		$experiment = new BURST_EXPERIMENT($experiment_id);
-
-		return $experiment->variant_id;
-	}
-
-}
-
 if ( ! function_exists( 'burst_get_current_post_type' ) ) {
 
 	/**
