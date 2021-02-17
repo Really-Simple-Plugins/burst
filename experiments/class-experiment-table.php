@@ -334,7 +334,7 @@ class burst_experiment_Table extends WP_List_Table {
 		$columns = array(
 			'name' => array( 'name', true ),
 			'goals' => array( 'goals', true),
-			'active' => array( 'test_running', true),
+			'active' => array( 'active', true),
 		);
 
 		return $columns;
@@ -464,7 +464,7 @@ class burst_experiment_Table extends WP_List_Table {
 					'control_id' => $experiment->control_id,
 					'variant_id' => $experiment->variant_id,
 					'goals' => $experiment->goals,
-					'test_running' => $experiment->test_running,
+					'status' => $experiment->status,
 				);
 			}
 		}

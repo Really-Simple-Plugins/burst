@@ -140,7 +140,6 @@ if ( ! function_exists( 'burst_get_experiments' ) ) {
 
 	function burst_get_experiments( $args = array() ) {
 		$defaults = array(
-			'status' => 'active',
 			'order'  => 'DESC',
 			'orderby' => 'date_started',
 		);
