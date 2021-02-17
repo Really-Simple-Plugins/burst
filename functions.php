@@ -152,12 +152,12 @@ if ( ! function_exists( 'burst_get_experiments' ) ) {
 
 		if ( isset($args['status']) ) {
 			$status = burst_sanitize_experiment_status($args['status']);
-			$sql .= " AND cdb.status = '$status'";
+			$sql .= " AND status = '$status'";
 		}
 
 		$sql .= " ORDER BY $orderby $order";
 
-		return  $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments as cdb where 1=1 $sql" );
+		return  $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments where 1=1 $sql" );
 	}
 }
 
