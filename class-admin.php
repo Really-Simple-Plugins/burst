@@ -883,6 +883,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 				include( dirname( __FILE__ ) . '/experiments/class-experiment-table.php' );
 
 				$experiments_table = new burst_experiment_Table();
+
 				$experiments_table->prepare_items();
 
 				?>
@@ -898,6 +899,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 					      action="">
 
 						<?php
+						$experiments_table->views();
 						$experiments_table->search_box( __( 'Filter', 'burst' ),
 							'burst-experiment' );
 						$experiments_table->display();

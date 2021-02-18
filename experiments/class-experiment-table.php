@@ -83,6 +83,8 @@ class burst_experiment_Table extends WP_List_Table {
 	public function search_box( $text, $input_id ) {
 		/**
 		* @todo Add filters
+		* 
+		
 		$input_id = $input_id . '-search-input';
 		$status   = $this->get_status();
 		if ( ! empty( $_REQUEST['orderby'] ) ) {
@@ -110,7 +112,20 @@ class burst_experiment_Table extends WP_List_Table {
 				array( 'ID' => 'search-submit' ) ); ?>
 		</p>
 		<?php
-		*/
+		**/
+		
+	}
+
+	protected function get_views() { 
+		//@todo translate strings
+	    $status_links = array(
+	        "all"       	=> '<a href="'. admin_url() .'admin.php?page=burst-experiments">All</a>',
+	        "active" 		=> '<a href="'. admin_url() .'admin.php?page=burst-experiments&status=active">Active</a>',
+	        "draft" 		=> '<a href="'. admin_url() .'admin.php?page=burst-experiments&status=draft">Draft</a>',
+	        "archived"   	=> '<a href="'. admin_url() .'admin.php?page=burst-experiments&status=archived">Archived</a>',
+	        "completed"   	=> '<a href="'. admin_url() .'admin.php?page=burst-experiments&status=completed">Completed</a>',
+	    );
+	    return $status_links;
 	}
 	
 
@@ -301,7 +316,7 @@ class burst_experiment_Table extends WP_List_Table {
 			'control_id' => '<span class="burst-experiment-dot control"></span>'. __( 'Control', 'burst' ),
 			'variant_id' => '<span class="burst-experiment-dot variant"></span>'. __( 'Variant', 'burst' ),
 			'goals' => __( 'Goal', 'burst' ),
-			'status' => __( 'Active', 'burst' ),
+			'status' => __( 'Status', 'burst' ),
 		);
 
 //not sure what this should do @hessel
