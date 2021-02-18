@@ -36,22 +36,17 @@ function burst_track_hit(WP_REST_Request $request){
 			$burst_uid = burst_random_str();
 		}
 	}
-	
 
-	setcookie('burst_uid', $burst_uid, time() + apply_filters('burst_cookie_retention', DAY_IN_SECONDS * 365), '/');
-
+	burst_setcookie('burst_uid', $burst_uid, 1);
 	$data = $request->get_json_params();
-	$url = $data['url'];
+	$url = sanitize_text_field($data['url']);
 
-	error_log('data');
-	error_log(print_r($data, true));
-	
-	$statistics = new BURST_STATISTICS($url, $burst_uid);
+	$statistics = new BURST_STATISTICS();
+	$statistics->uid = $burst_uid;
+	$statistics->page_url = $url;
 	$statistics->page_id = url_to_postid($url);
 	$statistics->test_version = $data['test_version'];
 	$statistics->experiment_id = $data['experiment_id'];
-	$statistics->add();
-
-	error_log(print_r($statistics, true));
-
+	$statistics->conversion = $data['conversion'];
+	$statistics->track();
 }

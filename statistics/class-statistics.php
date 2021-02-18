@@ -23,11 +23,11 @@ function burst_install_statistics_table() {
             `time` varchar(255) NOT NULL,
             `uid` varchar(255) NOT NULL,
             `test_version` varchar(255) NOT NULL,
+            `conversion` int(11) NOT NULL,
               PRIMARY KEY  (ID)
             ) $charset_collate;";
 		dbDelta( $sql );
 		update_option( 'burst_stats_db_version', burst_version );
-
 	}
 }
 
@@ -40,21 +40,23 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 		public $uid;
 		public $test_version;
 		public $experiment_id;
-		//public $clicked; //array('timestamp(seconds from 01-01-1970)' => clicked on url );
-		//public $referer; //array('timestamp(seconds from 01-01-1970)' => previous URL );
+		public $conversion;
+		public $data;
 
-		function __construct( $page_url = false, $uid = false ) {
-			error_log('constuct statistics');
-			$this->uid = $uid;
-			$this->page_url = $page_url;
+		function __construct( $experiment_id = false ) {
+			if ($experiment_id) {
+				$this->experiment_id = $experiment_id;
+				$this->get();
+			}
 		}
 
 		/**
 		 * Add a new statistic database entry
 		 */
 
-		public function add() {
+		public function track() {
 			global $wpdb;
+
 			$update_array = array(
 				'page_url'            		=> sanitize_text_field( $this->page_url ),
 				'page_id'                   => intval( $this->page_id ),
@@ -62,39 +64,40 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 				'uid'               		=> sanitize_title($this->uid),
 				'test_version'				=> $this->sanitize_test_version($this->test_version),
 				'experiment_id'				=> intval($this->experiment_id),
+				'conversion'				=> intval($this->conversion),
 			);
-			error_log('update array');
-			error_log(print_r($update_array, true));
 
-			$wpdb->insert(
-				$wpdb->prefix . 'burst_statistics',
-				$update_array
-			);
-			$this->id = $wpdb->insert_id;
+			//check if the current users' uid/experiment id combination is already in the database.
+			$this->id = $wpdb->get_var( $wpdb->prepare( "select ID from {$wpdb->prefix}burst_statistics where experiment_id = %s and uid = %s", intval( $this->experiment_id ), sanitize_title($this->uid) ) );
+			if ($this->id) {
+				$wpdb->update(
+					$wpdb->prefix . 'burst_statistics',
+					$update_array,
+					array('ID' => $this->id)
+				);
+				$this->id = $wpdb->insert_id;
+			} else {
+				$wpdb->insert(
+					$wpdb->prefix . 'burst_statistics',
+					$update_array
+				);
+				$this->id = $wpdb->insert_id;
+			}
 		}
 
 		/**
-		 * Load the statistic data
+		 * Load the statistic data by experiment id
 		 *
 		 */
 
 		private function get() {
 			global $wpdb;
-
-			$statistics
-				= $wpdb->get_results( $wpdb->prepare( "select * from {$wpdb->prefix}burst_statistics where id = %s",
-				esc_attr( $this->id ) ) );
-
-			if ( isset( $statistics[0] ) ) {
-				$statistic          = $statistics[0];
-				$this->page_url     = $statistic->page_url;
-				$this->page_id      = $statistic->page_id;
-				$this->time 		= $statistic->time;
-				$this->uid 			= $statistic->uid;
+			$statistics = $wpdb->get_results( $wpdb->prepare( "select * from {$wpdb->prefix}burst_statistics where experiment_id = %s", esc_attr( $this->experiment_id ) ) );
+			if ( !empty($statistics) ) {
+				$this->data = $statistics;
 				return true;
 			}
 			return false;
-
 		}
 
 		/**
@@ -108,7 +111,7 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 			$test_versions = array(
 				'variant',
 				'control'
-				);
+			);
 
 			if ( in_array( $str, $test_versions)) {
 				return $str;
@@ -116,44 +119,6 @@ if ( ! class_exists( "BURST_STATISTICS" ) ) {
 				return 'control';
 			}
 		}
-
-		/**
-		 * Delete a statistics
-		 *
-		 * @return bool $success
-		 * @since 2.0
-		 */
-
-		public function delete( $force = false ) {
-			if ( ! burst_user_can_manage()) {
-				return false;
-			}
-
-			$error = false;
-			global $wpdb;
-
-			//do not delete the last one.
-			$count
-				= $wpdb->get_var( "select count(*) as count from {$wpdb->prefix}burst_statistics" );
-			if ( $count == 1 && ! $force ) {
-				$error = true;
-			}
-
-			if ( ! $error ) {
-
-				$wpdb->delete( $wpdb->prefix . 'burst_statistics', array(
-					'page_id' => $this->page_id,
-				) );
-
-				//clear all statistics regarding this banner
-				// $wpdb->delete( $wpdb->prefix . 'burst_statistics', array(
-				// 	'statistic_id' => $this->id,
-				// ) );
-			}
-
-			return ! $error;
-		}
-
 	}
 
 }

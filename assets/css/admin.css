@@ -37,6 +37,9 @@
     Tips and Tricks
    */
   /*Tooltips on dashboard/settings page*/
+  /*
+	  Progress bar
+	 */
 }
 #burst #burst-header {
   display: flex;
@@ -290,6 +293,26 @@
 #burst .burst-tooltip-right {
   float: right;
 }
+#burst .burst-statistics-container {
+  height: 360px;
+}
+#burst .burst-grid button {
+  margin-top: 15px;
+}
+#burst .burst-progress-bar-container {
+  padding-top: 15px;
+  margin: 0 auto;
+}
+#burst .burst-progress-bar-container .burst-progress {
+  overflow: hidden;
+  height: 20px;
+  border-radius: 5px;
+  background-color: #f7f7f7;
+}
+#burst .burst-progress-bar-container .burst-progress .burst-percentage {
+  height: 100%;
+  background-color: #22932e;
+}
 .burst-bullet {
   height: 15px;
   width: 15px;
@@ -393,3 +416,4 @@
 .burst-1_page_burst-settings #wpbody-content {
   padding-bottom: 20px;
 }
+/*# sourceMappingURL=admin.css.map */

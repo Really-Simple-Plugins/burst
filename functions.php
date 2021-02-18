@@ -152,12 +152,41 @@ if ( ! function_exists( 'burst_get_experiments' ) ) {
 
 		if ( isset($args['status']) ) {
 			$status = burst_sanitize_experiment_status($args['status']);
-			$sql .= " AND cdb.status = '$status'";
+			$sql .= " AND status = '$status'";
 		}
 
 		$sql .= " ORDER BY $orderby $order";
 
-		return  $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments as cdb where 1=1 $sql" );
+		return  $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments where 1=1 $sql" );
+	}
+}
+
+if ( !function_exists('burst_get_default_experiment_id')){
+	/**
+	 * Get the default experiment id
+	 * @return bool|int
+	 */
+	function burst_get_default_experiment_id(){
+		$experiments = burst_get_experiments();
+		if ( $experiments && is_array($experiments) ) {
+			$experiments = reset($experiments);
+			return $experiments->ID;
+		} else {
+			return false;
+		}
+	}
+}
+
+if ( !function_exists( 'burst_setcookie') ) {
+	function burst_setcookie( $key, $value, $expiration_days ){
+		$options = array (
+			'expires' => time() + (DAY_IN_SECONDS * apply_filters('burst_cookie_retention', $expiration_days) ),
+			'path' => '/',
+			'secure' => is_ssl(),
+			'samesite' => 'Lax' // None || Lax  || Strict
+		);
+
+		setcookie($key, $value, $options );
 	}
 }
 

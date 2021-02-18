@@ -28,14 +28,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			add_action('admin_init', array($this, 'init_grid') );
 			add_action('wp_ajax_burst_get_datatable', array($this, 'ajax_get_datatable'));
-
-
 			add_action( 'edit_form_top', array( $this, 'add_experiment_info_below_title' ));
-
-			$is_burst_page = isset($_GET['page']) && $_GET['page'] === 'burst' ? true : false;
-			if ($is_burst_page) {
-				add_action('admin_footer', array($this, 'inline_styles'), 999);
-			}
 			add_action( 'admin_init',array( $this, 'process_burst_metaboxes' ) );
 			add_action ( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
             add_action( 'add_meta_boxes', array( $this, 'add_burst_metabox_to_classic_editor' ) );
@@ -219,7 +212,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 			    return false;
 			}
 
-			error_log('post_id: '. $post_id);
 			if (!$post_id) return false;
 
 			if ($_POST["burst_duplicate_or_choose_existing"] === 'duplicate') {
@@ -239,10 +231,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			/**
 			* create experiment entry
 			*/
-			error_log('burst title' . $_POST['burst_title']);
-
 			$experiment_title = !empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : __('Unnamed experiment', 'burst');
-
 			$experiment = new BURST_EXPERIMENT();
 			$experiment->title = $experiment_title;
 			$experiment->control_id = $post_id;
@@ -250,17 +239,14 @@ if ( ! class_exists( "burst_admin" ) ) {
 			$experiment->date_created = time();
 			$experiment->date_modified = time();
 			$experiment->save();
-
 			update_post_meta( $post_id,'burst_experiment_id', $experiment->id );
 			update_post_meta( $variant_id,'burst_experiment_id', $experiment->id );
-
-
 			return $variant_id;
 		}
 
 		/**
 		 * Function for post duplication. Dups appear as experiments. User is redirected to the edit screen
-		 *
+		 * @param int $post_id
 		 */
 		public function duplicate_post($post_id)
 		{
@@ -271,16 +257,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 			$current_user = wp_get_current_user();
 			$new_post_author = $current_user->ID;
 			if (isset($post) && $post != null) {
-//
-//				/*
-//				 * create new slug
-//				 */
-//				if (isset($post->post_name)) {
-//					$slug = $post->post_name . '_' . __( "experiment", 'burst' );
-//				} else {
-//					$slug = __( "experiment", 'burst' );
-//				}
-
 				$args = array(
 					'comment_status' => $post->comment_status,
 					'post_status' => 'experiment',
@@ -402,9 +378,44 @@ if ( ! class_exists( "burst_admin" ) ) {
 				'burst-admin',
 				'burst',
 				array(
-					'admin_url'    => admin_url( 'admin-ajax.php' ),
-				)
-			);
+					'ajaxurl' => admin_url( 'admin-ajax.php' ),
+					'strings' => array(
+						'Today'        => __( 'Today', 'burst' ),
+						'Yesterday'    => __( 'Yesterday', 'burst' ),
+						'Last 7 days'  => __( 'Last 7 days', 'burst' ),
+						'Last 30 days' => __( 'Last 30 days', 'burst' ),
+						'This Month'   => __( 'This Month', 'burst' ),
+						'Last Month'   => __( 'Last Month', 'burst' ),
+						'date_format'  => get_option( 'date_format' ),//_x( 'MM/DD/YYYY','Date format' 'burst' ),
+						'Apply'        => __( "Apply", "burst" ),
+						'Cancel'       => __( "Cancel", "burst" ),
+						'From'         => __( "From", "burst" ),
+						'To'           => __( "To", "burst" ),
+						'Custom'       => __( "Custom", "burst" ),
+						'W'            => __( "W", "burst" ),
+						"Mo"           => __( "Mo", "burst" ),
+						'Tu'           => __( "Tu", "burst" ),
+						'We'           => __( "We", "burst" ),
+						'Th'           => __( "Th", "burst" ),
+						'Fr'           => __( "Fr", "burst" ),
+						'Sa'           => __( "Sa", "burst" ),
+						'Su'           => __( "Su", "burst" ),
+						'January'      => __( "January" ),
+						'February'     => __( "February" ),
+						'March'        => __( "March" ),
+						'April'        => __( "April" ),
+						'May'          => __( "May" ),
+						'June'         => __( "June" ),
+						'July'         => __( "July" ),
+						'August'       => __( "August" ),
+						'September'    => __( "September" ),
+						'October'      => __( "October" ),
+						'November'     => __( "November" ),
+						'December'     => __( "December" ),
+                    ),
+                )
+            );
+	
 		}
 
 		/**
@@ -529,7 +540,15 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 		}
 
+		/**
+		 * Initialize the grid
+		 */
+
 		public function init_grid(){
+		    if (!burst_user_can_manage()) return;
+
+		    if (!isset($_GET['page']) || $_GET['page'] !== 'burst') return;
+
 		    $this->tabs = apply_filters('burst_tabs', array(
 		            'dashboard' => array(
 		                    'title'=> __( "General", "burst" ),
@@ -549,38 +568,34 @@ if ( ! class_exists( "burst_admin" ) ) {
             $this->grid_items = array(
                 1 => array(
                     'title' => __("Your last experiment", "burst"),
-                    'content' => '<canvas class="burst-chartjs-stats" width="400" height="400"></canvas>',
-                    'class' => 'table-overview burst-load-ajax',
+                    'class' => 'table-overview',
                     'type' => 'no-type',
                     'controls' => $date_control,
                     'can_hide' => true,
                     'page' => 'dashboard',
-                    'body' => 'admin_wrap',
-
+                    'body' => 'dashboard/statistics.php',
                 ),
                 2 => array(
-                    'title' => __("Documents", "burst"),
+                    'title' => __("Objective", "burst"),
                     'content' => '<div class="burst-skeleton"></div>',
                     'class' => 'small burst-load-ajax',
-                    'type' => 'no-type',
+                    'type' => 'objective',
                     'controls' => __("Last update", "burst"),
                     'can_hide' => true,
                     'ajax_load' => true,
                     'page' => 'dashboard',
-                    'body' => 'admin_wrap',
-
+                    'body'=> '',
                 ),
                 3 => array(
                     'title' => __("Tools", "burst"),
                     'content' => '<div class="burst-skeleton"></div>',
-                    'class' => 'small burst-load-ajax',
+                    'class' => 'small',
                     'type' => 'no-type',
                     'controls' => '',
                     'can_hide' => true,
                     'ajax_load' => true,
                     'page' => 'dashboard',
-                    'body' => 'admin_wrap',
-
+                    'body'=> '',
                 ),
                 4 => array(
                     'title' => __("Tips & Tricks", "burst"),
@@ -590,7 +605,8 @@ if ( ! class_exists( "burst_admin" ) ) {
                     'can_hide' => true,
                     'controls' => '',
                     'page' => 'dashboard',
-                    'body' => 'admin_wrap',
+                    'body'=> '',
+
                 ),
                 5 => array(
                     'title' => __("Our Plugins", "burst"),
@@ -600,7 +616,8 @@ if ( ! class_exists( "burst_admin" ) ) {
                     'can_hide' => false,
                     'controls' => '<div class="rsp-logo"><a href="https://really-simple-plugins.com/"><img src="'. trailingslashit(burst_url) .'assets/images/really-simple-plugins.png" /></a></div>',
                     'page' => 'dashboard',
-                    'body' => 'admin_wrap',
+                    'body'=> '',
+
                 ),
 
             );
@@ -617,225 +634,13 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			$grid_html = '';
 			foreach ($grid_items as $index => $grid_item) {
-				if($grid_item['page'] !== 'dashboard') continue;
-				$grid_html .= burst_grid_element($grid_item);
+			    $grid_html .= burst_grid_element($grid_item);
 			}
 			$args = array(
 				'page' => 'dashboard',
 				'content' => burst_grid_container($grid_html),
 			);
 			echo burst_get_template('admin_wrap.php', $args );
-		}
-
-		/**
-		 * Some scripts to load the graph
-		 */
-		public function inline_styles()
-		{
-			?>
-            <script type="text/javascript">
-                jQuery(document).ready(function ($) {
-                    function burstInitChartJS() {
-                        var XscaleLabelDisplay = true;
-                        var YscaleLabelDisplay = true;
-                        var titleDisplay = true;
-                        var legend = true;
-                        var config = {
-                            type: 'line',
-                            data: {
-                                labels: ['...', '...', '...', '...', '...', '...', '...'],
-                                datasets: [{
-                                    label: '...',
-                                    backgroundColor: 'rgb(255, 99, 132)',
-                                    borderColor: 'rgb(255, 99, 132)',
-                                    data: [
-                                        0, 0, 0, 0, 0, 0, 0,
-                                    ],
-                                    fill: false,
-                                }
-
-                                ]
-                            },
-                            options: {
-                                legend:{
-                                    display:legend,
-                                },
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                title: {
-                                    display: titleDisplay,
-                                    text: 'Select an experiment'
-                                },
-                                tooltips: {
-                                    mode: 'index',
-                                    intersect: false,
-                                },
-                                hover: {
-                                    mode: 'nearest',
-                                    intersect: true
-                                },
-                                scales: {
-                                    xAxes: [{
-                                        display: XscaleLabelDisplay,
-                                        scaleLabel: {
-                                            display: true,
-                                            labelString: 'Date'
-                                        }
-                                    }],
-                                    yAxes: [{
-                                        display: YscaleLabelDisplay,
-                                        scaleLabel: {
-                                            display: true,
-                                            labelString: 'Count'
-                                        },
-                                        ticks: {
-                                            beginAtZero: true,
-                                            min: 0,
-                                            max: 1,
-                                            stepSize: 5
-                                        }
-                                    }]
-                                }
-                            }
-                        };
-
-                        var ctx = document.getElementsByClassName('burst-chartjs-stats');
-                        window.conversionGraph = new Chart(ctx, config);
-                        var date_start = localStorage.getItem('burst_range_start');
-                        var date_end = localStorage.getItem('burst_range_end');
-
-                        var experiment_id = $('select[name=burst_selected_experiment_id]').val();
-                        if (experiment_id>0) {
-                            $.ajax({
-                                type: "get",
-                                dataType: "json",
-                                url: ajaxurl,
-                                data: {
-                                    action: "burst_get_experiment_statistics",
-                                    experiment_id: experiment_id,
-                                    date_start: date_start,
-                                    date_end: date_end,
-                                },
-                                success: function (response) {
-                                    console.log(response);
-                                    if (response.success == true) {
-                                        var i = 0;
-                                        response.data.datasets.forEach(function (dataset) {
-                                            if (config.data.datasets.hasOwnProperty(i)) {
-                                                config.data.datasets[i] = dataset;
-                                            } else {
-                                                var newDataset = dataset;
-                                                config.data.datasets.push(newDataset);
-                                            }
-
-                                            i++;
-                                        });
-                                        config.data.labels = response.data.labels;
-                                        config.options.title.text = response.title;
-                                        config.options.scales.yAxes[0].ticks.max = parseInt(response.data.max);
-                                        window.conversionGraph.update();
-                                    } else {
-                                        alert("Your experiment data could not be loaded")
-                                    }
-                                }
-                            })
-                        }
-                    }
-
-                    "use strict";
-
-                    var unixStart = localStorage.getItem('burst_range_start');
-                    var unixEnd = localStorage.getItem('burst_range_end');
-
-                    if (unixStart === null || unixEnd === null ) {
-                        unixStart = moment().endOf('day').subtract(1, 'week').unix();
-                        unixEnd = moment().endOf('day').unix();
-                        localStorage.setItem('burst_range_start', unixStart);
-                        localStorage.setItem('burst_range_end', unixEnd);
-                    }
-
-                    unixStart = parseInt(unixStart);
-                    unixEnd = parseInt(unixEnd);
-                    burstUpdateDate(moment.unix(unixStart), moment.unix(unixEnd));
-                    console.log("run init chart js");
-                    burstInitChartJS();
-
-                    function burstUpdateDate(start, end) {
-                        $('.burst-date-container span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-                        localStorage.setItem('burst_range_start', start.add( moment().utcOffset(), 'm' ).unix());
-                        localStorage.setItem('burst_range_end', end.add( moment().utcOffset(), 'm' ).unix());
-                    }
-                    var todayStart = moment().endOf('day').subtract(1, 'days').add(1, 'minutes');
-                    var todayEnd = moment().endOf('day');
-                    var yesterdayStart = moment().endOf('day').subtract(2, 'days').add(1, 'minutes');
-
-                    var yesterdayEnd = moment().endOf('day').subtract(1, 'days');
-                    var lastWeekStart = moment().endOf('day').subtract(8, 'days').add(1, 'minutes');
-                    var lastWeekEnd = moment().endOf('day').subtract(1, 'days');
-                    $('.burst-date-container.burst-date-range').daterangepicker(
-                        {
-                            ranges: {
-                                'Today': [todayStart, todayEnd],
-                                'Yesterday': [yesterdayStart, yesterdayEnd],
-                                'Last 7 Days': [lastWeekStart, lastWeekEnd],
-                                'Last 30 Days': [moment().subtract(31, 'days'), yesterdayEnd],
-                                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                            },
-                            "locale": {
-                                "format": "<?php _e( 'MM/DD/YYYY', 'burst' );?>",
-                                "separator": " - ",
-                                "applyLabel": "<?php _e("Apply","burst")?>",
-                                "cancelLabel": "<?php _e("Cancel","burst")?>",
-                                "fromLabel": "<?php _e("From","burst")?>",
-                                "toLabel": "<?php _e("To","burst")?>",
-                                "customRangeLabel": "<?php _e("Custom","burst")?>",
-                                "weekLabel": "<?php _e("W","burst")?>",
-                                "daysOfWeek": [
-                                    "<?php _e("Mo","burst")?>",
-                                    "<?php _e("Tu","burst")?>",
-                                    "<?php _e("We","burst")?>",
-                                    "<?php _e("Th","burst")?>",
-                                    "<?php _e("Fr","burst")?>",
-                                    "<?php _e("Sa","burst")?>",
-                                    "<?php _e("Su","burst")?>",
-
-                                ],
-                                "monthNames": [
-                                    "<?php _e("January")?>",
-                                    "<?php _e("February")?>",
-                                    "<?php _e("March")?>",
-                                    "<?php _e("April")?>",
-                                    "<?php _e("May")?>",
-                                    "<?php _e("June")?>",
-                                    "<?php _e("July")?>",
-                                    "<?php _e("August")?>",
-                                    "<?php _e("September")?>",
-                                    "<?php _e("October")?>",
-                                    "<?php _e("November")?>",
-                                    "<?php _e("December")?>"
-                                ],
-                                "firstDay": 1
-                            },
-                            "alwaysShowCalendars": true,
-                            startDate: moment.unix(unixStart),
-                            endDate: moment.unix(unixEnd),
-                            "opens": "left",
-                        }, function (start, end, label) {
-                            burstUpdateDate(start, end);
-                            burstInitChartJS();
-                        });
-
-
-                        $(document).on('change', 'select[name=burst_selected_experiment_id]', function(){
-                            console.log('change');
-                            burstInitChartJS();
-                        });
-                });
-
-
-            </script>
-			<?php
 		}
 
 		/**

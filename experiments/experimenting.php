@@ -6,7 +6,6 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		private static $_this;
 		public $experimenting_enabled = false;
 
-
 		function __construct() {
 			if ( isset( self::$_this ) ) {
 				wp_die( sprintf( '%s is a singleton class and you cannot create a second instance.',
@@ -15,14 +14,12 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 
 			add_action( 'init', array($this, 'add_experiment_post_status') );
 			add_filter( 'the_content', array($this, 'load_experiment_content') );
-
 			add_action('wp_enqueue_scripts', array($this,'enqueue_assets') );
-			
 			add_action('admin_footer-post.php', array($this,'add_variant_status_add_in_post_page') );
 		    add_action('admin_footer-post-new.php', array($this,'add_variant_status_add_in_post_page') );
 		    add_action('admin_footer-edit.php', array($this,'add_variant_status_add_in_quick_edit') );
-
 		    add_filter( 'display_post_states', array( $this, 'add_display_post_states' ), 10, 2 );
+		    add_action( 'wp_ajax_burst_experiment_action', array($this, 'experiment_action'));
 
 			self::$_this = $this;
 		}
@@ -31,11 +28,55 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			return self::$_this;
 		}
 
+		/**
+		 * Start or stop an experiment with an ajax request
+		 *
+		 */
+		public function experiment_action(){
+			$error = false;
+			if ( ! burst_user_can_manage() ) {
+				$error = true;
+			}
+			if ( !isset($_POST['experiment_id'])) {
+				$error = true;
+			}
+
+			if ( !isset($_POST['type'])) {
+				$error = true;
+			}
+
+			if ( !$error ) {
+				$experiment_id = intval( $_POST['experiment_id'] );
+				$experiment = new BURST_EXPERIMENT($experiment_id);
+				if ( $_POST['type'] === 'start' ) {
+					$experiment->start();
+				} else {
+					$experiment->stop();
+				}
+			}
+
+			$return  = array(
+				'success' => !$error,
+			);
+			echo json_encode( $return );
+			die;
+		}
+
 
 		public function enqueue_assets( $hook ) {
 			$minified = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
-			$track_type = 'visit';
-			$identifier = 'my-class';
+
+			global $post;
+			if ( $post ) {
+				$experiment = new BURST_EXPERIMENT(false, $post->ID );
+				if ($experiment->id) {
+					$track_type = $experiment->track_type;
+					$identifier = $experiment->identifier;
+					$track_type = 'visit';
+					$identifier = 'class';
+				}
+			}
+
 			wp_enqueue_script( 'burst',
 				burst_url . "assets/js/burst$minified.js", array(),
 				burst_version, true );
