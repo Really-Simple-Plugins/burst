@@ -25,6 +25,7 @@ function burst_install_experiments_table() {
             `date_started` varchar(255) NOT NULL,
             `date_end` varchar(255) NOT NULL,
             `goal` text NOT NULL,
+            `goal_type` text NOT NULL,
             `statistics` text NOT NULL,
               PRIMARY KEY  (ID)
             ) $charset_collate;";
@@ -46,6 +47,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		public $date_started = false;
 		public $date_end = false;
 		public $goal = false;
+		public $goal_type = false;
 		public $statistics = false;
 
 		function __construct( $id = false, $post_id = false ) {
@@ -141,6 +143,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				$this->date_started 		= $experiment->date_started;
 				$this->date_end 			= $experiment->date_end;
 				$this->goal 				= $experiment->goal;
+				$this->goal_type 			= $experiment->goal_type;
 				$this->statistics 			= $experiment->statistics;
 
 			}
@@ -194,6 +197,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				'date_started'              => sanitize_text_field( $this->date_started ),
 				'date_end'                	=> sanitize_text_field( $this->date_end ),
 				'goal'                		=> sanitize_text_field( $this->goal ),
+				'goal_type'                		=> sanitize_text_field( $this->goal_type ),
 				'statistics'                => $this->statistics,
 			);
 			global $wpdb;
@@ -248,7 +252,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			}
       
 			$this->status = 'archived';
-
+			$this->date_modified = time();
 			$this->save();
 		}
 
@@ -264,6 +268,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			}
 
 			$this->status = 'draft';
+			$this->date_modified = time();
 			$this->save();
 		}
 
