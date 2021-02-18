@@ -52,24 +52,62 @@ function burst_grid_element($grid_item){
 		$contents = file_get_contents($file);
 	}
 
-	$template_part = $grid_item['body'].'.php';
-	$template_part = burst_get_template($template_part);
+	$template_part = $grid_item['body'];
+	$template_part = !empty($template_part) ? burst_get_template($template_part) : "";
+	$content = empty($grid_item['content']) ? $template_part : $grid_item['content'];
 	$contents = str_replace( array(
 		'{class}',
 		'{header}',
 		'{controls}',
 		'{body}',
 		'{index}',
+		'{type}',
 	), array(
 		$grid_item['class'],
 		$grid_item['title'],
 		$grid_item['controls'],
-		$grid_item['content'],
+		$content,
 		$grid_item['index'],
+		$grid_item['type'],
 	), $contents );
 
 
 	return $contents;
 }
+
+
+/**
+ * Load a grid block
+ */
+function burst_load_grid_block(){
+	$error = false;
+	$html = '';
+
+	if ( ! burst_user_can_manage() ) {
+		$error = true;
+	}
+
+	if ( !isset($_GET['experiment_id'])) {
+		$error = true;
+	}
+
+	if ( !isset($_GET['type'])) {
+		$error = true;
+	}
+
+	if ( !$error ) {
+		$type = sanitize_title($_GET['type']);
+		$html = burst_get_template('dashboard/'.$type.'.php');
+	}
+
+	$return  = array(
+		'success'  => !$error,
+		'html'     => $html,
+	);
+	echo json_encode( $return );
+	die;
+}
+add_action( 'wp_ajax_burst_load_grid_block', 'burst_load_grid_block');
+
 
 

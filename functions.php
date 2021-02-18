@@ -161,6 +161,35 @@ if ( ! function_exists( 'burst_get_experiments' ) ) {
 	}
 }
 
+if ( !function_exists('burst_get_default_experiment_id')){
+	/**
+	 * Get the default experiment id
+	 * @return bool|int
+	 */
+	function burst_get_default_experiment_id(){
+		$experiments = burst_get_experiments();
+		if ( $experiments && is_array($experiments) ) {
+			$experiments = reset($experiments);
+			return $experiments->ID;
+		} else {
+			return false;
+		}
+	}
+}
+
+if ( !function_exists( 'burst_setcookie') ) {
+	function burst_setcookie( $key, $value, $expiration_days ){
+		$options = array (
+			'expires' => time() + (DAY_IN_SECONDS * apply_filters('burst_cookie_retention', $expiration_days) ),
+			'path' => '/',
+			'secure' => is_ssl(),
+			'samesite' => 'Lax' // None || Lax  || Strict
+		);
+
+		setcookie($key, $value, $options );
+	}
+}
+
 if ( !function_exists( 'burst_sanitize_experiment_status' )) {
 	/**
 	 * Sanitize the status

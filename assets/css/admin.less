@@ -338,6 +338,37 @@
 	.burst-tooltip-right {
 		float: right;
 	}
+
+	.burst-statistics-container {
+		height:360px;
+	}
+
+	.burst-grid {
+		button {
+			margin-top:@default-margin;
+		}
+	}
+
+	/*
+	  Progress bar
+	 */
+
+	.burst-progress-bar-container {
+		padding-top: 15px;
+		margin: 0 auto;
+		.burst-progress {
+			overflow: hidden;
+			height: 20px;
+			border-radius: 5px;
+			background-color: #f7f7f7;
+			.burst-percentage {
+				height: 100%;
+				background-color: @color-success;
+			}
+		}
+	}
+
+
 }
 
 .burst-bullet{

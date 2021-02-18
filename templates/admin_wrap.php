@@ -18,7 +18,6 @@
                         <?php
                     }
                     ?>
-
                 </select>
                 <a href="https://wpburst.com/support" class="button button-black" target="_blank"><?php _e("Support", "burst") ?></a>
             </div>
