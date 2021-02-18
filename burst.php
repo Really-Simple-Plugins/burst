@@ -197,7 +197,7 @@ if ( ! function_exists( 'burst_add_admin_bar_item' ) ) {
 	    }
 	    $active_experiments = burst_get_experiments(array( 'status' => 'active' ));
 	    $count = count($active_experiments);
-	    $color = $count > 0 ? 'burst-green' : 'grey';
+	    $color = $count > 0 ? 'rsp-green' : 'grey';
 	    $icon = '<span class="burst-bullet '. $color .'"></span>';
 	    $title =  burst_plugin_name;
 	    if ( $count > 0 ) {

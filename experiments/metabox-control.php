@@ -10,8 +10,6 @@ $experiment_id = burst_get_experiment_id_for_post($post_id);
 
 if (intval($experiment_id)) { 
 	$experiment = new BURST_EXPERIMENT($experiment_id);
-	error_log('experiment');
-	error_log(print_r($experiment, true));
 	?>
 
 <?php } ?>

@@ -70,13 +70,13 @@ function burst_get_experiment_statistics(){
 		//				'data' =>[8, 13, 8, 9, 6, 0, false],
 		//				'backgroundColor' => 'rgba(231, 126, 35, 0.2)',
 		//				'borderColor' => 'rgba(231, 126, 35, 1)',
-		//				'label' => 'Original'
+		//				'label' => 'control'
 		//			),
 		//				array(
 		//					'data' => array(8, 9, 12, 20, 6, 2.5 ,3),
 		//					'backgroundColor' => 'rgba(51, 152, 219, 0.2)',
 		//					'borderColor' => 'rgba(51, 152, 219, 1)',
-		//					'label' => 'Variation'
+		//					'label' => 'variant'
 		//				))
 		//		);
 
