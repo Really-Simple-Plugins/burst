@@ -62,18 +62,28 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			die;
 		}
 
-
+		/**
+		 * Enqueue some assets
+		 * @param $hook
+		 */
 		public function enqueue_assets( $hook ) {
 			$minified = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 			global $post;
+			//set some defaults
+			$localize_args = array(
+				'url' => get_rest_url() . 'burst/v1/hit',
+				'goal' => 'visit',
+				'identifier' => ''
+			);
+
 			if ( $post ) {
 				$experiment = new BURST_EXPERIMENT(false, $post->ID );
 				if ($experiment->id) {
-					$track_type = $experiment->track_type;
-					$identifier = $experiment->identifier;
-					$track_type = 'visit';
-					$identifier = 'class';
+					$localize_args['goal'] = $experiment->goal;
+					$localize_args['identifier'] = $experiment->identifier;
+					$localize_args['goal'] = 'visit';
+					$localize_args['identifier'] = 'class';
 				}
 			}
 
@@ -83,24 +93,9 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			wp_localize_script(
 				'burst',
 				'burst',
-				array( 
-					'url' => get_rest_url() . 'burst/v1/hit',
-					'track_type' => $track_type,
-					'identifier' => $identifier 
-				)
+				$localize_args
 			);
-			
 		}
-		/**
-		 *
-		 * //if experimenting enabled
-		 * //if a post is loaded, check if it has variants.
-		 * get content of variant and load instead of post.
-		 *
-		 *
-		 *
-		 */
-
 
 		/**
 		 * Load variant content by filtering the_content
@@ -109,15 +104,11 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		 * @return string
 		 */
 		public function load_experiment_content($content){
-			error_log('load_variant_content');
 			global $post;
 
 			$control_id = $post->ID;
-			$experiment = new BURST_EXPERIMENT(false, $control_id);
-
-			if ( !$experiment->variant_id ||
-			     $experiment->id ) {
-
+			$experiment = new BURST_EXPERIMENT(false, $control_id );
+			if ( $experiment->id && $experiment->variant_id ) {
 				$variant_id = $experiment->variant_id;
 				$experiment_id = $experiment->id;
 				$burst_uid    = isset( $_COOKIE['burst_uid'] ) ? sanitize_text_field( $_COOKIE['burst_uid'] ) : false;
@@ -237,29 +228,4 @@ function burst_experiment_form_submit() {
 		$experiment = new BURST_EXPERIMENT( $id );
 	}
 	$experiment->process_form( $_POST );
-
-
-	// redirect
-	// redirect to page with experiment status
-	
-	// redirect to experiment settings page
-	// if ( isset( $_POST['burst_add_new'] ) ) {
-	// 	wp_redirect( admin_url( 'admin.php?page=burst-experiments&id='
-	// 	                        . $experiment->id ) );
-	// 	exit;
-	// }
 }
-
-// add_action( 'admin_init', 'burst_redirect_to_experiment' );
-// function burst_redirect_to_experiment() {
-// 	//on experiment page?
-// 	if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'burst-experiments' ) {
-// 		return;
-// 	}
-// 	if ( ! apply_filters( 'burst_show_experiment_list_view', false )
-// 	     && ! isset( $_GET['id'] )
-// 	) {
-// 		wp_redirect( add_query_arg( 'id', $_GET['id'],
-// 			admin_url( 'admin.php?page=burst-experiments' ) ) );
-// 	}
-// }

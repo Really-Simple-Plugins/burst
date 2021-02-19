@@ -1,12 +1,22 @@
 if ( burst_wp_has_consent() ) {
+	burst_track_hit();
+
+	if (burst.goal === 'click' ) {
+
+	}
+}
+
+
+function burst_track_hit(){
 	var request = new XMLHttpRequest();
 	request.open('POST', burst.url, true);
-	console.log(burst.url);
 	var url = location.pathname;
 	var test_version = test_version;
+	var experiment_id = experiment_id;
 	var data = {
 		'url': url,
 		'test_version': test_version,
+		'experiment_id': experiment_id,
 	};
 
 	console.log(data);
