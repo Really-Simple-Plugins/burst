@@ -705,7 +705,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 						<?php
 						$experiments_table->views();
-						$experiments_table->search_box( __( 'Filter', 'burst' ),
+						$experiments_table->search_box( __( 'Search', 'burst' ),
 							'burst-experiment' );
 						$experiments_table->display();
 						?>
