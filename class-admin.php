@@ -169,7 +169,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 		{
 			if (!burst_user_can_manage()) return;
 			if (!isset($_POST['post_ID'])) return;
-			error_log(print_r($_POST, true));
             $post_id = intval($_POST['post_ID']);
 			if ( isset( $_POST["burst_create_experiment_button"] ) ){
 				$redirect_id = $this->create_experiment($post_id);
@@ -190,9 +189,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			*/
 
 			if (isset($redirect_id)) {
-				error_log('redirect');
 				$url = add_query_arg(array( 'post' => $redirect_id, 'action' => 'edit'), admin_url('post.php') );
-				error_log($url);
 				if ( wp_redirect( $url ) ) {
 				    exit;
 				}
