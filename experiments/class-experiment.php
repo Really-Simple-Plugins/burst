@@ -24,8 +24,9 @@ function burst_install_experiments_table() {
             `date_modified` varchar(255) NOT NULL,
             `date_started` varchar(255) NOT NULL,
             `date_end` varchar(255) NOT NULL,
-            `goal` text NOT NULL,
-            `goal_type` text NOT NULL,
+            `goal` varchar(255) NOT NULL,
+            `goal_url` varchar(255) NOT NULL,
+            `identifier` varchar(255) NOT NULL,
             `statistics` text NOT NULL,
               PRIMARY KEY  (ID)
             ) $charset_collate;";
@@ -46,15 +47,18 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		public $date_modified = false;
 		public $date_started = false;
 		public $date_end = false;
-		public $goal = false;
-		public $goal_type = false;
+		public $goal = false;//visit, click
+		public $goal_url = '';
+		public $identifier = '';
 		public $statistics = false;
 
-		function __construct( $id = false, $post_id = false ) {
+		function __construct( $id = false, $post_id = false, $page_url = false ) {
 
 			//if a post id is passed, use the post id to find the linked experiment
 			if ( !$id && is_numeric($post_id) ) {
 				$this->id = burst_get_experiment_id_for_post($post_id);
+			} else if ($page_url) {
+				$this->page_url = $page_url;
 			} else {
 				$this->id = $id;
 			}
@@ -88,7 +92,25 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			$this->id = $wpdb->insert_id;
 		}
 
+		/**
+		 * Sanitize the goal type
+		 * @param string $str
+		 *
+		 * @return string
+		 */
 
+		private function sanitize_goal( $str){
+			$goals = array(
+				'visit',
+				'click'
+			);
+
+			if ( in_array( $str, $goals)) {
+				return $str;
+			} else {
+				return 'visit';
+			}
+		}
 
 		public function process_form( $post ) {
 
@@ -108,6 +130,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				return false;
 			}
 
+			//sanitizing in save function
 			foreach ( $this as $property => $value ) {
 				if ( isset( $post[ 'burst_' . $property ] ) ) {
 					$this->{$property} = $post[ 'burst_' . $property ];
@@ -128,11 +151,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			if ( ! intval( $this->id ) > 0 ) {
 				return;
 			}
-
-			error_log("#1");
 			$experiment = $wpdb->get_row( $wpdb->prepare( "select * from {$wpdb->prefix}burst_experiments where ID = %s", intval( $this->id ) ) );
-			error_log("#2");
-
 			if ( $experiment ) {
 				$this->title          		= $experiment->title;
 				$this->variant_id 			= $experiment->variant_id;
@@ -143,7 +162,8 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				$this->date_started 		= $experiment->date_started;
 				$this->date_end 			= $experiment->date_end;
 				$this->goal 				= $experiment->goal;
-				$this->goal_type 			= $experiment->goal_type;
+				$this->goal_url 		    = $experiment->goal_url;
+				$this->identifier 		    = $experiment->identifier;
 				$this->statistics 			= $experiment->statistics;
 
 			}
@@ -196,9 +216,10 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				'date_modified'             => sanitize_text_field( $this->date_modified ),
 				'date_started'              => sanitize_text_field( $this->date_started ),
 				'date_end'                	=> sanitize_text_field( $this->date_end ),
-				'goal'                		=> sanitize_text_field( $this->goal ),
-				'goal_type'                		=> sanitize_text_field( $this->goal_type ),
-				'statistics'                => $this->statistics,
+				'goal'                		=> $this->sanitize_goal( $this->goal ),
+				'identifier'                => sanitize_text_field($this->identifier),
+				'goal_url'                  => sanitize_text_field($this->goal_url),
+
 			);
 			global $wpdb;
 			$updated = $wpdb->update( $wpdb->prefix . 'burst_experiments',

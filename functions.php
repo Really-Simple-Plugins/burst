@@ -415,6 +415,7 @@ if ( ! function_exists( 'burst_get_experiment_id_for_post' ) ) {
 		if (!$post_id) {
 			$post_id = burst_get_current_post_id();			
 		}
+
 		if (!$post_id) return false;
 
 		return get_post_meta($post_id, 'burst_experiment_id', true);
