@@ -313,6 +313,15 @@
   height: 100%;
   background-color: #22932e;
 }
+#burst .burst-percentage-text-container {
+  display: flex;
+  padding-top: 20px;
+}
+#burst .burst-percentage-text-container .burst-percentage-number {
+  font-size: 18px;
+  font-weight: 400;
+  margin-right: 3px;
+}
 .burst-bullet {
   height: 15px;
   width: 15px;

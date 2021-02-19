@@ -483,6 +483,14 @@ jQuery(document).ready(function ($) {
     var strThisMonth= burstLocalizeString('This Month');
     var strLastMonth= burstLocalizeString('Last Month');
 
+    var ranges = {}
+    ranges[strToday] = [todayStart, todayEnd];
+    ranges[strYesterday] = [yesterdayStart, yesterdayEnd];
+    ranges[strLast7] = [lastWeekStart, lastWeekEnd];
+    ranges[strLast30] = [moment().subtract(31, 'days'), yesterdayEnd];
+    ranges[strThisMonth] = [moment().startOf('month'), moment().endOf('month')];
+    ranges[strLastMonth] = [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')];
+
     var unixStart = localStorage.getItem('burst_range_start');
     var unixEnd = localStorage.getItem('burst_range_end');
 
@@ -512,14 +520,7 @@ jQuery(document).ready(function ($) {
     var lastWeekEnd = moment().endOf('day').subtract(1, 'days');
     $('.burst-date-container.burst-date-range').daterangepicker(
         {
-            ranges: {
-                strToday: [todayStart, todayEnd],
-                strYesterday : [yesterdayStart, yesterdayEnd],
-                strLast7: [lastWeekStart, lastWeekEnd],
-                strLast30: [moment().subtract(31, 'days'), yesterdayEnd],
-                strThisMonth: [moment().startOf('month'), moment().endOf('month')],
-                strLastMonth: [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            },
+            ranges: ranges,
             "locale": {
                 "format": burstLocalizeString("date_format","burst"),
                 "separator": " - ",
@@ -565,6 +566,7 @@ jQuery(document).ready(function ($) {
 
     $(document).on('change', 'select[name=burst_selected_experiment_id]', function(){
         burstInitChartJS();
+        burstLoadGridBlocks();
     });
 
     function burstLocalizeString(str) {

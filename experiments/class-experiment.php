@@ -229,7 +229,30 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			if ( $this->goal === 'visit' ) {
 				update_post_meta( $this->goal_id,'burst_experiment_id', $this->id );
 			}
+		}
 
+		/**
+		 * Load the statistic data by experiment id
+		 * all hits from experiment
+		 *
+		 * @param array $args
+		 *
+		 * @return int
+		 */
+
+		public function count_hits( $args ) {
+			$default_args = array(
+				'test_version' => 'control',
+			);
+			$sql = '';
+			$args = wp_parse_args( $args, $default_args );
+			global $wpdb;
+			$test_version = burst_sanitize_test_version( $args['test_version']);
+			if ( isset($args['converted']) ) {
+				$converted = $args['converted'] ? 'true' : 'false';
+				$sql = ' AND conversion = '.$converted;
+			}
+			return $wpdb->get_var( $wpdb->prepare( "select count(*) from {$wpdb->prefix}burst_statistics where experiment_id = %s and test_version = %s ".$sql, intval( $this->id ), $test_version ) );
 		}
 
 		/**

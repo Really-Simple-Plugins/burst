@@ -18,8 +18,6 @@ function burst_register_rest_routes(){
  */
 
 function burst_track_hit(WP_REST_Request $request){
-	error_log('track hit');
-
 	//check if this user has a cookie 
 	$burst_uid = isset( $_COOKIE['burst_uid']) ? $_COOKIE['burst_uid'] : false;
 	if ( !$burst_uid ) {
