@@ -86,7 +86,7 @@ function burst_add_experiment_settings($fields){
 				),
 			),
 
-			'goal_url' => array(
+			'goal_id' => array(
 				'source'             => 'BURST_EXPERIMENT',
 				'step'               => 'goal',
 				'type'               => 'select2',
