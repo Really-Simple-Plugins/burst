@@ -106,17 +106,17 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		public function load_experiment_content($content){
 			global $post;
 
-			$control_id = $post->ID;
-			$experiment = new BURST_EXPERIMENT(false, $control_id );
-			if ( $experiment->id && $experiment->variant_id ) {
-				$variant_id = $experiment->variant_id;
-				$experiment_id = $experiment->id;
-				$burst_uid    = isset( $_COOKIE['burst_uid'] ) ? sanitize_text_field( $_COOKIE['burst_uid'] ) : false;
-				$page_url     = burst_get_current_url();
-				$test_version = false;
+			$experiment = new BURST_EXPERIMENT(false, $post->ID );
+			//when this page is a goal
+			if ( $experiment->goal_id == $post->ID ) {
+				$content .= '<script type="text/javascript">var burst_experiment_id = "' . $experiment->id . '";var burst_is_goal_page = true;</script>';
+			} else if ( $experiment->id && $experiment->variant_id ) {
+				$burst_uid     = isset( $_COOKIE['burst_uid'] ) ? sanitize_text_field( $_COOKIE['burst_uid'] ) : false;
+				$page_url      = burst_get_current_url();
+				$test_version  = false;
 
 				if ( $burst_uid ) {
-					$test_version = burst_get_latest_visit_data( $burst_uid, $page_url, 'test_version' );
+					$test_version = BURST::$statistics->get_latest_visit_data( $burst_uid, $page_url, 'test_version' );
 				}
 
 				if ( ! $test_version ) {
@@ -129,15 +129,19 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 				}
 
 				if ( $test_version == 'variant' ) {
-					$content = get_the_content( null, false, $variant_id );
-					// $content = apply_filters( 'the_content', $content );
-					// Causes inifinte loop
-					$content = str_replace( ']]>', ']]&gt;', $content );
+					$content = get_the_content( null, false, $experiment->variant_id );
+				} else {
+					$content = get_the_content( null, false, $experiment->control_id );
 				}
 
+				// $content = apply_filters( 'the_content', $content );
+				// Causes infinite loop
+				$content = str_replace( ']]>', ']]&gt;', $content );
+
 				$content .= '<script type="text/javascript">
-					var test_version = "' . $test_version . '";
-					var experiment_id = "' . $experiment_id . '";
+					var burst_test_version = "' . $test_version . '";
+					var burst_experiment_id = ' . $experiment->id . ';
+					var burst_identifier = "' . $experiment->identifier . '";
 					</script>';
 			}
 			return $content;

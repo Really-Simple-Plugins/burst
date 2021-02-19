@@ -59,6 +59,7 @@ if ( ! class_exists( 'BURST' ) ) {
 	class BURST {
 		public static $instance;
 		public static $experimenting;
+		public static $statistics;
 		public static $admin;
 		public static $review;
 		public static $field;
@@ -69,6 +70,7 @@ if ( ! class_exists( 'BURST' ) ) {
 			self::includes();
 			self::hooks();
 			self::$experimenting  = new burst_experimenting();
+			self::$statistics  = new burst_statistics();
 
 			self::$config = new burst_config();
 
@@ -125,14 +127,10 @@ if ( ! class_exists( 'BURST' ) ) {
 				require_once( burst_path . 'class-review.php' );
 			}
 
-			require_once( burst_path . 'statistics/statistics.php' );
 			require_once( burst_path . 'statistics/class-statistics.php' );
-
 			require_once( burst_path . 'experiments/class-experiment.php' );
 			require_once( burst_path . 'experiments/experimenting.php' );
-
 			require_once( burst_path . 'rest-api/rest-api.php' );
-
 			require_once( burst_path . 'config/class-config.php');
 		}
 
