@@ -39,6 +39,23 @@ function burst_track_hit(WP_REST_Request $request){
 
 	burst_setcookie('burst_uid', $burst_uid, 1);
 	$data = $request->get_json_params();
+
+	//we need to check if this post is a goal for an experiment. the goal_url.
+	$url = burst_get_current_url();
+	//look up in the database
+	$experiment = new BURST_EXPERIMENT(false, false, $url);
+	if ($experiment->id){
+		$experiment->conversion = true;
+		$experiment->save();
+	}
+
+	$default_data = array(
+		'test_version' => 'control',
+		'experiment_id' => false,
+		'conversion' => false,
+		'url' => '',
+	);
+	$data = wp_parse_args($data, $default_data);
 	$url = sanitize_text_field($data['url']);
 
 	$statistics = new BURST_STATISTICS();
