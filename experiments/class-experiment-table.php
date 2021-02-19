@@ -81,36 +81,43 @@ class burst_experiment_Table extends WP_List_Table {
 
 	
 	public function search_box( $text, $input_id ) {
-		/**
-		* @todo Add filters
-		$input_id = $input_id . '-search-input';
-		$status   = $this->get_status();
-		if ( ! empty( $_REQUEST['orderby'] ) ) {
-			echo '<input type="hidden" name="orderby" value="'
-			     . esc_attr( $_REQUEST['orderby'] ) . '" />';
-		}
-		if ( ! empty( $_REQUEST['order'] ) ) {
-			echo '<input type="hidden" name="order" value="'
-			     . esc_attr( $_REQUEST['order'] ) . '" />';
-		}
-
-
-
-		?>
-		<p class="search-box">
-			<label class="screen-reader-text"
-			       for="<?php echo $input_id ?>"><?php echo $text; ?>
-				:</label>
-			<select name="status">
-				<option value="active" <?php if ( $status === 'active' )
-					echo "selected" ?>><?php _e( 'Active Experiments',
-						'burst' ) ?></option>
-			</select>
-			<?php submit_button( $text, 'button', false, false,
-				array( 'ID' => 'search-submit' ) ); ?>
-		</p>
+        if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) {
+            return;
+        }
+ 
+        $input_id = $input_id . '-search-input';
+ 
+        if ( ! empty( $_REQUEST['orderby'] ) ) {
+            echo '<input type="hidden" name="orderby" value="' . esc_attr( $_REQUEST['orderby'] ) . '" />';
+        }
+        if ( ! empty( $_REQUEST['order'] ) ) {
+            echo '<input type="hidden" name="order" value="' . esc_attr( $_REQUEST['order'] ) . '" />';
+        }
+        if ( ! empty( $_REQUEST['post_mime_type'] ) ) {
+            echo '<input type="hidden" name="post_mime_type" value="' . esc_attr( $_REQUEST['post_mime_type'] ) . '" />';
+        }
+        if ( ! empty( $_REQUEST['detached'] ) ) {
+            echo '<input type="hidden" name="detached" value="' . esc_attr( $_REQUEST['detached'] ) . '" />';
+        }
+        ?>
+			<p class="search-box">
+			    <label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo $text; ?>:</label>
+			    <input type="search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>" />
+			        <?php submit_button( $text, '', '', false, array( 'id' => 'search-submit' ) ); ?>
+			</p>
 		<?php
-		*/
+    }
+
+	protected function get_views() { 
+	    $status_links = array(
+	        "all"       	=> '<a href="'. admin_url() .'admin.php?page=burst-experiments">'.__("All", "burst") .'</a>',
+	        "completed"   	=> '<a href="'. admin_url() .'admin.php?page=burst-experiments&status=completed">'.__("Completed", "burst") .'</a>',
+	        "active" 		=> '<a href="'. admin_url() .'admin.php?page=burst-experiments&status=active">'.__("Active", "burst") .'</a>',
+	        "draft" 		=> '<a href="'. admin_url() .'admin.php?page=burst-experiments&status=draft">'.__("Draft", "burst") .'</a>',
+	        "archived"   	=> '<a href="'. admin_url() .'admin.php?page=burst-experiments&status=archived">'.__("Archived", "burst") .'</a>',
+	        
+	    );
+	    return $status_links;
 	}
 	
 
@@ -172,14 +179,14 @@ class burst_experiment_Table extends WP_List_Table {
      * @return      void
      */
     function process_bulk_action() {
-        // if (!zip_user_can_manage()) {
-        //     return;
-        // }
+     	if ( ! burst_user_can_manage() ) {
+			return;
+		}
 
-        // if( !isset($_GET['_wpnonce']) || ! wp_verify_nonce( $_GET['_wpnonce'], '_wpnonce' ) ) {
-        //     error_log('process_bulk_action nonce');
-        //     return;
-        // }
+        if( !isset($_GET['_wpnonce']) || ! wp_verify_nonce( $_GET['_wpnonce'], '_wpnonce' ) ) {
+            error_log('process_bulk_action nonce');
+            return;
+        }
         $ids = isset( $_GET['experiment_id'] ) ? $_GET['experiment_id'] : false;
 
         if( ! $ids ) {
@@ -201,11 +208,11 @@ class burst_experiment_Table extends WP_List_Table {
     }
 
 
-	public function column_name( $item ) {
-		$name = ! empty( $item['name'] ) ? $item['name']
+	public function column_title( $item ) {
+		$title = ! empty( $item['title'] ) ? $item['title']
 			: '<em>' . __( 'Unnamed experiment', 'burst' )
 			  . '</em>';
-		$name = apply_filters( 'burst_experiment_name', $name );
+		$title = apply_filters( 'burst_experiment_title', $title );
 
 		$actions = array(
 			// 'edit'   => '<a href="'
@@ -220,7 +227,7 @@ class burst_experiment_Table extends WP_List_Table {
 
 		$experiment_count = count( burst_get_experiments() );
 
-		return $name . $this->row_actions( $actions );
+		return $title . $this->row_actions( $actions );
 	}
 
 	public function column_status( $item ) {
@@ -297,11 +304,11 @@ class burst_experiment_Table extends WP_List_Table {
 	public function get_columns() {
 		$columns = array(
 			'cb'        => '<input type="checkbox"/>',
-			'name' => __( 'Name', 'burst' ),
+			'title' => __( 'Name', 'burst' ),
 			'control_id' => '<span class="burst-experiment-dot control"></span>'. __( 'Control', 'burst' ),
 			'variant_id' => '<span class="burst-experiment-dot variant"></span>'. __( 'Variant', 'burst' ),
 			'goals' => __( 'Goal', 'burst' ),
-			'status' => __( 'Active', 'burst' ),
+			'status' => __( 'Status', 'burst' ),
 		);
 
 //not sure what this should do @hessel
@@ -324,7 +331,7 @@ class burst_experiment_Table extends WP_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$columns = array(
-			'name' => array( 'name', true ),
+			'title' => array( 'title', true ),
 			'status' => array( 'status', true),
 		);
 
@@ -429,8 +436,7 @@ class burst_experiment_Table extends WP_List_Table {
 		$offset  = $this->per_page * ( $paged - 1 );
 		$search  = $this->get_search();
 		$status  = $this->get_status();
-		$order   = isset( $_GET['order'] )
-			? sanitize_text_field( $_GET['order'] ) : 'DESC';
+		$order   = isset( $_GET['order'] ) ? sanitize_text_field( $_GET['order'] ) : 'DESC';
 		$orderby = isset( $_GET['orderby'] )
 			? sanitize_text_field( $_GET['orderby'] ) : 'id';
 
@@ -440,9 +446,10 @@ class burst_experiment_Table extends WP_List_Table {
 			'order'   => $order,
 			'orderby' => $orderby,
 		);
+		error_log(print_r($order, true));
 		if ($status) $args['status'] = $status;
 
-		$args['name'] = $search;
+		$args['title'] = $search;
 
 		$this->args = $args;
 		$experiments    = burst_get_experiments( $args );
@@ -451,7 +458,7 @@ class burst_experiment_Table extends WP_List_Table {
 			foreach ( $experiments as $experiment ) {
 				$data[] = array(
 					'ID'   => $experiment->ID,
-					'name' => $experiment->title,
+					'title' => $experiment->title,
 					'control_id' => $experiment->control_id,
 					'variant_id' => $experiment->variant_id,
 					'goals' => $experiment->goal,

@@ -147,7 +147,8 @@ if ( ! function_exists( 'burst_get_experiments' ) ) {
 		$sql  = '';
 
 		$orderby = sanitize_title($args['orderby']);
-		$order = $args['order'] === 'DESC' ? 'DESC' : 'ASC';
+
+		$order = strtoupper($args['order']) === 'DESC' ? 'DESC' : 'ASC';
 		global $wpdb;
 
 		if ( isset($args['status']) ) {

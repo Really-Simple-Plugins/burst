@@ -335,7 +335,7 @@
 .rsp-blue-yellow {
   background: #29b6f6;
   background: linear-gradient(77deg, #29b6f6 0%, #29b6f6 30%, #f4bf3e 70%, #f4bf3e 100%);
-  animation: gradient 5s ease infinite;
+  animation: gradient 2s ease infinite;
   background-size: 200% 200%;
 }
 @keyframes gradient {
