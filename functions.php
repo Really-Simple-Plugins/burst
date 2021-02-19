@@ -313,13 +313,18 @@ function burst_get_posts_ajax_callback(){
  	if (!burst_user_can_manage()) return;
 
 	$return = array();
- 
-	$search_results = new WP_Query( array( 
+ 	$query_settings = array();
+ 	$query_settings = $_GET['query_settings'];
+
+ 	$default_args = array( 
 		's'=> $_GET['q'],
-		'post_status'=> $_GET['post_status'],
-		'post_type'=> $_GET['post_type'],
+		'post_type'=> 'any',
 		'posts_per_page' => 25
-	) );
+	);
+
+	$args = array_merge($default_args, $query_settings);
+
+	$search_results = new WP_Query( $args );
 	if( $search_results->have_posts() ) :
 		while( $search_results->have_posts() ) : $search_results->the_post();	
 			// shorten the title a little
@@ -465,3 +470,29 @@ if ( ! function_exists( 'burst_get_current_post_id' ) ) {
 	}
 
 }
+
+if ( ! function_exists( 'burst_get_all_post_statuses' ) ) {
+
+	/**
+	 * Get the current post type
+	 * @param $post_id
+	 *
+	 * @return string
+	 */
+	
+	function burst_get_all_post_statuses($exceptions = array()){
+		$post_statuses = get_post_stati();
+		
+		$filtered_post_statuses = array();
+		foreach ($post_statuses as $post_status => $value) {
+			if (!in_array($post_status, $exceptions)) {
+				$filtered_post_statuses[] = $post_status;
+			}
+		}
+		
+		return $filtered_post_statuses;
+	}
+
+}
+
+

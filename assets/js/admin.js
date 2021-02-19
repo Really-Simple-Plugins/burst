@@ -138,6 +138,9 @@ jQuery(document).ready(function ($) {
 
     function burstInitSelect2() {
         // multiple select with AJAX search
+        var fieldName = $('.burst-select2-page-field').attr("name");
+        var queryName = fieldName + '_query_settings';
+        console.log(queryName);
         $('.burst-select2-page-field').select2({
             ajax: {
                     url: ajaxurl, // AJAX URL is predefined in WordPress admin
@@ -146,7 +149,7 @@ jQuery(document).ready(function ($) {
                     data: function (params) {
                         return {
                             q: params.term, // search query
-                            query: query_settings,
+                            query_settings: window[queryName],
                             action: 'burst_get_posts' // AJAX action for admin-ajax.php
                         };
                     },

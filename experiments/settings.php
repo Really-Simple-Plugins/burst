@@ -33,8 +33,8 @@ function burst_add_experiment_settings($fields){
 				'type'               => 'select2',
 				'query_settings'	 => array(
 						'post_type' 	=> burst_get_current_post_type(), //get_current_post_type();
-						'post_status' 	=> 'experiment',
-						'exclude' 		=> burst_get_current_post_id(),
+						'post_status' 	=> burst_get_all_post_statuses( array('publish') ),
+						'post__not_in' 	=> array( burst_get_current_post_id() ),
 				),
 				'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
 					'burst' ),
