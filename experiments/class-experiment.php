@@ -223,13 +223,6 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			$error = false;
 			global $wpdb;
 
-			//do not delete the last one.
-			$count
-				= $wpdb->get_var( "select count(*) as count from {$wpdb->prefix}burst_experiments" );
-			if ( $count == 1 && ! $force ) {
-				$error = true;
-			}
-
 			if ( ! $error ) {
 
 				$wpdb->delete( $wpdb->prefix . 'burst_experiments', array(

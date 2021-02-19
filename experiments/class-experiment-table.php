@@ -179,14 +179,14 @@ class burst_experiment_Table extends WP_List_Table {
      * @return      void
      */
     function process_bulk_action() {
-        // if (!zip_user_can_manage()) {
-        //     return;
-        // }
+     	if ( ! burst_user_can_manage() ) {
+			return;
+		}
 
-        // if( !isset($_GET['_wpnonce']) || ! wp_verify_nonce( $_GET['_wpnonce'], '_wpnonce' ) ) {
-        //     error_log('process_bulk_action nonce');
-        //     return;
-        // }
+        if( !isset($_GET['_wpnonce']) || ! wp_verify_nonce( $_GET['_wpnonce'], '_wpnonce' ) ) {
+            error_log('process_bulk_action nonce');
+            return;
+        }
         $ids = isset( $_GET['experiment_id'] ) ? $_GET['experiment_id'] : false;
 
         if( ! $ids ) {
