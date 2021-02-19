@@ -423,6 +423,29 @@ if ( ! function_exists( 'burst_get_experiment_id_for_post' ) ) {
 
 }
 
+if ( !function_exists( 'burst_sanitize_test_version' )) {
+	/**
+	 * Sanitize the test version
+	 *
+	 * @param string $str
+	 *
+	 * @return string
+	 */
+
+	function burst_sanitize_test_version( $str ) {
+		$test_versions = array(
+			'variant',
+			'control'
+		);
+
+		if ( in_array( $str, $test_versions ) ) {
+			return $str;
+		} else {
+			return 'control';
+		}
+	}
+}
+
 if ( ! function_exists( 'burst_get_current_post_type' ) ) {
 
 	/**
@@ -463,6 +486,16 @@ if ( ! function_exists( 'burst_get_current_post_id' ) ) {
 		if (!intval($post_id)) return false;
 
 		return $post_id;
+	}
+}
+
+if ( !function_exists( 'burst_get_current_url') ) {
+	/**
+	 * Function to get the current URL used in the load_experiment_content function
+	 * @return string The current URL
+	 */
+	function burst_get_current_url() {
+		return parse_url( get_permalink(), PHP_URL_PATH );
 	}
 
 }

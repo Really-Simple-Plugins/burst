@@ -40,15 +40,6 @@ function burst_track_hit(WP_REST_Request $request){
 	burst_setcookie('burst_uid', $burst_uid, 1);
 	$data = $request->get_json_params();
 
-	//we need to check if this post is a goal for an experiment. the goal_url.
-	$url = burst_get_current_url();
-	//look up in the database
-	$experiment = new BURST_EXPERIMENT(false, false, $url);
-	if ($experiment->id){
-		$experiment->conversion = true;
-		$experiment->save();
-	}
-
 	$default_data = array(
 		'test_version' => 'control',
 		'experiment_id' => false,
@@ -57,13 +48,30 @@ function burst_track_hit(WP_REST_Request $request){
 	);
 	$data = wp_parse_args($data, $default_data);
 	$url = sanitize_text_field($data['url']);
+	$experiment_id = intval($data['experiment_id']);
+	global $wpdb;
+	$update_array = array(
+		'page_url'            		=> sanitize_text_field( $url ),
+		'page_id'                   => intval( url_to_postid( $url ) ),
+		'time'               		=> time(),
+		'uid'               		=> sanitize_title($burst_uid),
+		'test_version'				=> burst_sanitize_test_version($data['test_version']),
+		'experiment_id'				=> $experiment_id,
+		'conversion'				=> intval($data['conversion']),
+	);
 
-	$statistics = new BURST_STATISTICS();
-	$statistics->uid = $burst_uid;
-	$statistics->page_url = $url;
-	$statistics->page_id = url_to_postid($url);
-	$statistics->test_version = $data['test_version'];
-	$statistics->experiment_id = $data['experiment_id'];
-	$statistics->conversion = $data['conversion'];
-	$statistics->track();
+	//check if the current users' uid/experiment id combination is already in the database.
+	$id = $wpdb->get_var( $wpdb->prepare( "select ID from {$wpdb->prefix}burst_statistics where experiment_id = %s and uid = %s", $experiment_id, sanitize_title($burst_uid) ) );
+	if ($id) {
+		$wpdb->update(
+			$wpdb->prefix . 'burst_statistics',
+			$update_array,
+			array('ID' => $id)
+		);
+	} else {
+		$wpdb->insert(
+			$wpdb->prefix . 'burst_statistics',
+			$update_array
+		);
+	}
 }

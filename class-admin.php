@@ -233,11 +233,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			$experiment->title = $experiment_title;
 			$experiment->control_id = $post_id;
 			$experiment->variant_id = $variant_id;
-			$experiment->date_created = time();
-			$experiment->date_modified = time();
 			$experiment->save();
-			update_post_meta( $post_id,'burst_experiment_id', $experiment->id );
-			update_post_meta( $variant_id,'burst_experiment_id', $experiment->id );
 			return $variant_id;
 		}
 

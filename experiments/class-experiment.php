@@ -25,7 +25,7 @@ function burst_install_experiments_table() {
             `date_started` varchar(255) NOT NULL,
             `date_end` varchar(255) NOT NULL,
             `goal` varchar(255) NOT NULL,
-            `goal_url` varchar(255) NOT NULL,
+            `goal_id` varchar(255) NOT NULL,
             `identifier` varchar(255) NOT NULL,
             `statistics` text NOT NULL,
               PRIMARY KEY  (ID)
@@ -48,17 +48,14 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		public $date_started = false;
 		public $date_end = false;
 		public $goal = false;//visit, click
-		public $goal_url = '';
+		public $goal_id = false;
 		public $identifier = '';
 		public $statistics = false;
 
-		function __construct( $id = false, $post_id = false, $page_url = false ) {
-
+		function __construct( $id = false, $post_id = false ) {
 			//if a post id is passed, use the post id to find the linked experiment
 			if ( !$id && is_numeric($post_id) ) {
 				$this->id = burst_get_experiment_id_for_post($post_id);
-			} else if ($page_url) {
-				$this->page_url = $page_url;
 			} else {
 				$this->id = $id;
 			}
@@ -79,12 +76,13 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			if ( ! burst_user_can_manage() ) {
 				return false;
 			}
+
 			$array = array(
 				'title' => __( 'New experiment', 'burst' ),
+				'date_created' => time(),
 			);
 
 			global $wpdb;
-
 			$wpdb->insert(
 				$wpdb->prefix . 'burst_experiments',
 				$array
@@ -162,7 +160,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				$this->date_started 		= $experiment->date_started;
 				$this->date_end 			= $experiment->date_end;
 				$this->goal 				= $experiment->goal;
-				$this->goal_url 		    = $experiment->goal_url;
+				$this->goal_id 		        = $experiment->goal_id;
 				$this->identifier 		    = $experiment->identifier;
 				$this->statistics 			= $experiment->statistics;
 
@@ -213,18 +211,24 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				'control_id'                => intval( $this->control_id ),
 				'status'                    => burst_sanitize_experiment_status( $this->status ),
 				'date_created'              => sanitize_text_field( $this->date_created ),
-				'date_modified'             => sanitize_text_field( $this->date_modified ),
+				'date_modified'             => time(),
 				'date_started'              => sanitize_text_field( $this->date_started ),
 				'date_end'                	=> sanitize_text_field( $this->date_end ),
 				'goal'                		=> $this->sanitize_goal( $this->goal ),
 				'identifier'                => sanitize_text_field($this->identifier),
-				'goal_url'                  => sanitize_text_field($this->goal_url),
+				'goal_id'                  => intval($this->goal_id),
 			);
 			global $wpdb;
 			$updated = $wpdb->update( $wpdb->prefix . 'burst_experiments',
 				$update_array,
 				array( 'ID' => $this->id )
 			);
+
+			update_post_meta( $this->control_id,'burst_experiment_id', $this->id );
+			update_post_meta( $this->variant_id,'burst_experiment_id', $this->id );
+			if ( $this->goal === 'visit' ) {
+				update_post_meta( $this->goal_id,'burst_experiment_id', $this->id );
+			}
 
 		}
 
