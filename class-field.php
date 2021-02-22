@@ -1351,6 +1351,8 @@ if ( ! class_exists( "burst_field" ) ) {
 			if ( ! $this->show_field( $args ) ) {
 				return;
 			}
+			$query_settings = json_encode($args['query_settings']);
+			echo '<script> var '. $fieldname .'_query_settings = '. $query_settings .';</script>';
 
 			?>
 			<?php do_action( 'burst_before_label', $args ); ?>
