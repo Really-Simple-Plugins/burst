@@ -177,6 +177,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			} elseif ( isset( $_POST["burst_start_experiment_button"] ) ){
 				$redirect_id = $post_id;
 				$experiment = new BURST_EXPERIMENT(false, $post_id );
+				error_log(print_r($_POST, true));
 				$experiment->start();
 			} elseif ( isset( $_POST["burst_stop_experiment_button"] ) ){
 				$redirect_id = $post_id;

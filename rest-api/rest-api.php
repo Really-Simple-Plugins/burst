@@ -18,8 +18,6 @@ function burst_register_rest_routes(){
  */
 
 function burst_track_hit(WP_REST_Request $request){
-	error_log('track hit');
-
 	//check if this user has a cookie 
 	$burst_uid = isset( $_COOKIE['burst_uid']) ? $_COOKIE['burst_uid'] : false;
 	if ( !$burst_uid ) {
@@ -49,6 +47,7 @@ function burst_track_hit(WP_REST_Request $request){
 	$data = wp_parse_args($data, $default_data);
 	$url = sanitize_text_field($data['url']);
 	$experiment_id = intval($data['experiment_id']);
+
 	global $wpdb;
 	$update_array = array(
 		'page_url'            		=> sanitize_text_field( $url ),
@@ -74,4 +73,12 @@ function burst_track_hit(WP_REST_Request $request){
 			$update_array
 		);
 	}
+
+	//check if we can stop this experiment.
+	$experiment = new BURST_EXPERIMENT($experiment_id);
+	if ( time() > $experiment->date_end ) {
+		$experiment->stop();
+	}
+
+
 }
