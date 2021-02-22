@@ -32,7 +32,6 @@ function burst_install_experiments_table() {
             ) $charset_collate;";
 		dbDelta( $sql );
 		update_option( 'burst_abdb_version', burst_version );
-
 	}
 }
 

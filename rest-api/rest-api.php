@@ -47,6 +47,7 @@ function burst_track_hit(WP_REST_Request $request){
 	$data = wp_parse_args($data, $default_data);
 	$url = sanitize_text_field($data['url']);
 	$experiment_id = intval($data['experiment_id']);
+
 	global $wpdb;
 	$update_array = array(
 		'page_url'            		=> sanitize_text_field( $url ),
@@ -72,4 +73,12 @@ function burst_track_hit(WP_REST_Request $request){
 			$update_array
 		);
 	}
+
+	//check if we can stop this experiment.
+	$experiment = new BURST_EXPERIMENT($experiment_id);
+	if ( time() > $experiment->date_end ) {
+		$experiment->stop();
+	}
+
+
 }
