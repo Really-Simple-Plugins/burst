@@ -30,31 +30,25 @@ if (intval($experiment_id)) {
 
 				<?php wp_nonce_field( 'burst_start_experiment', 'burst_nonce' ); ?>
 
-			
-				
-                    <?php if ($experiment->status == 'active') { ?>
-                    	<div class="burst-experiment-save-button">
-                    		<input class="button button-primary" name="burst_stop_experiment_button"
-					        	type="submit" value="<?php _e( 'Stop the experiment', 'burst' ) ?>">
-					    </div>
-
-                    <?php } else {
-
-						if ( ! intval($experiment_id) ) { 
-							echo '<input type="hidden" value="1" name="burst_create_experiment">';
-						} 
-					
-						BURST::$field->get_fields( 'BURST_EXPERIMENT', 'goal' );
-						BURST::$field->get_fields( 'BURST_EXPERIMENT', 'timeline' );
-						?>
-						<div class="burst-experiment-save-button">
-							<input class="button button-primary" name="burst_start_experiment_button"
-					        	type="submit" value="<?php _e( 'Start the experiment', 'burst' ) ?>">
-					    </div>
-
+				<?php	
+				if ( ! intval($experiment_id) ) { ?>
+					<input type="hidden" value="1" name="burst_create_experiment">
+				<?php } ?>
+				<?php
+				BURST::$field->get_fields( 'BURST_EXPERIMENT', 'goal' );
+				?>
+				<?php
+				BURST::$field->get_fields( 'BURST_EXPERIMENT', 'timeline' );
+				?>
+				<div class="burst-experiment-save-button">
+                    <?php if ($experiment->status !== 'active') { ?>
+                        <input class="button button-primary" name="burst_start_experiment_button"
+					        type="submit" value="<?php _e( 'Start the experiment', 'burst' ) ?>">
+                    <?php } else { ?>
+                        <input class="button button-primary" name="burst_stop_experiment_button"
+					        type="submit" value="<?php _e( 'Stop the experiment', 'burst' ) ?>">
                     <?php } ?>
 				</div>
 				
+			</div>
 	</form>
-
-	
