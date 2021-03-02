@@ -74,16 +74,16 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			$localize_args = array(
 				'url' => get_rest_url() . 'burst/v1/hit',
 				'goal' => 'visit',
-				'identifier' => ''
+				'goal_identifier' => ''
 			);
 
 			if ( $post ) {
 				$experiment = new BURST_EXPERIMENT(false, $post->ID );
 				if ($experiment->id) {
 					$localize_args['goal'] = $experiment->goal;
-					$localize_args['identifier'] = $experiment->identifier;
+					$localize_args['goal_identifier'] = $experiment->goal_identifier;
 					$localize_args['goal'] = 'visit';
-					$localize_args['identifier'] = 'class';
+					$localize_args['goal_identifier'] = 'class';
 				}
 			}
 
@@ -141,7 +141,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 				$content .= '<script type="text/javascript">
 					var burst_test_version = "' . $test_version . '";
 					var burst_experiment_id = ' . $experiment->id . ';
-					var burst_identifier = "' . $experiment->identifier . '";
+					var burst_goal_identifier = "' . $experiment->goal_identifier . '";
 					</script>';
 			}
 			return $content;

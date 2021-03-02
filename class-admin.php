@@ -171,18 +171,51 @@ if ( ! class_exists( "burst_admin" ) ) {
 			if (!isset($_POST['post_ID'])) return;
             $post_id = intval($_POST['post_ID']);
 			if ( isset( $_POST["burst_create_experiment_button"] ) ){
+
 				$redirect_id = $this->create_experiment($post_id);
+
 			} elseif ( isset( $_POST["burst_go_to_setup_experiment_button"] ) ){
+
 				$redirect_id = intval($_POST["burst_redirect_to_variant"]);
+
 			} elseif ( isset( $_POST["burst_start_experiment_button"] ) ){
+
 				$redirect_id = $post_id;
 				$experiment = new BURST_EXPERIMENT(false, $post_id );
 				error_log(print_r($_POST, true));
+
+				// Set goal
+				$goal = !empty($_POST['burst_goal']) ? $_POST["burst_goal"] : false;
+				$experiment->goal = $goal;
+				if ($goal == 'visit') {
+					$experiment->goal_id = !empty($_POST['burst_goal_id']) ? $_POST["burst_goal_id"] : false;
+				} elseif ($goal == 'click') {
+					$experiment->goal_identifier = !empty($_POST['burst_goal_identifier']) ? $_POST["burst_goal_identifier"] : false;
+				}
+
+				//Set timeline
+				$timeline_select = !empty($_POST['burst_timeline_select']) ? $_POST["burst_timeline_select"] : false;
+				if ($timeline_select == 'custom') {
+					$amount_of_days = !empty($_POST['burst_timeline_custom']) ? intval($_POST["burst_timeline_custom"]) : false;
+				} else {
+					$amount_of_days = intval($timeline_select);
+				}
+				
+				$strtotime = "+".$amount_of_days." days";
+				$experiment->date_started = time();
+				$experiment->date_end = strtotime($strtotime);
+
+
+				$experiment->save();
+
 				$experiment->start();
+
 			} elseif ( isset( $_POST["burst_stop_experiment_button"] ) ){
+
 				$redirect_id = $post_id;
 				$experiment = new BURST_EXPERIMENT(false, $post_id );
 				$experiment->stop();
+
 			}
 
 			/*
@@ -229,7 +262,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			/**
 			* create experiment entry
 			*/
-			$experiment_title = !empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : __('Unnamed experiment', 'burst');
+			$experiment_title = !empty($_POST['burst_title']) ? $_POST['burst_title'] : __('Unnamed experiment', 'burst');
 			$experiment = new BURST_EXPERIMENT();
 			$experiment->title = $experiment_title;
 			$experiment->control_id = $post_id;

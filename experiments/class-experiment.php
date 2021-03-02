@@ -26,7 +26,7 @@ function burst_install_experiments_table() {
             `date_end` varchar(255) NOT NULL,
             `goal` varchar(255) NOT NULL,
             `goal_id` varchar(255) NOT NULL,
-            `identifier` varchar(255) NOT NULL,
+            `goal_identifier` varchar(255) NOT NULL,
             `statistics` text NOT NULL,
               PRIMARY KEY  (ID)
             ) $charset_collate;";
@@ -48,7 +48,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		public $date_end = false;
 		public $goal = false;//visit, click
 		public $goal_id = false;
-		public $identifier = '';
+		public $goal_identifier = '';
 		public $statistics = false;
 
 		function __construct( $id = false, $post_id = false ) {
@@ -160,7 +160,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				$this->date_end 			= $experiment->date_end;
 				$this->goal 				= $experiment->goal;
 				$this->goal_id 		        = $experiment->goal_id;
-				$this->identifier 		    = $experiment->identifier;
+				$this->goal_identifier 		= $experiment->goal_identifier;
 				$this->statistics 			= $experiment->statistics;
 
 			}
@@ -214,8 +214,8 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				'date_started'              => sanitize_text_field( $this->date_started ),
 				'date_end'                	=> sanitize_text_field( $this->date_end ),
 				'goal'                		=> $this->sanitize_goal( $this->goal ),
-				'identifier'                => sanitize_text_field($this->identifier),
-				'goal_id'                  => intval($this->goal_id),
+				'goal_identifier'           => sanitize_text_field($this->goal_identifier),
+				'goal_id'                   => intval($this->goal_id),
 			);
 			global $wpdb;
 			$updated = $wpdb->update( $wpdb->prefix . 'burst_experiments',

@@ -69,20 +69,20 @@ function burst_add_experiment_settings($fields){
 				'step'        => 'goal',
 				'type'        => 'radio',
 				'options' => array(
-					'click-on-element'  => __( "Click on element", 'burst' ),
-					'page-visit'  => __( "Page visit", 'burst' ),
+					'click'  => __( "Click on element", 'burst' ),
+					'visit'  => __( "Page visit", 'burst' ),
 				),
 				'label'       => __( "Goal", 'burst' ),
 				'default' => 'click-on-element',
 			),
 
-			'goal_element_id_or_class' => array(
+			'goal_identifier' => array(
 				'source'             => 'BURST_EXPERIMENT',
 				'step'               => 'goal',
 				'type'               => 'text',
 				'placeholder' => __( '.class or #id' ),
 				'condition' => array(
-					'goal' => 'click-on-element',
+					'goal' => 'click',
 				),
 			),
 
@@ -95,7 +95,7 @@ function burst_add_experiment_settings($fields){
 						'post_status' 	=> 'publish',
 				),
 				'condition' => array(
-					'goal' => 'page-visit',
+					'goal' => 'visit',
 				),
 			),
 
