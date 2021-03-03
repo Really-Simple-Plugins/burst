@@ -5,35 +5,14 @@ add_filter('burst_fields', 'burst_add_general_settings');
 function burst_add_general_settings($fields){
 	$fields = $fields + array(
 
-		'a_b_testing' => array(
-			'source'   => 'settings',
+		'clear_data_on_uninstall' => array(
+            'source'   => 'settings',
 			'step'     => 'general',
-			'type'     => 'checkbox',
-			'label'    => __( "Test checkbox", 'burst' ),
-			'table'    => true,
-			'disabled' => false,
-			'default'  => false,
-			//setting this to true will set it always to true, as the get_cookie settings will see an empty value
-		),
-
-		'a_b_testing_duration' => array(
-			'source'    => 'settings',
-			'step'      => 'general',
-			'type'      => 'number',
-			'label'     => __( "Duration in days of the experiment period",
+			'type'    => 'checkbox',
+			'label'   => __( "Clear all data from Burst on uninstall",
 				'burst' ),
-			'table'     => true,
-			'disabled'  => true,
-			'condition' => array( 'a_b_testing' => true ),
-			'default'   => 30,
-		),
-
-		'cookie_expiry' => array(
-			'source'  => 'settings',
-			'step'    => 'general',
-			'type'    => 'number',
-			'default' => 365,
-			'label'   => __( "Cookie banner expiration in days",
+			'default' => false,
+			'tooltip'    => __( 'Enabling this option will delete all your settings, and the Burst tables when you deactivate and remove Burst.',
 				'burst' ),
 			'table'   => true,
 		),

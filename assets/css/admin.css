@@ -425,4 +425,76 @@
 .burst-1_page_burst-settings #wpbody-content {
   padding-bottom: 20px;
 }
-/*# sourceMappingURL=admin.css.map */
+/*
+    cool checkbox sliders
+*/
+.burst-switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 21px;
+}
+.burst-switch input {
+  display: none !important;
+}
+.burst-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+.burst-slider:before {
+  position: absolute;
+  content: "";
+  height: 15px;
+  width: 15px;
+  left: 4px;
+  bottom: 3px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+.burst-slider.burst-round {
+  border-radius: 20px;
+}
+.burst-slider.burst-round:before {
+  border-radius: 50%;
+}
+.burst-slider-na {
+  padding: 2px 8px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+.burst-slider-na:before {
+  position: absolute;
+  content: "N/A";
+  color: white;
+}
+.burst-slider-na.burst-round {
+  border-radius: 20px;
+}
+input:checked + .burst-slider {
+  background-color: #22932e;
+}
+input:checked + .burst-slider:before {
+  -webkit-transform: translateX(17px);
+  -ms-transform: translateX(17px);
+  transform: translateX(17px);
+}
+input:checked:disabled + .burst-slider {
+  background-color: #99e8a2;
+}
+input:focus + .burst-slider {
+  box-shadow: 0 0 1px #22932e;
+}

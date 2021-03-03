@@ -96,7 +96,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		 * @return string
 		 */
 
-		private function sanitize_goal( $str){
+		private function sanitize_goal( $str ){
 			$goals = array(
 				'visit',
 				'click'
