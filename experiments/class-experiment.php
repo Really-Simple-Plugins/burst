@@ -311,6 +311,37 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			$this->save();
 		}
 
+		/**
+		 * Get the significance value
+		 */
+
+		public function get_significance(){
+			//https://blog.prepscholar.com/statistical-significance-definition
+
+			// set null hypothesis, H0
+			// Control and variant both 50% vs 50%
+
+			// alternative hypothesis
+			// Control wins
+
+			//significance level, alpha, a.
+			//probability of rejecting the null hypothesis when the H0 is true.
+			$a = 0.05;
+
+			$confidence_level = 100 * (1-$a); //95%
+
+			//one tailed test: We only Change page A into B, if B is better. Not if it's worse.
+			//https://blog.analytics-toolkit.com/2017/one-tailed-two-tailed-tests-significance-ab-testing/
+
+			//sample size $n0
+			$Z = 0;
+			$p = 0.5; //is the (estimated) proportion of the population which prefers the control variant. We assume 50%,
+			$q = 0;
+			$e = 0.5; //margin of error
+			$n0 = ( $Z*$Z * $p * $q ) / ( $e * $e );
+
+		}
+
 	}
 
 }
