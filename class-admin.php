@@ -33,6 +33,14 @@ if ( ! class_exists( "burst_admin" ) ) {
 			add_action ( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
             add_action( 'add_meta_boxes', array( $this, 'add_burst_metabox_to_classic_editor' ) );
 			add_action( 'admin_head', array( $this, 'hide_publish_button_on_experiments' ) );
+
+
+			error_log('burst_get_value( burst_display_clear_data_on_uninstall_popup');
+			error_log(burst_get_value( 'display_clear_data_on_uninstall_popup', false, 'settings' ));
+			if ( burst_get_value( 'display_clear_data_on_uninstall_popup', false, 'settings' ) ) {
+				add_action('admin_footer', array($this, 'deactivate_popup'), 40);
+				add_action('admin_init', array($this, 'listen_for_deactivation'), 40);
+			}
 		}
 
 		static function this() {
@@ -1104,6 +1112,198 @@ if ( ! class_exists( "burst_admin" ) ) {
 		    header("Content-Type: application/json");
 		    echo $response;
 		    exit;
+	    }
+
+	    /**
+	     *
+	     * Add a button and thickbox to deactivate the plugin while keeping SSL
+	     *
+	     * @since 3.0
+	     *
+	     * @access public
+	     *
+	     */
+
+	    public function deactivate_popup()
+	    {
+	        //only on plugins page
+	        $screen = get_current_screen();
+	        if (!$screen || $screen->base !=='plugins' ) return;
+
+	        ?>
+		    <?php add_thickbox();?>
+	        <style>
+
+	            #TB_ajaxContent.burst-deactivation-popup {
+	                text-align: center !important;
+	                width:750px;
+	            }
+	            #TB_window.burst-deactivation-popup {
+	                height: auto;
+	                max-height: 400px;
+	                border-left: 7px solid black;
+	            }
+	            .burst-deactivation-popup #TB_title{
+	                height: 70px;
+	                border-bottom: 1px solid #dedede;
+	            }
+	            .burst-deactivation-popup #TB_ajaxWindowTitle {
+	                font-weight:bold;
+	                font-size:30px;
+	                padding: 20px;
+	            }
+
+	            .burst-deactivation-popup .tb-close-icon {
+	                color:#dedede;
+	                width: 50px;
+	                height: 50px;
+	                top: 12px;
+	                right: 20px;
+	            }
+	            .burst-deactivation-popup .tb-close-icon:before {
+	                font: normal 50px/50px dashicons;
+	            }
+	            .burst-deactivation-popup #TB_closeWindowButton:focus .tb-close-icon {
+	                outline:0;
+	                box-shadow: 0 0 0 0 #5b9dd9, 0 0 0 0 rgba(30, 140, 190, .8);
+	                color:#dedede;
+	            }
+	            .burst-deactivation-popup #TB_closeWindowButton .tb-close-icon:hover {
+	                color:#666;
+	            }
+	            .burst-deactivation-popup #TB_closeWindowButton:focus {
+	                outline:0;
+	            }
+	            .burst-deactivation-popup #TB_ajaxContent {
+	                width: 100% !important;
+	                padding: 0;
+	            }
+
+	            .burst-deactivation-popup .button-burst-tertiary.button {
+	                background-color: #D7263D !important;
+	                color: white !important;
+	                border-color: #D7263D;
+	            }
+
+	            .burst-deactivation-popup .button-burst-tertiary.button:hover {
+	                background-color: #f1f1f1 !important;
+	                color: #d7263d !important;
+	            }
+
+	            .burst-deactivate-notice-content {
+	                margin: 20px
+	            }
+	            .burst-deactivate-notice-content h3 , .burst-deactivate-notice-content ul{
+	                font-size:1.1em;
+	            }
+
+	            .burst-deactivate-notice-footer {
+	                padding-top: 20px;
+	                position:absolute;
+	                bottom:15px;
+	                width: 94%;
+	                margin-left: 3%;
+	                border-top: 1px solid #dedede;
+	            }
+
+	            .burst-deactivation-popup ul {
+	                list-style: circle;
+	                padding-left: 20px;
+	            }
+	            .burst-deactivation-popup a {
+	                margin-right:10px !important;
+	            }
+	        </style>
+	        <script>
+	            jQuery(document).ready(function ($) {
+	                $('#burst_close_tb_window').click(tb_remove);
+	                $(document).on('click', '#deactivate-burst-a-b-split-testing', function(e){
+	                    e.preventDefault();
+	                    tb_show( '', '#TB_inline?height=420&inlineId=deactivate_keep_ssl', 'null');
+	                    $("#TB_window").addClass('burst-deactivation-popup');
+
+	                });
+	                if ($('#deactivate-burst-a-b-split-testing').length){
+	                    $('.burst-button-deactivate').attr('href',  $('#deactivate-burst-a-b-split-testing').attr('href') );
+	                }
+
+	            });
+	        </script>
+	        <div id="deactivate_and_delete_data" style="display: none;">
+	                <div class="burst-deactivate-notice-content">
+	                    <h3 style="margin: 20px 0; text-align: left;">
+	                        <?php _e("To deactivate the plugin correctly, please select if you want to:", "burst") ?></h3>
+	                    <ul style="text-align: left; font-size: 1.2em;">
+	                        <li><?php _e("Deactivate", "burst") ?></li>
+	                        <li>
+	                        	<?php _e("Deactivate, and remove all statistics, experiments and settings.", "burst"); ?>
+	                        	<?php _e("The data will be gone forever.", "burst"); ?>		
+	                        </li>
+	                    </ul>
+	                </div>
+
+	                <?php
+	                $token = wp_create_nonce('burst_deactivate_plugin');
+	                $deactivate_and_remove_all_data_url = admin_url("options-general.php?page=burst&action=uninstall_delete_all_data&token=" . $token);
+	                ?>
+	                <div class="burst-deactivate-notice-footer">
+	                    <a class="button button-default" href="#" id="burst_close_tb_window"><?php _e("Cancel", "burst") ?></a>
+	                    <a class="button button-primary burst-button-deactivate" href="#"><?php _e("Deactivate", "burst") ?></a>
+	                    <a class="button button-burst-tertiary" href="<?php echo $deactivate_and_remove_all_data_url ?>"><?php _e("Deactivate and delete all data", "burst") ?></a>
+	                </div>
+	        </div>
+	        <?php
+	    }
+	    /**
+	     * Deactivate the plugin while keeping SSL
+	     * Activated when the 'uninstall_keep_data' button is clicked in the settings tab
+	     *
+	     */
+
+	    public function listen_for_deactivation()
+	    {	
+	        //check user role
+	        if (!current_user_can('activate_plugins')) return;
+
+	        //check nonce
+	        if (!isset($_GET['token']) || (!wp_verify_nonce($_GET['token'], 'burst_deactivate_plugin'))) return;
+
+	        //check for action
+	        if (isset($_GET["action"]) && $_GET["action"] == 'uninstall_delete_all_data') {
+
+	        	// delete all burst data
+	            $this->delete_all_burst_data();
+
+	            $plugin = $this->plugin_dir . "/" . $this->plugin_filename;
+	            $plugin = plugin_basename(trim($plugin));
+
+	           
+                $current = get_option('active_plugins', array());
+                $current = $this->remove_plugin_from_array($plugin, $current);
+                update_option('active_plugins', $current);
+	            
+	            wp_redirect(admin_url('plugins.php'));
+	            exit;
+	        }
+	    }
+
+	    /**
+	     * Remove the plugin from the active plugins array when called from listen_for_deactivation
+	     *
+	     * */
+
+	    public function remove_plugin_from_array($plugin, $current)
+	    {
+	        $key = array_search($plugin, $current);
+	        if (false !== $key) {
+	            unset($current[$key]);
+	        }
+	        return $current;
+	    }
+
+	    public function delete_all_burst_data(){
+	    	// @todo delete all burst data
+	    	// define( 'BURST_UNINSTALL_AND_DELETE_DATA', 'Burst' );
 	    }
 
 	}

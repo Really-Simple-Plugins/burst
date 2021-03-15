@@ -91,14 +91,14 @@
   width: 100%;
   max-width: 400px;
 }
-#burst .burst-tooltip {
+.burst-tooltip {
   font-weight: 400;
   font-size: 13px;
   position: relative;
   /* making the .tooltip span a container for the tooltip text */
   margin-left: 5px;
 }
-#burst .burst-tooltip:before {
+.burst-tooltip:before {
   content: attr(data-text);
   /* here's the magic */
   position: absolute;
@@ -119,11 +119,11 @@
   display: none;
   transition: 0.3s opacity;
 }
-#burst .burst-tooltip:hover:before,
-#burst .burst-tooltip:hover:after {
+.burst-tooltip:hover:before,
+.burst-tooltip:hover:after {
   display: flex;
 }
-#burst .burst-tooltip.left:before {
+.burst-tooltip.left:before {
   /* reset defaults */
   left: initial;
   margin: initial;
@@ -131,7 +131,7 @@
   right: 100%;
   margin-right: 15px;
 }
-#burst .burst-tooltip::after {
+.burst-tooltip::after {
   content: "";
   position: absolute;
   /* position tooltip correctly */

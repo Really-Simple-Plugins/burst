@@ -12,7 +12,7 @@ function burst_add_experiment_settings($fields){
 				'type'        => 'text',
 				'label'       => __( "Experiment name", 'burst' ),
 				'placeholder' => __( 'For example: Red vs green buttons' ),
-				//'help'        => __( 'This name is for internal use only. Try to give the experiment a clear name, so you can find this test again.', 'burst' ),
+				'help'        => __( 'This name is for internal use only. Try to give the experiment a clear name, so you can find this test again.', 'burst' ),
 			),
 
 			'duplicate_or_choose_existing' => array(
@@ -74,6 +74,7 @@ function burst_add_experiment_settings($fields){
 				),
 				'label'       => __( "Goal", 'burst' ),
 				'default' => 'click-on-element',
+				'help'        => __( 'Select what metric you want to improve. For example a click on a button or a visit on a checkout page.', 'burst' ),
 			),
 
 			'goal_identifier' => array(

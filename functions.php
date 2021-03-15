@@ -60,7 +60,7 @@ if ( ! function_exists( 'burst_get_value' ) ) {
 		if ( ! $page ) {
 			$page = BURST::$config->fields[ $fieldname ]['source'];
 		}
-		if ( $post_id && ( $page !== 'wizard' ) ) {
+		if ( $post_id ) {
 			$value = get_post_meta( $post_id, $fieldname, true );
 		} else {
 			$fields = get_option( 'burst_options_' . $page );
