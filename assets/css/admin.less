@@ -4,6 +4,9 @@
 .burst-noticed-hook-element {
   display:none;
 }
+
+
+
 .burst-date-container {
 	background: #fff;
 	cursor: pointer;
@@ -353,6 +356,45 @@
 	  Progress bar
 	 */
 
+	.burst-row {
+		display:flex;
+		flex-wrap:wrap;
+		padding:@small-padding @default-padding;
+		div + div {
+			padding-left:@default-padding;
+		}
+	}
+
+	.burst-percentage-text-container {
+		.burst-row;
+		padding-top:@default-padding;
+		.burst-percentage-number {
+			font-size:24px;
+			font-weight:700;
+		}
+		.burst-percentage-text {
+			font-weight:700;
+		}
+	}
+	.burst-objective-total-container {
+		.burst-row;
+		div {
+			flex:1;
+			&.burst-objective-number {
+				text-align:right;
+			}
+		}
+	}
+	.burst-objective-bullets-container {
+		.burst-row;
+		.burst-column-1, .burst-column-3 {
+			width:40px;
+		}
+		.burst-column-2, .burst-column-4 {
+			flex:1;
+		}
+	}
+
 	.burst-progress-bar-container {
 		padding-top: 15px;
 		margin: 0 auto;
@@ -368,18 +410,7 @@
 		}
 	}
 
-	.burst-percentage-text-container {
-		display:flex;
-		padding-top:20px;
-		.burst-percentage-number {
-			font-size:18px;
-			font-weight:400;
-			margin-right:3px;
-		}
-		.burst-percentage-text {
 
-		}
-	}
 
 
 }
@@ -402,6 +433,9 @@
 
 .rsp-pink {
 	background-color: @rsp-pink;
+}
+.rsp-red {
+	background-color: @rsp-red;
 }
 
 .rsp-green {

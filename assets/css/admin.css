@@ -299,6 +299,60 @@
 #burst .burst-grid button {
   margin-top: 15px;
 }
+#burst .burst-row {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px 20px;
+}
+#burst .burst-row div + div {
+  padding-left: 20px;
+}
+#burst .burst-percentage-text-container {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px 20px;
+  padding-top: 20px;
+}
+#burst .burst-percentage-text-container div + div {
+  padding-left: 20px;
+}
+#burst .burst-percentage-text-container .burst-percentage-number {
+  font-size: 24px;
+  font-weight: 700;
+}
+#burst .burst-percentage-text-container .burst-percentage-text {
+  font-weight: 700;
+}
+#burst .burst-objective-total-container {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px 20px;
+}
+#burst .burst-objective-total-container div + div {
+  padding-left: 20px;
+}
+#burst .burst-objective-total-container div {
+  flex: 1;
+}
+#burst .burst-objective-total-container div.burst-objective-number {
+  text-align: right;
+}
+#burst .burst-objective-bullets-container {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px 20px;
+}
+#burst .burst-objective-bullets-container div + div {
+  padding-left: 20px;
+}
+#burst .burst-objective-bullets-container .burst-column-1,
+#burst .burst-objective-bullets-container .burst-column-3 {
+  width: 40px;
+}
+#burst .burst-objective-bullets-container .burst-column-2,
+#burst .burst-objective-bullets-container .burst-column-4 {
+  flex: 1;
+}
 #burst .burst-progress-bar-container {
   padding-top: 15px;
   margin: 0 auto;
@@ -312,15 +366,6 @@
 #burst .burst-progress-bar-container .burst-progress .burst-percentage {
   height: 100%;
   background-color: #22932e;
-}
-#burst .burst-percentage-text-container {
-  display: flex;
-  padding-top: 20px;
-}
-#burst .burst-percentage-text-container .burst-percentage-number {
-  font-size: 18px;
-  font-weight: 400;
-  margin-right: 3px;
 }
 .burst-bullet {
   height: 15px;
@@ -337,6 +382,9 @@
 }
 .rsp-pink {
   background-color: #E35899;
+}
+.rsp-red {
+  background-color: #D7263D;
 }
 .rsp-green {
   background-color: #22932e;
@@ -498,3 +546,4 @@ input:checked:disabled + .burst-slider {
 input:focus + .burst-slider {
   box-shadow: 0 0 1px #22932e;
 }
+/*# sourceMappingURL=admin.css.map */

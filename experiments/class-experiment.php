@@ -51,6 +51,15 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		public $goal_identifier = '';
 		public $statistics = false;
 
+		/**
+		 * An alpha of 0.05, or 5 percent, is standard, but if you're running a particularly sensitive experiment,
+		 * such as testing a medicine or building an airplane, 0.01 may be more appropriate.
+		 * For our a/b experiment, a 0.05 alpha is fine.
+		 *
+		 * @var float
+		 */
+		private $alpha_level = 0.05;
+
 		function __construct( $id = false, $post_id = false ) {
 			//if a post id is passed, use the post id to find the linked experiment
 			if ( !$id && is_numeric($post_id) ) {
@@ -364,7 +373,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			return $wpdb->get_var( $wpdb->prepare(
 				"select round(data.converted/data.total, 2) as average from 
     					(SELECT COUNT(*) AS total, (SELECT COUNT(*) FROM {$wpdb->prefix}burst_statistics 
-    					WHERE experiment_id=%s and test_version=%s and conversion=) as converted FROM 
+    					WHERE experiment_id=%s and test_version=%s and conversion=1) as converted FROM 
     					  {$wpdb->prefix}burst_statistics WHERE experiment_id=%s and test_version=%s  ) as data",
 				intval( $this->id ),
 				$type,
@@ -372,6 +381,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				$type
 			) );
 		}
+
 
 		/**
 		 * @param string $type
@@ -387,12 +397,17 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		}
 
 		/**
-		 * get the raw data for this experiment
-		 * @return object
+		 * Determine if experiment is significant, based on alpha and significance value.
+		 *
+		 * @return bool
 		 */
-		private function get_raw_data() {
-			global $wpdb;
-			return $wpdb->get_results( $wpdb->prepare("select * FROM {$wpdb->prefix}burst_statistics WHERE experiment_id=%s", intval( $this->id ) ) );
+		public function is_statistical_significant(){
+			$significance = $this->get_significance();
+			if ( $significance && $this->alpha_level > $significance ) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 		/**
@@ -408,11 +423,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			// alternative hypothesis
 			// Control wins
 
-			//significance level, alpha, a.
-			//probability of rejecting the null hypothesis when the H0 is true.
-			$a = 0.05;
-
-			$confidence_level = 100 * (1-$a); //95%
+			$confidence_level = 100 * (1-$this->alpha_level); //95%
 
 			//one tailed test: We only Change page A into B, if B is better. Not if it's worse.
 			//https://blog.analytics-toolkit.com/2017/one-tailed-two-tailed-tests-significance-ab-testing/
@@ -425,13 +436,19 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			$s_variant = $this->get_standard_deviation('variant');
 			$s_variant_sample_size = $this->get_sample_size('variant');
 
+			//if the sample size is 0, there's no data we can use
+			if ( $s_control_sample_size == 0 || $s_variant_sample_size == 0 ) {
+				return false;
+			}
+
 			$standard_deviation = sqrt(($s_control/$s_control_sample_size) + ($s_variant/$s_variant_sample_size));
 
 			$m1 = $this->get_average( 'control');
 			$m2 = $this->get_average( 'variant');
-			$t_score = ($m1-$m2)/$standard_deviation;
+			$t_score = abs($m1-$m2)/$standard_deviation;
 
-			$degrees_of_freedom = $s_control_sample_size + $s_variant_sample_size -2;
+			$degrees_of_freedom = abs($s_control_sample_size + $s_variant_sample_size -2 );
+
 			return $this->get_significance_from_t_table( $degrees_of_freedom, $t_score );
 		}
 
@@ -450,18 +467,97 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		}
 
 		/**
-		 * Get margin of error based on sample size
+		 * Check if minimum sample size has been reached
+		 *
+		 * @return bool
+		 */
+		public function has_reached_minimum_sample_size(){
+			return $this->get_sample_size() > $this->get_required_sample_size();
+		}
+
+		/**
+		 * @return float
+		 *
+		 *
+	     * https://stats.stackexchange.com/questions/364547/how-to-analytically-solve-the-probability-of-improvement-acquisition-function-in
+		 */
+		public function probability_of_improvement(){
+			$standard_deviation = $this->get_standard_deviation('control');
+
+			if ( $standard_deviation ==0 ){
+				return 0;
+			}
+
+			$max_found_value = 1;
+			$args = array(
+				'test_version' => 'control',
+				'converted' => true,
+			);
+			$converted = $this->count_hits($args);
+			if ( $converted == 0 ) {
+				$max_found_value = 0;
+			}
+
+			$mu = $this->get_average('control');
+			$CDF = $this->cumulative_density_function($mu);
+			return round(100 * $CDF - $max_found_value/$standard_deviation, 1);
+		}
+
+		/**
+		 * Get cumulative density function value
+		 * @param $x
+		 *
+		 * https://stackoverflow.com/questions/4304765/how-to-generate-a-cumulative-normal-distribution-in-php
+		 * https://github.com/shadiakiki1986/php-blackscholes/blob/master/src/BlackScholesStatic.php
+		 *
+		 * @return float
+		 */
+
+		private function cumulative_density_function($x)
+		{
+			$Pi = 3.141592653589793238;
+			$a1 = 0.319381530;
+			$a2 = -0.356563782;
+			$a3 = 1.781477937;
+			$a4 = -1.821255978;
+			$a5 = 1.330274429;
+			$L = abs($x);
+			$k = 1 / ( 1 + 0.2316419 * $L);
+			$p = 1 - 1 /  pow(2 * $Pi, 0.5) * exp( -pow($L, 2) / 2 ) * ($a1 * $k + $a2 * pow($k, 2)
+			                                                            + $a3 * pow($k, 3) + $a4 * pow($k, 4) + $a5 * pow($k, 5) );
+			if ($x >= 0) {
+				return $p;
+			} else {
+				return 1-$p;
+			}
+		}
+
+		/**
+		 * Calculate the chance that the control wins
+		 * @return float
+		 */
+		public function probability_of_control_winning(){
+			$m1 = $this->get_average( 'control');
+			$m2 = $this->get_average( 'variant');
+			return round(100 * $m1 / ($m1 + $m2), 1);
+		}
+
+		/**
+		 * Get margin of error based on sample size, in %
 		 * https://www.statisticshowto.com/probability-and-statistics/find-sample-size/
 		 *
 		 * @return float
 		 */
 		public function get_margin_of_error(){
 			$n = $this->get_sample_size();
+			//without any data, it's 100%
+			if ($n==0) return 100;
+
 			//sample size $n0
 			$Z = 1.96; //based on assumption in article, where confidence of 95% suggests a Z of 1.96.
 			$p = 0.5; //is the (estimated) proportion of the population which prefers the control variant. We assume 50%,
 			$q = 1-$p;
-			return sqrt( $Z*$Z * $p * $q )/$n;
+			return round(100 * sqrt( $Z*$Z * $p * $q )/$n, 1);
 		}
 
 		/**
@@ -527,8 +623,8 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			} else if ( $df>120 ) {
 				$df=0;
 			}
-
 			$row = $table[$df];
+			$t = 2.323;
 			$index = $this->get_closest_value($t, $row);
 			return $p[$index];
 		}
