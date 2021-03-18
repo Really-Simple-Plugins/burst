@@ -40,18 +40,29 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			if ( !isset($_POST['experiment_id'])) {
 				$error = true;
 			}
+			$actions = array(
+				'stop',
+				'start',
+				'delete',
+				'archive'
+			);
 
-			if ( !isset($_POST['type'])) {
+			if ( !isset($_POST['type']) || !in_array($_POST['type'], $actions ) ) {
 				$error = true;
 			}
 
 			if ( !$error ) {
 				$experiment_id = intval( $_POST['experiment_id'] );
+				$type = sanitize_title($_POST['type']);
 				$experiment = new BURST_EXPERIMENT($experiment_id);
-				if ( $_POST['type'] === 'start' ) {
+				if ( $type === 'start' ) {
 					$experiment->start();
-				} else {
+				} else if ( $type === 'stop' ) {
 					$experiment->stop();
+				} else if ( $type === 'delete' ) {
+					$experiment->delete();
+				} else if ( $type === 'archive' ) {
+					$experiment->archive();
 				}
 			}
 

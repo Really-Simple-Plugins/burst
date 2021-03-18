@@ -139,7 +139,7 @@ class burst_experiment_Table extends WP_List_Table {
      *
      * @access      private
      * @since       7.1.2
-     * @return      void
+     * @return      string
      */
 
     function column_cb( $item ) {
@@ -153,7 +153,7 @@ class burst_experiment_Table extends WP_List_Table {
 
     }
 
-        /**
+    /**
      * Setup available bulk actions
      *
      * @access      private
@@ -182,8 +182,9 @@ class burst_experiment_Table extends WP_List_Table {
      	if ( ! burst_user_can_manage() ) {
 			return;
 		}
-
-        if( !isset($_GET['_wpnonce']) || ! wp_verify_nonce( $_GET['_wpnonce'], '_wpnonce' ) ) {
+     	error_log("bulk actions");
+        error_log(print_r($_GET, true));
+        if( !isset($_GET['_wpnonce']) || ! wp_verify_nonce( $_GET['_wpnonce'], 'bulk-records' ) ) {
             return;
         }
         $ids = isset( $_GET['experiment_id'] ) ? $_GET['experiment_id'] : false;
@@ -202,8 +203,6 @@ class burst_experiment_Table extends WP_List_Table {
                 $experiment->delete();
             }
         }
-
-
     }
 
 
@@ -214,17 +213,13 @@ class burst_experiment_Table extends WP_List_Table {
 		$title = apply_filters( 'burst_experiment_title', $title );
 
 		$actions = array(
-			// 'edit'   => '<a href="'
-			//             . admin_url( 'admin.php?page=burst-experiments&id='
-			//                          . $item['ID'] ) . '&action=edit">' . __( 'Edit',
-			// 		'burst' ) . '</a>',
-			'delete' => '<a class="burst-delete-experiment" data-id="' . $item['ID']
-			            . '" href="'. admin_url( 'admin.php?page=burst-experiments&id='
-			                         . $item['ID'] ) . '&action=delete"">' . __( 'Delete', 'burst' )
-			            . '</a>'
+            			'delete' => '<a class="burst-experiment-action" data-action="delete" data-id="' . $item['ID']
+			                        . '" href="#">' . __( 'Delete', 'burst' )
+			                        . '</a>',
+                        'archive' => '<a class="burst-experiment-action" data-action="archive" data-id="' . $item['ID']
+                                    . '" href="#">' . __( 'Archive', 'burst' )
+                                    . '</a>'
 		);
-
-		$experiment_count = count( burst_get_experiments() );
 
 		return $title . $this->row_actions( $actions );
 	}
@@ -268,12 +263,8 @@ class burst_experiment_Table extends WP_List_Table {
 		$control_id .= '</br><span style="color: grey; ">/'.$post->post_name.'</span>';
 		$control_id = apply_filters( 'burst_experiment_control_id', $control_id );
 
-
 		$actions = array(
-			'edit'   => '<a href="'
-			            . admin_url( 'post.php?post='
-			                         . $item['control_id'] ) . '&action=edit">' . __( 'Edit control post',
-					'burst' ) . '</a>',
+			'edit'   => '<a href="' . admin_url( 'post.php?post=' . $item['control_id'] ) . '&action=edit">' . __( 'Edit control post', 'burst' ) . '</a>',
 		);
 		return $control_id . $this->row_actions( $actions );
 	}
@@ -285,10 +276,7 @@ class burst_experiment_Table extends WP_List_Table {
 		$variant_id = apply_filters( 'burst_experiment_variant_id', $variant_id );
 
 		$actions = array(
-			'edit'   => '<a href="'
-			            . admin_url( 'post.php?post='
-			                         . $item['variant_id'] ) . '&action=edit">' . __( 'Edit variant post',
-					'burst' ) . '</a>',
+			'edit'   => '<a href="' . admin_url( 'post.php?post=' . $item['variant_id'] ) . '&action=edit">' . __( 'Edit variant post', 'burst' ) . '</a>',
 		);
 		return $variant_id . $this->row_actions( $actions );
 	}
@@ -475,6 +463,7 @@ class burst_experiment_Table extends WP_List_Table {
 		$hidden   = array(); // No hidden columns
 		$sortable = $this->get_sortable_columns();
 
+		$this->process_bulk_action();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
 		$this->items = $this->reports_data();
