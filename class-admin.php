@@ -21,11 +21,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 			add_action( 'admin_menu', array( $this, 'register_admin_page' ), 20 );
 
 			$plugin = burst_plugin;
-			add_filter( "plugin_action_links_$plugin",
-				array( $this, 'plugin_settings_link' ) );
+			add_filter( "plugin_action_links_$plugin", array( $this, 'plugin_settings_link' ) );
 			//multisite
-			add_filter( "network_admin_plugin_action_links_$plugin",
-				array( $this, 'plugin_settings_link' ) );
+			add_filter( "network_admin_plugin_action_links_$plugin", array( $this, 'plugin_settings_link' ) );
 			add_action( 'admin_init', array( $this, 'check_upgrade' ), 10, 2 );
 			add_action( 'burst_show_message', array( $this, 'show_message' ) );
 
@@ -1398,7 +1396,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 	        if (!isset($_GET['token']) || (!wp_verify_nonce($_GET['token'], 'burst_deactivate_plugin'))) return;
 	        if (isset($_GET["action"]) && $_GET["action"] == 'uninstall_delete_all_data') {
 	            $this->delete_all_burst_data();
-	            $plugin = $this->plugin_dir . "/" . $this->plugin_filename;
+	            $plugin = burst_plugin;
 	            $plugin = plugin_basename(trim($plugin));
                 $current = get_option('active_plugins', array());
                 $current = $this->remove_plugin_from_array($plugin, $current);
