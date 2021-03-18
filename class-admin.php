@@ -5,11 +5,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 		private static $_this;
 		public $error_message = "";
 		public $success_message = "";
-		public $task_count = 0;
-
-		public $plugin_dir = "burst";
-    	public $plugin_filename = "burst.php";
-
 		function __construct() {
 			if ( isset( self::$_this ) ) {
 				wp_die( sprintf( '%s is a singleton class and you cannot create a second instance.',
@@ -172,9 +167,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			}
 
             $this->maybe_sort_metabox('burst_edit_meta_box');
-
-            //@rogier is dit een handige manier? Voor de metabox is select2, de admin.js en admin.css nodig. 
-            $this->enqueue_assets('burst');
+			$this->enqueue_assets('burst');
 
 			wp_register_style( 'burst-metabox-css',
 				trailingslashit( burst_url ) . 'assets/css/metabox.css', "",
@@ -500,10 +493,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 			 ) {
 			 	return;
 			 }
-			// wp_register_style( 'burst',
-			// 	trailingslashit( burst_url ) . 'assets/css/admin.css', "",
-			// 	burst_version );
-			// wp_enqueue_style( 'burst' );
 
 			//datapicker
 			wp_enqueue_style( 'burst-datepicker' , trailingslashit(burst_url) . 'assets/datepicker/datepicker.css', "", burst_version);
