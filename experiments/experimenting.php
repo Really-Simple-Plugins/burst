@@ -35,8 +35,8 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			$experiments = burst_get_experiments( array( 'status' => 'active' ) );
 			foreach ( $experiments as $experiment_item ) {
 				$experiment = new BURST_EXPERIMENT($experiment_item->ID);
-				if ( $experiment->is_statistical_significant() ) {
-
+				if ( $experiment->is_statistical_significant() && $experiment->has_reached_minimum_sample_size() ) {
+					$experiment->activate_winner();
 				}
 			}
 		}

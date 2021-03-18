@@ -415,7 +415,6 @@ class burst_experiment_Table extends WP_List_Table {
 		$columns  = $this->get_columns();
 		$hidden   = array(); // No hidden columns
 		$sortable = $this->get_sortable_columns();
-        error_log("prepare items");
 		$this->process_bulk_action();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 

@@ -263,7 +263,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 				$redirect_id = $post_id;
 				$experiment = new BURST_EXPERIMENT(false, $post_id );
-				error_log(print_r($_POST, true));
 
 				// Set goal
 				$goal = !empty($_POST['burst_goal']) ? $_POST["burst_goal"] : false;
@@ -364,19 +363,19 @@ if ( ! class_exists( "burst_admin" ) ) {
 			$new_post_author = $current_user->ID;
 			if (isset($post) && $post != null) {
 				$args = array(
-					'comment_status' => $post->comment_status,
-					'post_status' => 'experiment',
+					'comment_status'     => $post->comment_status,
+					'post_status'        => 'experiment',
 					'hidden_post_status' => 'experiment',
-					'post_author' => $new_post_author,
-					'post_content' => $post->post_content,
-					'post_excerpt' => $post->post_excerpt,
-					'post_parent' => $post->post_parent,
-					'post_password' => $post->post_password,
-					'post_title' => __('Variant:', 'burst') . ' ' . $post->post_title,
-					'post_slug' => $post->post_title,
-					'post_type' => $post->post_type,
-					'to_ping' => $post->to_ping,
-					'menu_order' => $post->menu_order
+					'post_author'        => $new_post_author,
+					'post_content'       => $post->post_content,
+					'post_excerpt'       => $post->post_excerpt,
+					'post_parent'        => $post->post_parent,
+					'post_password'      => $post->post_password,
+					'post_title'         => __( 'Variant:', 'burst' ) . ' ' . $post->post_title,
+					'post_slug'          => $post->post_title,
+					'post_type'          => $post->post_type,
+					'to_ping'            => $post->to_ping,
+					'menu_order'         => $post->menu_order
 				);
 				$new_post_id = wp_insert_post($args);
 
@@ -393,7 +392,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 				 * duplicate all post meta just in two SQL queries
 				 */
 
-				$post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id");
+				$post_meta_infos = $wpdb->get_results($wpdb->prepare("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=%s"), intval($post_id));
 				if (count($post_meta_infos) != 0) {
 					$sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
 					foreach ($post_meta_infos as $meta_info) {
@@ -409,6 +408,69 @@ if ( ! class_exists( "burst_admin" ) ) {
 				return $new_post_id;
 			}
 		}
+
+		/**
+		 * Function for post copying
+		 * @param int $old_post_id
+		 * @param int $new_post_id
+         * @return bool
+		 */
+		public function copy_post( $old_post_id, $new_post_id )
+		{
+			if (!burst_user_can_manage()) return false;
+			global $wpdb;
+
+			$post = get_post($old_post_id);
+			$new_post = get_post($new_post_id);
+
+			if ( !$new_post || !$post ) return false;
+			if (isset($post) && $post != null) {
+				$args = array(
+					'ID'             => $new_post_id,
+					'comment_status' => $post->comment_status,
+					'post_author'    => $post->post_author,
+					'post_content'   => $post->post_content,
+					'post_excerpt'   => $post->post_excerpt,
+					'post_parent'    => $post->post_parent,
+					'post_password'  => $post->post_password,
+					'post_title'     => $post->post_title,
+					'post_slug'      => $post->post_title,
+					'post_type'      => $post->post_type,
+					'to_ping'        => $post->to_ping,
+					'menu_order'     => $post->menu_order
+				);
+				$new_post_id = wp_update_post($args);
+
+				/*
+				 * get all current post terms ad set them to the new post draft
+				 */
+				$taxonomies = get_object_taxonomies($post->post_type); // returns array of taxonomy names for post type, ex array("category", "post_tag");
+				foreach ($taxonomies as $taxonomy) {
+					$post_terms = wp_get_object_terms($old_post_id, $taxonomy, array('fields' => 'slugs'));
+					wp_set_object_terms($new_post_id, $post_terms, $taxonomy, false);
+				}
+
+				/*
+				 * duplicate all post meta just in two SQL queries
+				 */
+
+				$post_meta_infos = $wpdb->get_results($wpdb->prepare("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=%s"), intval($old_post_id));
+				if (count($post_meta_infos) != 0) {
+					$sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
+					foreach ($post_meta_infos as $meta_info) {
+						$meta_key = $meta_info->meta_key;
+						if ($meta_key == '_wp_old_slug') continue;
+						$meta_value = addslashes($meta_info->meta_value);
+						$sql_query_sel[] = "SELECT $new_post_id, '$meta_key', '$meta_value'";
+					}
+					$sql_query .= implode(" UNION ALL ", $sql_query_sel);
+					$wpdb->query($sql_query);
+				}
+
+				return true;
+			}
+		}
+
 		/**
 		 * Do upgrade on update
 		 */
@@ -1332,26 +1394,15 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 	    public function listen_for_deactivation()
 	    {	
-	        //check user role
 	        if (!current_user_can('activate_plugins')) return;
-
-	        //check nonce
 	        if (!isset($_GET['token']) || (!wp_verify_nonce($_GET['token'], 'burst_deactivate_plugin'))) return;
-
-	        //check for action
 	        if (isset($_GET["action"]) && $_GET["action"] == 'uninstall_delete_all_data') {
-
-	        	// delete all burst data
 	            $this->delete_all_burst_data();
-
 	            $plugin = $this->plugin_dir . "/" . $this->plugin_filename;
 	            $plugin = plugin_basename(trim($plugin));
-
-	           
                 $current = get_option('active_plugins', array());
                 $current = $this->remove_plugin_from_array($plugin, $current);
                 update_option('active_plugins', $current);
-	            
 	            wp_redirect(admin_url('plugins.php'));
 	            exit;
 	        }
@@ -1371,9 +1422,37 @@ if ( ! class_exists( "burst_admin" ) ) {
 	        return $current;
 	    }
 
+		/**
+		 * Clear plugin data
+		 */
 	    public function delete_all_burst_data(){
-	    	// @todo delete all burst data
-	    	error_log('Delete all data');
+		    if (!current_user_can('activate_plugins')) return;
+
+		    $options = array(
+			    'cmplz_activation_time',
+			    'burst_abdb_version',
+                'burst-current-version',
+                'burst_options_settings',
+                'burst_review_notice_shown',
+                'burst_activation_time',
+                'burst_stats_db_version',
+		    );
+
+		    foreach ($options as $option_name) {
+			    delete_option($option_name);
+			    delete_site_option($option_name);
+		    }
+
+		    global $wpdb;
+		    $table_names = array(
+			    $wpdb->prefix . 'burst_experiments',
+			    $wpdb->prefix . 'burst_statistics',
+		    );
+
+		    foreach($table_names as $table_name){
+			    $sql = "DROP TABLE IF EXISTS $table_name";
+			    $wpdb->query($sql);
+		    }
 	    }
 
 	}

@@ -261,16 +261,29 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		/**
 		 * Activate winning variant
 		 */
+
 		public function activate_winner(){
 			$success_rate_control = $this->get_average('control');
 			$success_rate_variant = $this->get_average('variant');
 			if ( $success_rate_variant > $success_rate_control ) {
-				$winner_id = $this->variant_id;
-				//get post content of control
-
+				//get post content of control, and save it in temp
+				$args = array(
+					'post_title' => __('Temporary post', 'burst'),
+					'post_status' => 'draft',
+					'post_type' => 'post',
+				);
+				$temp_id = wp_insert_post($args);
+				BURST::$admin->copy_post( $this->control_id, $temp_id );
 
 				//get post content of variant, and save it in control
+				//as control is already published, this should do the trick.
+				BURST::$admin->copy_post( $this->variant_id, $this->control_id );
 
+				//get post content of temp (original control), and save it in variant
+				BURST::$admin->copy_post( $temp_id, $this->variant_id );
+
+				//clean up temp post
+				wp_delete_post( $temp_id );
 			}
 			$this->stop();
 		}
