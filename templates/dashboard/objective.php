@@ -52,9 +52,11 @@
 	    <?php echo $count_variant_completed?>/<?php echo $count_variant_all?>
     </div>
 </div>
+
 <div class="burst-objective-total-container">
     <div class="burst-objective-text"><?php _e("Probability of improvement","burst")?></div>
 </div>
+
 <div class="burst-objective-bullets-container">
     <div class="burst-column-1"><div class="burst-bullet rsp-green"></div></div>
     <div class="burst-column-2">
@@ -64,41 +66,9 @@
     <div class="burst-column-3"><div class="burst-bullet rsp-red"></div></div>
     <div class="burst-column-4">
 		<?php _e("Variant","burst")?>
-		Baseline
+		<?php _e("Baseline", "burst")?>
     </div>
 </div>
 
 
-
-<div class="burst-significance-container">
-    <div>
-        <?php _e("Significant","burst")?>
-
-        <?php if ( $experiment->is_statistical_significant() ) {
-            _e("Yes","burst");
-        } else {
-	        _e("No","burst");
-
-        } ?>
-    </div>
-</div>
-<div class="burst-significance-container">
-    <div>
-		<?php _e("Margin of error","burst")?>
-
-		<?php echo $experiment->get_margin_of_error()?>%
-    </div>
-</div>
-<div class="burst-significance-container">
-    <div>
-		<?php _e("Recommended sample size reached","burst")?>
-
-		<?php if ( $experiment->has_reached_minimum_sample_size() ) {
-			_e("Yes","burst");
-		} else {
-			_e("No","burst");
-
-		} ?>
-    </div>
-</div>
 

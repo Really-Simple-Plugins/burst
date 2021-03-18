@@ -302,7 +302,7 @@
 #burst .burst-row {
   display: flex;
   flex-wrap: wrap;
-  padding: 10px 20px;
+  padding: 10px 10px;
 }
 #burst .burst-row div + div {
   padding-left: 20px;
@@ -310,7 +310,7 @@
 #burst .burst-percentage-text-container {
   display: flex;
   flex-wrap: wrap;
-  padding: 10px 20px;
+  padding: 10px 10px;
   padding-top: 20px;
 }
 #burst .burst-percentage-text-container div + div {
@@ -326,7 +326,7 @@
 #burst .burst-objective-total-container {
   display: flex;
   flex-wrap: wrap;
-  padding: 10px 20px;
+  padding: 10px 10px;
 }
 #burst .burst-objective-total-container div + div {
   padding-left: 20px;
@@ -340,7 +340,7 @@
 #burst .burst-objective-bullets-container {
   display: flex;
   flex-wrap: wrap;
-  padding: 10px 20px;
+  padding: 10px 10px;
 }
 #burst .burst-objective-bullets-container div + div {
   padding-left: 20px;

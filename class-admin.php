@@ -621,10 +621,10 @@ if ( ! class_exists( "burst_admin" ) ) {
                     'body'=> '',
                 ),
                 3 => array(
-                    'title' => __("Targeting", "burst"),
+                    'title' => __("Indicators", "burst"),
                     'content' => '<div class="burst-skeleton"></div>',
                     'class' => 'small burst-load-ajax',
-                    'type' => 'targeting',
+                    'type' => 'indicators',
                     'controls' => '',
                     'can_hide' => true,
                     'ajax_load' => true,
