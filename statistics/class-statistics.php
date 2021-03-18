@@ -11,7 +11,6 @@ if ( ! class_exists( "burst_statistics" ) ) {
 		 * Function for getting statistics for display with Chart JS
 		 * @return json                     Returns a JSON that is compatible with Chart JS
 		 *
-		 * @todo  Real data should be displayed here
 		 */
 		public function ajax_get_experiment_statistics(){
 			$error = false;
