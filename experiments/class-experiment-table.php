@@ -184,7 +184,6 @@ class burst_experiment_Table extends WP_List_Table {
 		}
 
         if( !isset($_GET['_wpnonce']) || ! wp_verify_nonce( $_GET['_wpnonce'], '_wpnonce' ) ) {
-            error_log('process_bulk_action nonce');
             return;
         }
         $ids = isset( $_GET['experiment_id'] ) ? $_GET['experiment_id'] : false;
@@ -446,7 +445,6 @@ class burst_experiment_Table extends WP_List_Table {
 			'order'   => $order,
 			'orderby' => $orderby,
 		);
-		error_log(print_r($order, true));
 		if ($status) $args['status'] = $status;
 
 		$args['title'] = $search;

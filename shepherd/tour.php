@@ -8,8 +8,6 @@ class burst_tour {
 	private static $_this;
 
 	public $capability = 'activate_plugins';
-	public $url;
-	public $version;
 
 	function __construct() {
 		if ( isset( self::$_this ) ) {
@@ -19,10 +17,8 @@ class burst_tour {
 
 		self::$_this = $this;
 
-		$this->url     = burst_url . '/shepherd';
-		$this->version = burst_version;
-		add_action( 'wp_ajax_burst_cancel_tour',
-			array( $this, 'listen_for_cancel_tour' ) );
+
+		add_action( 'wp_ajax_burst_cancel_tour', array( $this, 'listen_for_cancel_tour' ) );
 		add_action( 'admin_init', array( $this, 'restart_tour' ) );
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
@@ -33,111 +29,69 @@ class burst_tour {
 	}
 
 	public function enqueue_assets( $hook ) {
-
 		if ( get_site_option( 'burst_tour_started' ) ) {
-			if ( $hook !== 'plugins.php'
-			     && ( strpos( $hook, 'burst' ) === false )
-			) {
-				return;
-			}
 
-			wp_register_script( 'burst-tether',
-				trailingslashit( $this->url )
-				. 'tether/tether.min.js', "", $this->version );
+			wp_register_script( 'burst-tether', burst_url . 'shepherd/tether/tether.min.js', "", burst_version );
 			wp_enqueue_script( 'burst-tether' );
-
-			wp_register_script( 'burst-shepherd',
-				trailingslashit( $this->url )
-				. 'tether-shepherd/shepherd.min.js', "", $this->version );
+			wp_register_script( 'burst-shepherd', burst_url . 'shepherd/tether-shepherd/shepherd.min.js', "", burst_version );
 			wp_enqueue_script( 'burst-shepherd' );
-
-			wp_register_style( 'burst-shepherd',
-				trailingslashit( $this->url )
-				. "css/shepherd-theme-arrows.min.css", "",
-				$this->version );
+			wp_register_style( 'burst-shepherd', burst_url . "shepherd/css/shepherd-theme-arrows.min.css", "", burst_version );
 			wp_enqueue_style( 'burst-shepherd' );
-
-			wp_register_style( 'burst-shepherd-tour',
-				trailingslashit( $this->url ) . "css/burst-tour.min.css", "",
-				$this->version );
+			wp_register_style( 'burst-shepherd-tour', burst_url . "shepherd/css/tour.min.css", "", burst_version );
 			wp_enqueue_style( 'burst-shepherd-tour' );
-
-			wp_register_script( 'burst-shepherd-tour',
-				trailingslashit( $this->url )
-				. '/js/burst-tour.js', array( 'jquery' ), $this->version );
+			wp_register_script( 'burst-shepherd-tour', burst_url . 'shepherd/js/tour.js', array( 'jquery' ), burst_version );
 			wp_enqueue_script( 'burst-shepherd-tour' );
 
-			$logo
-				   = '<span class="burst-tour-logo"><img class="burst-tour-logo" style="width: 70px; height: 70px;" src="'
-				     . burst_url . 'assets/images/icon-256x256.png"></span>';
-			$html  = '<div class="burst-tour-logo-text">' . $logo
-			         . '<span class="burst-tour-text">{content}</span></div>';
+			$logo  = '<span class="burst-tour-logo"><img class="burst-tour-logo" style="width: 70px; height: 70px;" src="' . burst_url . 'assets/images/burst-logo.svg"></span>';
+			$html  = '<div class="burst-tour-logo-text">' . $logo . '<span class="burst-tour-text">{content}</span></div>';
 			$steps = array(
-				0 => array(
+				array(
 					'title'  => __( 'Welcome to Burst', 'burst' ),
-					'text'   => __( "Get ready for privacy legislation around the world. Follow a quick tour or start configuring the plugin!",
-						'burst' ),
-					'link'   => admin_url( "admin.php?page=burst" ),
+					'text'   => __( "Get ready for A/B testing. Follow a quick tour or start configuring the plugin!", 'burst' ),
+					'link'   => admin_url( "plugins.php" ),
 					'attach' => '.burst-settings-link',
+					'position' => 'right',
 				),
-				2 => array(
+				array(
 					'title'  => __( 'Dashboard', 'burst' ),
-					'text'   => __( "This is your Dashboard. When the Wizard is completed, this will give you an overview of tasks, tools, and documentation.",
-						'burst' ),
-					'link'   => add_query_arg( array(
-						"page" => "burst-wizard",
-						"step" => STEP_COOKIES
-					), admin_url( "admin.php" ) ),
-					'attach' => '.burst-dashboard-title',
+					'text'   => __( "This is your Dashboard. This will give you an overview of tasks, tools, and documentation.", 'burst' ),
+					'link'   => admin_url( "admin.php?page=burst" ),
+					'attach' => '.table-overview .burst-grid-title',
+					'position' => 'right',
 				),
-				3 => array(
-					'title'  => __( "The Wizard", "burst" ),
-					'text'   => __( "This is where you configure your website for your specific region. It includes everything you need to get started. We will come back to the Wizard soon.",
-						'burst' ),
-					'link'   => add_query_arg( array(
-						'page' => 'burst-cookiebanner',
-						'id'   => burst_get_default_banner_id()
-					), admin_url( "admin.php" ) ),
-					'attach' => '.burst-menu-item',
-				),
-				4 => array(
-					'title'  => __( 'Cookie Banner', 'burst' ),
-					'text'   => __( "Here you can configure and style your cookie banner if the Wizard is completed. An extra tab will be added with region-specific settings.",
-						'burst' ),
-					'link'   => admin_url( "admin.php?page=burst-script-center" ),
-					'attach' => '.burst-tablinks [bottom right]',
-				),
-
-				5 => array(
-					'title'  => __( "Integrations", "burst" ),
-					'text'   => __( "Based on your answers in the Wizard, we will automatically enable integrations with relevant services and plugins. In case you want to block extra scripts, you can add them to the Script Center.",
-						'burst' ),
-					'link'   => admin_url( "admin.php?page=burst-settings" ),
-					'attach' => '.burst-tablinks [bottom right]',
-				),
-				6 => array(
-					'title'  => __( 'Settings', 'burst' ),
-					'text'   => __( "Adding Document CSS, disabling certain features, and other settings can be found here. You can also revisit the tour here.",
-						'burst' ),
-					'link'   => admin_url( "admin.php?page=burst-proof-of-consent" ),
-					'attach' => '.burst-cookie_expiry',
-				),
-				7 => array(
-					'title'  => __( 'Proof of Consent', 'burst' ),
-					'text'   => __( "Complianz tracks changes in your Cookie Notice and Cookie Policy with time-stamped documents. This is your consent registration while respecting the data minimization guidelines and won't store any user data.",
-						'burst' ),
-					'link'   => admin_url( "admin.php?page=burst-wizard" ),
-					'attach' => '#burst-cookiestatement-snapshot-filter',
-				),
-				8 => array(
-					'title'  => __( "Let's start the Wizard",
-						'burst' ),
-					'text'   => __( "You are ready to start the Wizard. For more information, FAQ, and support, please visit Complianz.io.",
-						'burst' ),
-					'attach' => '.burst-menu-item',
-				),
-
+//				array(
+//					'title'  => __( "The Wizard", "burst" ),
+//					'text'   => __( "This is where you configure your website for your specific region. It includes everything you need to get started. We will come back to the Wizard soon.", 'burst' ),
+//					'link'   => add_query_arg( array( "page" => "burst-wizard", "step" => STEP_COOKIES ), admin_url( "admin.php" ) ),
+//					'attach' => '.use_cdb_api .burst-label',
+//					'position' => 'bottom',
+//				),
+//				array(
+//					'title'  => __( 'Cookie Banner', 'burst' ),
+//					'text'   => __( "Here you can configure and style your cookie banner if the Wizard is completed. An extra tab will be added with region-specific settings.", 'burst' ),
+//					'link'   => add_query_arg( array( 'page' => 'burst-cookiebanner', 'id'   => burst_get_default_banner_id() ), admin_url( "admin.php" ) ),
+//					'attach' => '#burst_COOKIEBANNER-general .burst-settings-title',
+//					'position' => 'bottom',
+//				),
+//
+//				array(
+//					'title'  => __( "Integrations", "burst" ),
+//					'text'   => __( "Based on your answers in the Wizard, we will automatically enable integrations with relevant services and plugins. In case you want to block extra scripts, you can add them to the Script Center.", 'burst' ),
+//					'link'   => add_query_arg(array("page" => 'burst-script-center'), admin_url( "admin.php" ) ),
+//					'attach' => '#integrations-services .burst-settings-title',
+//					'position' => 'right',
+//				),
+//
+//				array(
+//					'title'  => __( 'Settings', 'burst' ),
+//					'text'   => __( "Adding Document CSS, enabling safe mode, and other settings can be found here. You can also revisit the tour here.", 'burst' ),
+//					'link'   => add_query_arg(array("page" => 'burst-settings'), admin_url( "admin.php" ) ),
+//					'attach' => '#settings-general .burst-settings-title',
+//					'position' => 'right',
+//				),
 			);
+
+
 			$steps = apply_filters( 'burst_shepherd_steps', $steps );
 			wp_localize_script( 'burst-shepherd-tour', 'burst_tour',
 				array(
@@ -146,13 +100,11 @@ class burst_tour {
 					'token'          => wp_create_nonce( 'burst_tour_nonce' ),
 					'nextBtnText'    => __( "Next", "burst" ),
 					'backBtnText'    => __( "Previous", "burst" ),
-					'configure'      => __( "Configure", "burst" ),
-					'configure_link' => admin_url( "admin.php?page=burst-wizard" ),
+					'configure_text' => __( "Configure", "burst" ),
+					'configure_link' => admin_url( "admin.php?page=burst" ),
 					'startTour'      => __( "Start tour", "burst" ),
 					'endTour'        => __( "End tour", "burst" ),
 					'steps'          => $steps,
-
-
 				) );
 
 		}
@@ -167,7 +119,6 @@ class burst_tour {
 	 */
 
 	public function listen_for_cancel_tour() {
-
 		if ( ! isset( $_POST['token'] )
 		     || ! wp_verify_nonce( $_POST['token'], 'burst_tour_nonce' )
 		) {
@@ -184,7 +135,7 @@ class burst_tour {
 			return;
 		}
 
-		if ( ! burst_user_can_manage() ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 

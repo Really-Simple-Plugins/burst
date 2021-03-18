@@ -512,7 +512,7 @@ if ( ! function_exists( 'burst_get_all_post_statuses' ) ) {
 	 * Get the current post type
 	 * @param $post_id
 	 *
-	 * @return string
+	 * @return array
 	 */
 	
 	function burst_get_all_post_statuses($exceptions = array()){
@@ -529,5 +529,6 @@ if ( ! function_exists( 'burst_get_all_post_statuses' ) ) {
 	}
 
 }
+
 
 

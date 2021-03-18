@@ -128,9 +128,7 @@ if ( ! class_exists( "burst_statistics" ) ) {
 					GROUP BY CONCAT(YEAR(from_unixtime(time)),'-',DAYOFYEAR(from_unixtime(time)) ) order by period asc";
 
 			$results = $wpdb->get_results($sql);
-			error_log(print_r($results, true));
 			$nr_of_periods = $this->get_nr_of_periods('DAY', $start, $end );
-			error_log("periods $nr_of_periods");
 			$end_date_days_ago = $this->nr_of_periods_ago('DAY', $end );
 
 			$data = array();
@@ -236,8 +234,6 @@ if ( ! class_exists( "burst_statistics" ) ) {
 					= $wpdb->get_row( $wpdb->prepare( "select * from {$wpdb->prefix}burst_statistics where uid = %s". $sql ." ORDER BY time DESC LIMIT 1 ",
 					esc_attr( $burst_uid) ) );
 			}
-			error_log('stats');
-			error_log(print_r($statistics, true));
 			if (empty($statistics)){
 				return false;
 			} else {

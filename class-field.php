@@ -102,9 +102,6 @@ if ( ! class_exists( "burst_field" ) ) {
 					return;
 				}
 
-				error_log('process_save');
-				error_log(print_r($_POST, true));
-
 				$fields = BURST::$config->fields();
 
 				//remove multiple field

@@ -1,6 +1,3 @@
-/**css hooks
-
- */
 .burst-tour-hook {
   float: left;
 }
@@ -17,7 +14,7 @@
   z-index: 2;
 }
 .shepherd-element.shepherd-theme-arrows.shepherd-has-title .shepherd-content header {
-  background-color: #29b6f6;
+  background-color: #22932e;
   display: inline-block;
   width: 100%;
   height: 45px;
@@ -35,7 +32,7 @@
 .shepherd-content {
   width: 450px;
 }
-burst-tour-logo {
+.burst-tour-logo {
   height: 70px;
 }
 .burst-tour-logo-text {
@@ -57,4 +54,4 @@ burst-tour-logo {
   font-weight: bold;
   margin-top: -1px;
 }
-/*# sourceMappingURL=burst-tour.css.map */
+/*# sourceMappingURL=tour.css.map */
