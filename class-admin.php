@@ -103,7 +103,7 @@ if ( ! class_exists( "burst_admin" ) ) {
                         'id'     	=> 'burst-add-experiment-'. $experiment->ID,
                         'parent' 	=> 'burst-active-experiments',
                         'title'  	=> $experiment->title,
-                        'href'   	=> admin_url( 'admin.php?page=burst-experiments&id='. $experiment->ID .'&action=edit' ),
+                        'href'   	=> add_query_arg(array('page'=> 'burst-experiments', 'id' => $experiment->ID, 'action' => 'edit' ), admin_url( 'admin.php' ) ),
                     ) );
                 }
             }
@@ -329,7 +329,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 			if ($_POST["burst_duplicate_or_choose_existing"] === 'duplicate') {
 				$variant_id = $this->duplicate_post($post_id);
 			} else {
-				error_log('existing');
 				$variant_id = intval($_POST["burst_variant_id"]);
 				$args = array(
 					'ID'           => $variant_id,
@@ -813,12 +812,11 @@ if ( ! class_exists( "burst_admin" ) ) {
 						<?php
 						$experiments_table->views();
 						$experiments_table->search_box( __( 'Search', 'burst' ),
-							'burst-experiment' );
+							's' );
 						$experiments_table->display();
 						?>
-						<input type="hidden" name="page" value="burst-experiment"/>
+						<input type="hidden" name="page" value="burst-experiments"/>
 					</form>
-					<?php //do_action( 'burst_after_experiment_list' ); ?>
 				</div>
 				<?php
 			}

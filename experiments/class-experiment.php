@@ -259,6 +259,23 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		}
 
 		/**
+		 * Activate winning variant
+		 */
+		public function activate_winner(){
+			$success_rate_control = $this->get_average('control');
+			$success_rate_variant = $this->get_average('variant');
+			if ( $success_rate_variant > $success_rate_control ) {
+				$winner_id = $this->variant_id;
+				//get post content of control
+
+
+				//get post content of variant, and save it in control
+
+			}
+			$this->stop();
+		}
+
+		/**
 		 * Load the statistic data by experiment id
 		 * all hits from experiment
 		 *

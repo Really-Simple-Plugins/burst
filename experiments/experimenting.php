@@ -29,6 +29,19 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		}
 
 		/**
+		 * Check for each active experiment, if it is significant. If so, activate the
+		 */
+		public function maybe_activate_winner() {
+			$experiments = burst_get_experiments( array( 'status' => 'active' ) );
+			foreach ( $experiments as $experiment_item ) {
+				$experiment = new BURST_EXPERIMENT($experiment_item->ID);
+				if ( $experiment->is_statistical_significant() ) {
+
+				}
+			}
+		}
+
+		/**
 		 * Start or stop an experiment with an ajax request
 		 *
 		 */

@@ -84,37 +84,37 @@ class burst_experiment_Table extends WP_List_Table {
         if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) {
             return;
         }
- 
-        $input_id = $input_id . '-search-input';
- 
-        if ( ! empty( $_REQUEST['orderby'] ) ) {
-            echo '<input type="hidden" name="orderby" value="' . esc_attr( $_REQUEST['orderby'] ) . '" />';
-        }
-        if ( ! empty( $_REQUEST['order'] ) ) {
-            echo '<input type="hidden" name="order" value="' . esc_attr( $_REQUEST['order'] ) . '" />';
-        }
-        if ( ! empty( $_REQUEST['post_mime_type'] ) ) {
-            echo '<input type="hidden" name="post_mime_type" value="' . esc_attr( $_REQUEST['post_mime_type'] ) . '" />';
-        }
-        if ( ! empty( $_REQUEST['detached'] ) ) {
-            echo '<input type="hidden" name="detached" value="' . esc_attr( $_REQUEST['detached'] ) . '" />';
-        }
-        ?>
-			<p class="search-box">
-			    <label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo $text; ?>:</label>
-			    <input type="search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>" />
-			        <?php submit_button( $text, '', '', false, array( 'id' => 'search-submit' ) ); ?>
-			</p>
+		$input_id = $input_id . '-search-input';
+
+		if ( ! empty( $_REQUEST['orderby'] ) ) {
+			echo '<input type="hidden" name="orderby" value="' . esc_attr( $_REQUEST['orderby'] ) . '" />';
+		}
+		if ( ! empty( $_REQUEST['order'] ) ) {
+			echo '<input type="hidden" name="order" value="' . esc_attr( $_REQUEST['order'] ) . '" />';
+		}
+		if ( ! empty( $_REQUEST['post_mime_type'] ) ) {
+			echo '<input type="hidden" name="post_mime_type" value="' . esc_attr( $_REQUEST['post_mime_type'] ) . '" />';
+		}
+		if ( ! empty( $_REQUEST['detached'] ) ) {
+			echo '<input type="hidden" name="detached" value="' . esc_attr( $_REQUEST['detached'] ) . '" />';
+		}
+		?>
+		<p class="search-box">
+			<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo $text; ?>:</label>
+			<input type="search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>" />
+			<?php submit_button( $text, '', '', false, array( 'id' => 'search-submit' ) ); ?>
+		</p>
 		<?php
+
     }
 
 	protected function get_views() { 
 	    $status_links = array(
-	        "all"       	=> '<a href="'. admin_url() .'admin.php?page=burst-experiments">'.__("All", "burst") .'</a>',
-	        "completed"   	=> '<a href="'. admin_url() .'admin.php?page=burst-experiments&status=completed">'.__("Completed", "burst") .'</a>',
-	        "active" 		=> '<a href="'. admin_url() .'admin.php?page=burst-experiments&status=active">'.__("Active", "burst") .'</a>',
-	        "draft" 		=> '<a href="'. admin_url() .'admin.php?page=burst-experiments&status=draft">'.__("Draft", "burst") .'</a>',
-	        "archived"   	=> '<a href="'. admin_url() .'admin.php?page=burst-experiments&status=archived">'.__("Archived", "burst") .'</a>',
+	        "all"       	=> '<a href="'. add_query_arg( array( 'page' => 'burst-experiments' ), admin_url('admin.php') ) . '">' . __("All", "burst") .'</a>',
+	        "completed"   	=> '<a href="'. add_query_arg( array( 'page' => 'burst-experiments', 'status' => 'completed' ), admin_url('admin.php') ) . '">' . __("Completed", "burst") .'</a>',
+	        "active" 		=> '<a href="'. add_query_arg( array( 'page' => 'burst-experiments', 'status' => 'active' ), admin_url('admin.php') ) . '">'.__("Active", "burst") .'</a>',
+	        "draft" 		=> '<a href="'. add_query_arg( array( 'page' => 'burst-experiments', 'status' => 'draft' ), admin_url('admin.php') ) . '">'.__("Draft", "burst") .'</a>',
+	        "archived"   	=> '<a href="'. add_query_arg( array( 'page' => 'burst-experiments', 'status' => 'archived' ), admin_url('admin.php') ) . '">'.__("Archived", "burst") .'</a>',
 	        
 	    );
 	    return $status_links;
@@ -146,7 +146,7 @@ class burst_experiment_Table extends WP_List_Table {
 
         return sprintf(
             '<input type="checkbox" name="%1$s_id[]" value="%2$s" />',
-            'experiment',
+	        esc_attr( $this->_args['singular'] ),
             esc_attr( $item['ID'] ),
         );
 
@@ -182,8 +182,6 @@ class burst_experiment_Table extends WP_List_Table {
      	if ( ! burst_user_can_manage() ) {
 			return;
 		}
-     	error_log("bulk actions");
-        error_log(print_r($_GET, true));
         if( !isset($_GET['_wpnonce']) || ! wp_verify_nonce( $_GET['_wpnonce'], 'bulk-records' ) ) {
             return;
         }
@@ -325,52 +323,7 @@ class burst_experiment_Table extends WP_List_Table {
 		return $columns;
 	}
 
-	/**
-	 * Outputs the reporting views
-	 *
-	 * @return void
-	 * @since 1.5
-	 */
-	public function bulk_actions( $which = '' ) {
-		if ( is_null( $this->_actions ) ) {
-			$this->_actions = $this->get_bulk_actions();
 
-			/**
-			 * Filters the list table bulk actions drop-down.
-			 *
-			 * The dynamic portion of the hook name, `$this->screen->id`, refers
-			 * to the ID of the current screen, usually a string.
-			 *
-			 * @since 3.1.0
-			 *
-			 * @param string[] $actions An array of the available bulk actions.
-			 */
-			$this->_actions = apply_filters( "bulk_actions-{$this->screen->id}", $this->_actions ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
-
-			$two = '';
-		} else {
-			$two = '2';
-		}
-
-		if ( empty( $this->_actions ) ) {
-			return;
-		}
-
-		echo '<label for="bulk-action-selector-' . esc_attr( $which ) . '" class="screen-reader-text">' . __( 'Select bulk action' ) . '</label>';
-		echo '<select name="action' . $two . '" id="bulk-action-selector-' . esc_attr( $which ) . "\">\n";
-		echo '<option value="-1">' . __( 'Bulk actions' ) . "</option>\n";
-
-		foreach ( $this->_actions as $name => $title ) {
-			$class = 'edit' === $name ? ' class="hide-if-no-js"' : '';
-
-			echo "\t" . '<option value="' . $name . '"' . $class . '>' . $title . "</option>\n";
-		}
-
-		echo "</select>\n";
-
-		submit_button( __( 'Apply' ), 'action', '', false, array( 'id' => "doaction$two" ) );
-		echo "\n";
-	}
 
 	/**
 	 * Retrieve the current page number
@@ -462,7 +415,7 @@ class burst_experiment_Table extends WP_List_Table {
 		$columns  = $this->get_columns();
 		$hidden   = array(); // No hidden columns
 		$sortable = $this->get_sortable_columns();
-
+        error_log("prepare items");
 		$this->process_bulk_action();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 

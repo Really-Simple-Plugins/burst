@@ -134,6 +134,7 @@ if ( ! class_exists( 'BURST' ) ) {
 			require_once( burst_path . 'experiments/experimenting.php' );
 			require_once( burst_path . 'rest-api/rest-api.php' );
 			require_once( burst_path . 'config/class-config.php');
+			require_once( burst_path . 'cron/cron.php');
 		}
 
 		private function hooks() {
@@ -184,4 +185,13 @@ if ( ! function_exists( 'burst_start_tour' ) ) {
 
 	register_activation_hook( __FILE__, 'burst_start_tour' );
 }
+
+if ( !function_exists( 'burst_clear_scheduled_hooks' )) {
+	register_deactivation_hook( __FILE__, 'burst_clear_scheduled_hooks' );
+	function burst_clear_scheduled_hooks() {
+		wp_clear_scheduled_hook( 'burst_every_week_hook' );
+		wp_clear_scheduled_hook( 'burst_every_day_hook' );
+	}
+}
+
 
