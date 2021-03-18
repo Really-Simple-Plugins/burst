@@ -612,6 +612,31 @@ jQuery(document).ready(function ($) {
         });
     }
 
+    $(document).on('click', '.burst-experiment-action', function (e) {
+
+        e.preventDefault();
+        var btn = $(this);
+        btn.closest('tr').css('background-color', 'red');
+        var experiment_id = btn.data('id');
+        var type = btn.data('action');
+        $.ajax({
+            type: "POST",
+            url: burst.ajaxurl,
+            dataType: 'json',
+            data: ({
+                action: 'burst_experiment_action',
+                experiment_id: experiment_id,
+                type: type
+            }),
+            success: function (response) {
+                if (response.success) {
+                    btn.closest('tr').remove();
+                }
+            }
+        });
+    });
+
+
 
 
 });

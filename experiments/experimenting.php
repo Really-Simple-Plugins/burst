@@ -29,6 +29,19 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		}
 
 		/**
+		 * Check for each active experiment, if it is significant. If so, activate the
+		 */
+		public function maybe_activate_winner() {
+			$experiments = burst_get_experiments( array( 'status' => 'active' ) );
+			foreach ( $experiments as $experiment_item ) {
+				$experiment = new BURST_EXPERIMENT($experiment_item->ID);
+				if ( $experiment->is_statistical_significant() && $experiment->has_reached_minimum_sample_size() ) {
+					$experiment->activate_winner();
+				}
+			}
+		}
+
+		/**
 		 * Start or stop an experiment with an ajax request
 		 *
 		 */
@@ -40,18 +53,29 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			if ( !isset($_POST['experiment_id'])) {
 				$error = true;
 			}
+			$actions = array(
+				'stop',
+				'start',
+				'delete',
+				'archive'
+			);
 
-			if ( !isset($_POST['type'])) {
+			if ( !isset($_POST['type']) || !in_array($_POST['type'], $actions ) ) {
 				$error = true;
 			}
 
 			if ( !$error ) {
 				$experiment_id = intval( $_POST['experiment_id'] );
+				$type = sanitize_title($_POST['type']);
 				$experiment = new BURST_EXPERIMENT($experiment_id);
-				if ( $_POST['type'] === 'start' ) {
+				if ( $type === 'start' ) {
 					$experiment->start();
-				} else {
+				} else if ( $type === 'stop' ) {
 					$experiment->stop();
+				} else if ( $type === 'delete' ) {
+					$experiment->delete();
+				} else if ( $type === 'archive' ) {
+					$experiment->archive();
 				}
 			}
 

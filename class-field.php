@@ -345,19 +345,6 @@ if ( ! class_exists( "burst_field" ) ) {
 					}
 				}
 
-				//don't add field if it was deleted previously
-				$deleted_cookies = get_option( 'burst_deleted_cookies' );
-				if ( ( $deleted_cookies
-				       && in_array( $cookie_type, $deleted_cookies ) )
-				) {
-					return;
-				}
-
-				//don't add default wordpress cookies
-				if ( strpos( $cookie_type, 'wordpress_' ) !== false ) {
-					return;
-				}
-
 				$multiple_field[] = array( 'key' => $cookie_type );
 			} else {
 				$multiple_field[] = array();
