@@ -1,26 +1,20 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	die( 'you do not have access to this page!' );
+	die();
 }
 
 class burst_tour {
-
 	private static $_this;
-
 	public $capability = 'activate_plugins';
 
 	function __construct() {
 		if ( isset( self::$_this ) ) {
-			wp_die( sprintf( '%s is a singleton class and you cannot create a second instance.',
-				get_class( $this ) ) );
+			wp_die( sprintf( '%s is a singleton class and you cannot create a second instance.', get_class( $this ) ) );
 		}
 
 		self::$_this = $this;
-
-
 		add_action( 'wp_ajax_burst_cancel_tour', array( $this, 'listen_for_cancel_tour' ) );
 		add_action( 'admin_init', array( $this, 'restart_tour' ) );
-
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 	}
 
@@ -28,6 +22,10 @@ class burst_tour {
 		return self::$_this;
 	}
 
+	/**
+	 * Enqueue our assets
+	 * @param $hook
+	 */
 	public function enqueue_assets( $hook ) {
 		if ( get_site_option( 'burst_tour_started' ) ) {
 
@@ -128,9 +126,10 @@ class burst_tour {
 		update_site_option( 'burst_tour_shown_once', true );
 	}
 
-
+	/**
+	 * Restart the tour
+	 */
 	public function restart_tour() {
-
 		if ( ! isset( $_POST['burst_restart_tour'] ) ) {
 			return;
 		}
@@ -146,7 +145,6 @@ class burst_tour {
 		}
 
 		update_site_option( 'burst_tour_started', true );
-
 		wp_redirect( admin_url( 'plugins.php' ) );
 		exit;
 	}
