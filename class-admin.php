@@ -30,11 +30,11 @@ if ( ! class_exists( "burst_admin" ) ) {
             add_action( 'add_meta_boxes', array( $this, 'add_burst_metabox_to_classic_editor' ) );
 			add_action( 'admin_head', array( $this, 'hide_publish_button_on_experiments' ) );
 
+
 			// deactivating
 			add_action('admin_footer', array($this, 'deactivate_popup'), 40);
 			add_action('admin_init', array($this, 'listen_for_deactivation'), 40);
 			add_action( 'admin_bar_menu', array($this, 'add_admin_bar_item'), 500 );
-
 		}
 
 		static function this() {
@@ -1348,12 +1348,14 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 	            });
 	        </script>
-	        <div id="deactivate_keep_ssl" style="display: none;">
+
+	        <div id="deactivate_and_delete_data" style="display: none;">
 	                <div class="burst-deactivate-notice-content">
 	                    <h3 style="margin: 20px 0; text-align: left;">
 	                        <?php _e("To deactivate the plugin correctly, please select if you want to:", "burst") ?></h3>
 	                    <ul style="text-align: left; font-size: 1.2em;">
-	                        <li><?php _e("Deactivate, and keep all the Burst data.", "burst") ?></li>
+
+	                        <li><?php _e("Deactivate", "burst") ?></li>
 	                        <li>
 	                        	<?php _e("Deactivate, and remove all statistics, experiments and settings.", "burst"); ?>
 	                        	<?php _e("The data will be gone forever.", "burst"); ?>		
@@ -1381,8 +1383,14 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 	    public function listen_for_deactivation()
 	    {	
+
+	        //check user role
 	        if (!current_user_can('activate_plugins')) return;
+
+	        //check nonce
 	        if (!isset($_GET['token']) || (!wp_verify_nonce($_GET['token'], 'burst_deactivate_plugin'))) return;
+
+	        //check for action
 	        if (isset($_GET["action"]) && $_GET["action"] == 'uninstall_delete_all_data') {
 	            $this->delete_all_burst_data();
 	            $plugin = burst_plugin;
@@ -1440,6 +1448,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			    $sql = "DROP TABLE IF EXISTS $table_name";
 			    $wpdb->query($sql);
 		    }
+
 	    }
 
 	}
