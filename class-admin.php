@@ -5,11 +5,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 		private static $_this;
 		public $error_message = "";
 		public $success_message = "";
-		public $task_count = 0;
-
-		public $plugin_dir = "burst";
-    	public $plugin_filename = "burst.php";
-
 		function __construct() {
 			if ( isset( self::$_this ) ) {
 				wp_die( sprintf( '%s is a singleton class and you cannot create a second instance.',
@@ -21,11 +16,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 			add_action( 'admin_menu', array( $this, 'register_admin_page' ), 20 );
 
 			$plugin = burst_plugin;
-			add_filter( "plugin_action_links_$plugin",
-				array( $this, 'plugin_settings_link' ) );
+			add_filter( "plugin_action_links_$plugin", array( $this, 'plugin_settings_link' ) );
 			//multisite
-			add_filter( "network_admin_plugin_action_links_$plugin",
-				array( $this, 'plugin_settings_link' ) );
+			add_filter( "network_admin_plugin_action_links_$plugin", array( $this, 'plugin_settings_link' ) );
 			add_action( 'admin_init', array( $this, 'check_upgrade' ), 10, 2 );
 			add_action( 'burst_show_message', array( $this, 'show_message' ) );
 
@@ -174,9 +167,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			}
 
             $this->maybe_sort_metabox('burst_edit_meta_box');
-
-            //@rogier is dit een handige manier? Voor de metabox is select2, de admin.js en admin.css nodig. 
-            $this->enqueue_assets('burst');
+			$this->enqueue_assets('burst');
 
 			wp_register_style( 'burst-metabox-css',
 				trailingslashit( burst_url ) . 'assets/css/metabox.css', "",
@@ -502,10 +493,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 			 ) {
 			 	return;
 			 }
-			// wp_register_style( 'burst',
-			// 	trailingslashit( burst_url ) . 'assets/css/admin.css', "",
-			// 	burst_version );
-			// wp_enqueue_style( 'burst' );
 
 			//datapicker
 			wp_enqueue_style( 'burst-datepicker' , trailingslashit(burst_url) . 'assets/datepicker/datepicker.css', "", burst_version);
@@ -1405,21 +1392,14 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 	        //check for action
 	        if (isset($_GET["action"]) && $_GET["action"] == 'uninstall_delete_all_data') {
-
-        	// delete all burst data
-            $this->delete_all_burst_data();
-
-            $plugin = $this->plugin_dir . "/" . $this->plugin_filename;
-            $plugin = plugin_basename(trim($plugin));
-
-           
-            $current = get_option('active_plugins', array());
-            $current = $this->remove_plugin_from_array($plugin, $current);
-            update_option('active_plugins', $current);
-
-            wp_redirect(admin_url('plugins.php'));
-            exit;
-            
+	            $this->delete_all_burst_data();
+	            $plugin = burst_plugin;
+	            $plugin = plugin_basename(trim($plugin));
+                $current = get_option('active_plugins', array());
+                $current = $this->remove_plugin_from_array($plugin, $current);
+                update_option('active_plugins', $current);
+	            wp_redirect(admin_url('plugins.php'));
+	            exit;
 	        }
 	    }
 
