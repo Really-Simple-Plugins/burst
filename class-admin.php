@@ -20,20 +20,17 @@ if ( ! class_exists( "burst_admin" ) ) {
 			//multisite
 			add_filter( "network_admin_plugin_action_links_$plugin", array( $this, 'plugin_settings_link' ) );
 			add_action( 'admin_init', array( $this, 'check_upgrade' ), 10, 2 );
-			add_action( 'burst_show_message', array( $this, 'show_message' ) );
 
-			add_action('admin_init', array($this, 'init_grid') );
-			add_action('wp_ajax_burst_get_datatable', array($this, 'ajax_get_datatable'));
+			add_action( 'admin_init', array($this, 'init_grid') );
 			add_action( 'edit_form_top', array( $this, 'add_experiment_info_below_title' ));
 			add_action( 'admin_init',array( $this, 'process_burst_metaboxes' ) );
-			add_action ( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
+			add_action( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
             add_action( 'add_meta_boxes', array( $this, 'add_burst_metabox_to_classic_editor' ) );
 			add_action( 'admin_head', array( $this, 'hide_publish_button_on_experiments' ) );
 
-
 			// deactivating
-			add_action('admin_footer', array($this, 'deactivate_popup'), 40);
-			add_action('admin_init', array($this, 'listen_for_deactivation'), 40);
+			add_action( 'admin_footer', array($this, 'deactivate_popup'), 40);
+			add_action( 'admin_init', array($this, 'listen_for_deactivation'), 40);
 			add_action( 'admin_bar_menu', array($this, 'add_admin_bar_item'), 500 );
 		}
 
@@ -111,12 +108,15 @@ if ( ! class_exists( "burst_admin" ) ) {
 
         }
 
-
+		/**
+         * Add experiment info below the post title
+		 * @param int $post
+		 */
 
 		public function add_experiment_info_below_title( $post ) {
 		    if (!burst_user_can_manage()) return;
 
-			$post = isset($_GET['post']) ? $_GET['post'] : false;
+			$post = isset($_GET['post']) ? intval($_GET['post']) : false;
 			$post_status = get_post_status($post);
 			if (burst_post_has_experiment($post)) {
 				if ($post_status == 'experiment') {
@@ -127,8 +127,13 @@ if ( ! class_exists( "burst_admin" ) ) {
 			}
 		}
 
+		/**
+		 * Hide publish button on the experiment itself.
+		 */
         public function hide_publish_button_on_experiments(){
-        	$post = isset($_GET['post']) ? $_GET['post'] : false;
+	        if (!burst_user_can_manage()) return;
+
+	        $post = isset($_GET['post']) ? intval($_GET['post']) : false;
 			$post_status = get_post_status($post);
 			
 			if ($post_status == 'experiment') {
@@ -142,7 +147,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 		        <?php
 		    }
         }
-
 
 		/**
 		 * Well the function name says it all, this function 
@@ -218,7 +222,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 		 * 
 		 */
 		public function show_burst_control_metabox(){
-
 		    if (!burst_user_can_manage()) return;
 		    include( dirname( __FILE__ ) . "/experiments/metabox-control.php" );
 			
@@ -243,29 +246,23 @@ if ( ! class_exists( "burst_admin" ) ) {
 			if (!isset($_POST['post_ID'])) return;
             $post_id = intval($_POST['post_ID']);
 			if ( isset( $_POST["burst_create_experiment_button"] ) ){
-
 				$redirect_id = $this->create_experiment($post_id);
-
 			} elseif ( isset( $_POST["burst_go_to_setup_experiment_button"] ) ){
-
 				$redirect_id = intval($_POST["burst_redirect_to_variant"]);
-
 			} elseif ( isset( $_POST["burst_start_experiment_button"] ) ){
-
 				$redirect_id = $post_id;
 				$experiment = new BURST_EXPERIMENT(false, $post_id );
-
 				// Set goal
-				$goal = !empty($_POST['burst_goal']) ? $_POST["burst_goal"] : false;
+				$goal = !empty($_POST['burst_goal']) ? sanitize_title($_POST["burst_goal"]) : false;
 				$experiment->goal = $goal;
-				if ($goal == 'visit') {
-					$experiment->goal_id = !empty($_POST['burst_goal_id']) ? $_POST["burst_goal_id"] : false;
-				} elseif ($goal == 'click') {
-					$experiment->goal_identifier = !empty($_POST['burst_goal_identifier']) ? $_POST["burst_goal_identifier"] : false;
+				if ( $goal == 'visit' ) {
+					$experiment->goal_id = !empty($_POST['burst_goal_id']) ? intval($_POST["burst_goal_id"]) : false;
+				} elseif ( $goal == 'click' ) {
+					$experiment->goal_identifier = !empty($_POST['burst_goal_identifier']) ? sanitize_text_field($_POST["burst_goal_identifier"]) : false;
 				}
 
 				//Set timeline
-				$timeline_select = !empty($_POST['burst_timeline_select']) ? $_POST["burst_timeline_select"] : false;
+				$timeline_select = !empty($_POST['burst_timeline_select']) ? intval($_POST["burst_timeline_select"]) : false;
 				if ($timeline_select == 'custom') {
 					$amount_of_days = !empty($_POST['burst_timeline_custom']) ? intval($_POST["burst_timeline_custom"]) : false;
 				} else {
@@ -282,11 +279,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 				$experiment->start();
 
 			} elseif ( isset( $_POST["burst_stop_experiment_button"] ) ){
-
 				$redirect_id = $post_id;
 				$experiment = new BURST_EXPERIMENT(false, $post_id );
 				$experiment->stop();
-
 			}
 
 			/*
@@ -321,8 +316,8 @@ if ( ! class_exists( "burst_admin" ) ) {
 			} else {
 				$variant_id = intval($_POST["burst_variant_id"]);
 				$args = array(
-					'ID'           => $variant_id,
-					'post_status' => 'experiment',
+					'ID'                 => $variant_id,
+					'post_status'        => 'experiment',
 					'hidden_post_status' => 'experiment',
 				);
 				wp_update_post($args);
@@ -331,7 +326,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			/**
 			* create experiment entry
 			*/
-			$experiment_title = !empty($_POST['burst_title']) ? $_POST['burst_title'] : __('Unnamed experiment', 'burst');
+			$experiment_title = !empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : __('Unnamed experiment', 'burst');
 			$experiment = new BURST_EXPERIMENT();
 			$experiment->title = $experiment_title;
 			$experiment->control_id = $post_id;
@@ -798,33 +793,12 @@ if ( ! class_exists( "burst_admin" ) ) {
 			echo burst_get_template('admin_wrap.php', $args );
 		}
 
-		/**
-		 * Insights page
-		 */
-		public function insights() {
 
-			$grid_items = $this->grid_items;
-			//give each item the key as index
-			array_walk($grid_items, function(&$a, $b) { $a['index'] = $b; });
-
-			$grid_html = '';
-			foreach ($grid_items as $index => $grid_item) {
-				if($grid_item['page'] !== 'insights') continue;
-				$grid_html .= burst_grid_element($grid_item);
-			}
-			$args = array(
-				'page' => 'insights',
-				'content' => burst_grid_container($grid_html),
-			);
-			echo burst_get_template('admin_wrap.php', $args );
-		}
 
 		/**
 		 * Experiments table overview
 		 */
 		function experiments_overview() {
-
-
 			if ( ! burst_user_can_manage() ) {
 				return;
 			}
@@ -892,7 +866,7 @@ if ( ! class_exists( "burst_admin" ) ) {
                     'constant_free' => 'burst_plugin',
                     'constant_premium' => 'burst_pro_plugin',
                     'website' => 'https://burst.com/pro',
-                    'search' => 'Really+Simple+SSL+Mark+Wolters',
+                    'search' => 'Really+Simple+SSL+Burst',
                 ),
                 2 => array(
                     'title' => '<div class="rsp-blue burst-bullet"></div>',
@@ -945,30 +919,30 @@ if ( ! class_exists( "burst_admin" ) ) {
             $items = array(
                 1 => array(
                     'content' => __("Writing Content for Google", "burst"),
-                    'link'    => 'https://wpsearchinsights.com/writing-content-for-google/',
+                    'link'    => 'https://wpburst.com/writing-content-for-google/',
                 ),
                 2 => array(
                     'content' => __("WP Search Insights Beginner's Guide", "burst"),
-                    'link' => 'https://wpsearchinsights.com/burst-beginners-guide/',
+                    'link' => 'https://wpburst.com/burst-beginners-guide/',
                 ),
                 3 => array(
                     'content' => __("Using CSV/Excel Exports", "burst"),
-                    'link' => 'https://wpsearchinsights.com/using-csv-excel-exports/',
+                    'link' => 'https://wpburst.com/using-csv-excel-exports/',
                 ),
                 4 => array(
                     'content' => __("Improving your Search Result Page", "burst"),
-                    'link' => 'https://wpsearchinsights.com/improving-your-search-result-page/',
+                    'link' => 'https://wpburst.com/improving-your-search-result-page/',
                 ),
                 5 => array(
                     'content' => __("The Search Filter", "burst"),
-                    'link' => 'https://wpsearchinsights.com/the-search-filter/',
+                    'link' => 'https://wpburst.com/the-search-filter/',
                 ),
                 6 => array(
                     'content' => __("Positioning your search form", "burst"),
-                    'link' => 'https://wpsearchinsights.com/about-search-forms/',
+                    'link' => 'https://wpburst.com/about-search-forms/',
                 ),
             );
-	        $button = '<a href="https://wpsearchinsights.com/tips-tricks/" target="_blank"><button class="button button-upsell">'.__("View all" , "burst").'</button></a>';
+	        $button = '<a href="https://wpburst.com/tips-tricks/" target="_blank"><button class="button button-upsell">'.__("View all" , "burst").'</button></a>';
 
 	        $container = $this->get_template('dashboard/tipstricks.php');
 	        $output = "";
@@ -994,7 +968,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 			?>
 			<div class="wrap burst-settings">
 				<h1><?php _e( "Settings" ) ?></h1>
-				<?php do_action( 'burst_show_message' ) ?>
 				<form action="" method="post" enctype="multipart/form-data">
 
 					<table class="form-table">
@@ -1034,29 +1007,12 @@ if ( ! class_exists( "burst_admin" ) ) {
 			<?php
 		}
 
-		public function send_mail( $message, $from_name, $from_email ) {
-			$subject = "Support request from $from_name";
-			$to      = "support@wpburst.com";
-			$headers = array();
-			add_filter( 'wp_mail_content_type', function ( $content_type ) {
-				return 'text/html';
-			} );
-
-			$headers[] = "Reply-To: $from_name <$from_email>" . "\r\n";
-			$success   = wp_mail( $to, $subject, $message, $headers );
-
-			// Reset content-type to avoid conflicts -- http://core.trac.wordpress.org/ticket/23578
-			remove_filter( 'wp_mail_content_type', 'set_html_content_type' );
-
-			return $success;
-		}
-
 		/**
 		 * Get templates for parts of the dashboard
 		 * @param  string $file template file name
 		 * @param  string $path path to the template file
 		 * @param  array  $args
-		 * @return html   Returns the code with with dynamic content within the template
+		 * @return string   Returns the code with with dynamic content within the template
 		 */
 		public function get_template($file, $path = burst_path, $args = array())
         {
@@ -1094,28 +1050,8 @@ if ( ! class_exists( "burst_admin" ) ) {
                 $contents = str_replace('{'.$key.'}', $value, $contents);
             }
 
-
-
 	        return $contents;
         }
-
-        /**
-         * Show error or warning message message 
-         * @return [type] [description]
-         *
-         * @todo  Add burst_notice(), can probably get it from the other plugins
-         */
-        public function show_message() {
-			if ( ! empty( $this->error_message ) ) {
-				burst_notice( $this->error_message, 'warning' );
-				$this->error_message = "";
-			}
-
-			if ( ! empty( $this->success_message ) ) {
-				burst_notice( $this->success_message, 'success', true );
-				$this->success_message = "";
-			}
-		}
 
 	    /**
          * Get status link for plugin, depending on installed, or premium availability
@@ -1161,77 +1097,6 @@ if ( ! class_exists( "burst_admin" ) ) {
         	}
 
         }
-        /**
-         * Function for a AJAX request. Used in the JS function burstLoadData()
-         * 
-         * @return json 
-         *
-         * @todo Aanpassen? 
-         */
-        public function ajax_get_datatable()
-	    {
-		    $error = false;
-		    $total = 0;
-		    $html  = __("No data found", "burst");
-		    if (!current_user_can('manage_options')) {
-			    $error = true;
-		    }
-
-		    if (!isset($_GET['start'])){
-			    $error = true;
-		    }
-
-		    if (!isset($_GET['end'])){
-			    $error = true;
-		    }
-
-		    if (!isset($_GET['type'])){
-			    $error = true;
-		    }
-
-		    if (!isset($_GET['token'])){
-			    $error = true;
-		    }
-
-		    $page = isset($_GET['page']) ? intval($_GET['page']) : false;
-
-		    if (!$error && !wp_verify_nonce(sanitize_title($_GET['token']), 'search_insights_nonce')){
-			    $error = true;
-		    }
-
-		    if (!$error){
-			    $start = intval($_GET['start']);
-			    $end = intval($_GET['end']);
-			    $type = sanitize_title($_GET['type']);
-			    $total = $this->get_results_count($type, $start, $end);
-			    switch ($type){
-                    case 'all':
-	                    $html = $this->recent_table( $start, $end, $page);
-	                    break;
-                    case 'popular':
-	                    $html = $this->generate_dashboard_widget(true, $start, $end);
-	                    break;
-				    case 'results':
-					    $html = $this->results_table( $start, $end);
-					    break;
-                    default:
-                        $html = apply_filters("burst_ajax_content_$type", '');
-                        break;
-			    }
-		    }
-
-		    $data = array(
-			    'success' => !$error,
-			    'html' => $html,
-                'total_rows' => $total,
-                'batch' => $this->rows_batch,
-		    );
-
-		    $response = json_encode($data);
-		    header("Content-Type: application/json");
-		    echo $response;
-		    exit;
-	    }
 
 	    /**
 	     *

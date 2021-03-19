@@ -150,10 +150,8 @@ if ( ! class_exists( "burst_field" ) ) {
 					array( $this, 'filter_burst_fields' ),
 					ARRAY_FILTER_USE_KEY );
 				foreach ( $posted_fields as $fieldname => $fieldvalue ) {
-					
 					$this->save_field( $fieldname, $fieldvalue );
 				}
-				//we're assuming the page is the same for all fields here, as it's all on the same page (or should be)
 			}
 		}
 
@@ -365,26 +363,21 @@ if ( ! class_exists( "burst_field" ) ) {
 			switch ( $type ) {
 				case 'colorpicker':
 					return sanitize_hex_color( $value );
-				case 'text':
-					return sanitize_text_field( $value );
 				case 'multicheckbox':
 					if ( ! is_array( $value ) ) {
 						$value = array( $value );
 					}
-
 					return array_map( 'sanitize_text_field', $value );
+				case 'text':
 				case 'phone':
-					$value = sanitize_text_field( $value );
-
-					return $value;
-				case 'email':
+					return sanitize_text_field( $value );
+                case 'email':
 					return sanitize_email( $value );
 				case 'url':
 					return esc_url_raw( $value );
 				case 'number':
-					return intval( $value );
 				case 'weightslider':
-					return intval( $value );
+				    return intval( $value );
 				case 'css':
 				case 'javascript':
 					return  $value ;
@@ -908,7 +901,7 @@ if ( ! class_exists( "burst_field" ) ) {
 							return false;
 						}
 					} else {
-						$actual_value = burst_get_value( $c_fieldname );
+						$actual_value = $this->get_value( $c_fieldname );
 
 						$fieldtype = $this->get_field_type( $c_fieldname );
 

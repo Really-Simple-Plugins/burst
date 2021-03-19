@@ -1,19 +1,6 @@
 <?php
 defined( 'ABSPATH' ) or die( "you do not have acces to this page!" );
 
-
-if ( ! function_exists( 'burst_uses_google_analytics' ) ) {
-
-	/**
-	 * Check if site uses google analytics
-	 * @return bool
-	 */
-
-	function burst_uses_google_analytics() {
-		return BURST::$cookie_admin->uses_google_analytics();
-	}
-}
-
 if ( ! function_exists( 'burst_user_can_manage' ) ) {
 	/**
 	 * Check if user has Burst permissions 
@@ -28,103 +15,6 @@ if ( ! function_exists( 'burst_user_can_manage' ) ) {
 		}
 
 		return true;
-	}
-}
-
-if ( ! function_exists( 'burst_get_value' ) ) {
-
-	/**
-	 * Get value for an a burst option
-	 * For usage very early in the execution order, use the $page option. This bypasses the class usage.
-	 *
-	 * @param      $fieldname
-	 * @param bool $post_id
-	 * @param bool $page
-	 * @param bool $use_default
-	 *
-	 * @return array|bool|mixed|string
-	 */
-
-	function burst_get_value(
-		$fieldname, $post_id = false, $page = false, $use_default = true
-	) {
-		if ( ! is_numeric( $post_id ) ) {
-			$post_id = false;
-		}
-
-		if ( ! $page && ! isset( BURST::$config->fields[ $fieldname ] ) ) {
-			return false;
-		}
-
-		//if  a post id is passed we retrieve the data from the post
-		if ( ! $page ) {
-			$page = BURST::$config->fields[ $fieldname ]['source'];
-		}
-		if ( $post_id ) {
-			$value = get_post_meta( $post_id, $fieldname, true );
-		} else {
-			$fields = get_option( 'burst_options_' . $page );
-
-			$default = ( $use_default && $page
-			             && isset( BURST::$config->fields[ $fieldname ]['default'] ) )
-				? BURST::$config->fields[ $fieldname ]['default'] : '';
-			$value   = isset( $fields[ $fieldname ] ) ? $fields[ $fieldname ]
-				: $default;
-		}
-
-		/**
-         * Translate output
-         *
-         * */
-
-		$type = isset( BURST::$config->fields[ $fieldname ]['type'] )
-			? BURST::$config->fields[ $fieldname ]['type'] : false;
-		if ( $type === 'cookies' || $type === 'thirdparties'
-		     || $type === 'processors'
-		) {
-			if ( is_array( $value ) ) {
-
-				//this is for example a cookie array, like ($item = cookie("name"=>"_ga")
-
-				foreach ( $value as $item_key => $item ) {
-					//contains the values of an item
-					foreach ( $item as $key => $key_value ) {
-						if ( function_exists( 'pll__' ) ) {
-							$value[ $item_key ][ $key ] = pll__( $item_key . '_'
-							                                     . $fieldname
-							                                     . "_" . $key );
-						}
-						if ( function_exists( 'icl_translate' ) ) {
-							$value[ $item_key ][ $key ]
-								= icl_translate( 'burst',
-								$item_key . '_' . $fieldname . "_" . $key,
-								$key_value );
-						}
-
-						$value[ $item_key ][ $key ]
-							= apply_filters( 'wpml_translate_single_string',
-							$key_value, 'burst',
-							$item_key . '_' . $fieldname . "_" . $key );
-					}
-				}
-			}
-		} else {
-			if ( isset( BURST::$config->fields[ $fieldname ]['translatable'] )
-			     && BURST::$config->fields[ $fieldname ]['translatable']
-			) {
-				if ( function_exists( 'pll__' ) ) {
-					$value = pll__( $value );
-				}
-				if ( function_exists( 'icl_translate' ) ) {
-					$value = icl_translate( 'burst', $fieldname, $value );
-				}
-
-				$value = apply_filters( 'wpml_translate_single_string', $value,
-					'burst', $fieldname );
-			}
-		}
-
-		return $value;
 	}
 }
 
@@ -213,27 +103,6 @@ if ( !function_exists( 'burst_sanitize_experiment_status' )) {
 	}
 }
 
-if ( ! function_exists( 'burst_get_experiments_by' ) ) {
-
-	/**
-	 * Get array of banner objects
-	 *
-	 * @param string     $field The field to retrieve the user with. id | ID | title | variant_id | control_id | date_created
-	 * @param int|string $value A value for $field. ID | title | date
-	 *	 *
-	 * @return stdClass Object
-	 */
-
-	function burst_get_experiments_by( $field, $value ) {
-		global $wpdb;
-
-		$experiments
-			= $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments as cdb where {$field} = {$value}" );
-
-		return $experiments;
-	}
-}
-
 if (!function_exists('burst_read_more')) {
 	/**
 	 * Create a generic read more text with link for help texts.
@@ -315,10 +184,14 @@ function burst_get_posts_ajax_callback(){
 
 	$return = array();
  	$query_settings = array();
- 	$query_settings = $_GET['query_settings'];
+ 	foreach ( $_GET['query_settings'] as $key => $value ) {
+	    $key = sanitize_text_field($key);
+	    $value = sanitize_text_field($value);
+	    $query_settings[$key] = $value;
+    }
 
- 	$default_args = array( 
-		's'=> $_GET['q'],
+ 	$default_args = array(
+		's'=> sanitize_text_field( $_GET['q'] ),
 		'post_type'=> 'any',
 		'posts_per_page' => 25
 	);
@@ -456,18 +329,19 @@ if ( ! function_exists( 'burst_get_current_post_type' ) ) {
 
 	/**
 	 * Get the current post type
-	 * @param $post_id
+	 * @param int $post_id
 	 *
-	 * @return string
+	 * @return string|bool
 	 */
 	
 	function burst_get_current_post_type($post_id = false){
 		if (!$post_id) {
 			$post_id = burst_get_current_post_id();			
 		}
-		if (!$post_id) return;
+		if (!$post_id) return false;
 
 		$post = get_post($post_id);
+		if (!$post) return false;
 
 		return $post->post_type;
 	}
@@ -486,10 +360,9 @@ if ( ! function_exists( 'burst_get_current_post_id' ) ) {
 	function burst_get_current_post_id(){
 		$post_id = get_the_ID();
 		
-		if (!$post_id){
-			$post_id = isset($_GET['post']) ? $_GET['post'] : false;
+		if ( !$post_id ){
+			$post_id = isset($_GET['post']) && is_numeric($_GET['post']) ? intval($_GET['post']) : false;
 		}
-		if (!intval($post_id)) return false;
 
 		return $post_id;
 	}
