@@ -71,7 +71,7 @@ jQuery(document).ready(function($) {
 						};
 
 					tour.addStep(key, {
-						classes: 'shepherd-theme-arrows zrdn-shepherd shepherd-has-cancel-link shepherd-step-' + key,
+						classes: 'shepherd-theme-arrows burst-shepherd shepherd-has-cancel-link shepherd-step-' + key,
 						attachTo: step.attach + ' ' + step.position,
 						title: step.title,
 						text: burst_tour.html.replace('{content}', step.text),

@@ -185,7 +185,7 @@ class burst_experiment_Table extends WP_List_Table {
         if( !isset($_GET['_wpnonce']) || ! wp_verify_nonce( $_GET['_wpnonce'], 'bulk-records' ) ) {
             return;
         }
-        $ids = isset( $_GET['experiment_id'] ) ? $_GET['experiment_id'] : false;
+        $ids = isset( $_GET['experiment_id'] ) ? intval($_GET['experiment_id']) : false;
 
         if( ! $ids ) {
             return;
@@ -354,7 +354,7 @@ class burst_experiment_Table extends WP_List_Table {
 	 * @since 1.7
 	 */
 	public function get_search() {
-		return ! empty( $_GET['s'] ) ? urldecode( trim( $_GET['s'] ) ) : false;
+		return ! empty( $_GET['s'] ) ? sanitize_text_field( urldecode( trim( $_GET['s'] ) ) ) : false;
 	}
 
 	/**
@@ -376,9 +376,8 @@ class burst_experiment_Table extends WP_List_Table {
 		$offset  = $this->per_page * ( $paged - 1 );
 		$search  = $this->get_search();
 		$status  = $this->get_status();
-		$order   = isset( $_GET['order'] ) ? sanitize_text_field( $_GET['order'] ) : 'DESC';
-		$orderby = isset( $_GET['orderby'] )
-			? sanitize_text_field( $_GET['orderby'] ) : 'id';
+		$order   = isset( $_GET['order'] ) ? sanitize_title( $_GET['order'] ) : 'DESC';
+		$orderby = isset( $_GET['orderby'] ) ? sanitize_title( $_GET['orderby'] ) : 'id';
 
 		$args = array(
 			'number'  => $this->per_page,

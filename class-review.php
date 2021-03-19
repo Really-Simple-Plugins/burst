@@ -150,18 +150,18 @@ if ( ! class_exists( "burst_review" ) ) {
 			<script type='text/javascript'>
 				jQuery(document).ready(function ($) {
 					$(".burst-review.notice.is-dismissible").on("click", ".notice-dismiss", function (event) {
-						rsssl_dismiss_review('dismiss');
+						burst_dismiss_review('dismiss');
 					});
 					$(".burst-review.notice.is-dismissible").on("click", "#maybe-later", function (event) {
-						rsssl_dismiss_review('later');
+						burst_dismiss_review('later');
 						$(this).closest('.burst-review').remove();
 					});
 					$(".burst-review.notice.is-dismissible").on("click", ".review-dismiss", function (event) {
-						rsssl_dismiss_review('dismiss');
+						burst_dismiss_review('dismiss');
 						$(this).closest('.burst-review').remove();
 					});
 
-					function rsssl_dismiss_review(type) {
+					function burst_dismiss_review(type) {
 						var data = {
 							'action': 'dismiss_review_notice',
 							'type': type,
@@ -185,7 +185,7 @@ if ( ! class_exists( "burst_review" ) ) {
 		 */
 
 		public function dismiss_review_notice_callback() {
-			$type = isset( $_POST['type'] ) ? $_POST['type'] : false;
+			$type = isset( $_POST['type'] ) ? sanitize_title($_POST['type']) : false;
 
 			if ( $type === 'dismiss' ) {
 				update_option( 'burst_review_notice_shown', true );

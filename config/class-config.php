@@ -11,6 +11,7 @@ if ( ! class_exists( "burst_config" ) ) {
 		public $pages;
 		public $warning_types;
 		public $yes_no;
+		public $premium_experimenting;
 
 
 		function __construct() {
@@ -28,11 +29,6 @@ if ( ! class_exists( "burst_config" ) ) {
 				'no'  => __( 'No', 'burst' ),
 			);
 
-			$this->premium_geo_ip
-				= sprintf( __( "To enable the warning only for countries with a cookie law, %sget premium%s.",
-					'burst' ),
-					'<a href="https://burst.io" target="_blank">', '</a>' )
-				  . "&nbsp;";
 			$this->premium_experimenting
 				= sprintf( __( "If you want to run a/b testing to track which banner gets the highest acceptance ratio, %sget premium%s.",
 					'burst' ),
