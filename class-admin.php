@@ -495,34 +495,27 @@ if ( ! class_exists( "burst_admin" ) ) {
 			wp_enqueue_script('burst-datepicker', trailingslashit(burst_url) . 'assets/datepicker/datepicker.js', array("jquery", "burst-moment"), burst_version);
 
 			//select2
-			wp_register_style( 'select2',
-					burst_url . 'assets/select2/css/select2.min.css', false,
-					burst_version );
+			wp_register_style( 'select2', burst_url . 'assets/select2/css/select2.min.css', false, burst_version );
 			wp_enqueue_style( 'select2' );
-			wp_enqueue_script( 'select2',
-				burst_url . "assets/select2/js/select2.min.js",
-				array( 'jquery' ), burst_version, true );
+			wp_enqueue_script( 'select2', burst_url . "assets/select2/js/select2.min.js", array( 'jquery' ), burst_version, true );
 
-				//chartjs
-			wp_register_style( 'chartjs',
-					burst_url . 'assets/chartjs/Chart.min.css', false,
-					burst_version );
-			wp_enqueue_style( 'chartjs' );
-			wp_enqueue_script( 'chartjs',
-				burst_url . "assets/chartjs/Chart.min.js",
-				array(), burst_version, true );
+			//chartjs
+            if (isset($_GET['page']) && $_GET['page'] === 'burst' ) {
+	            wp_register_style( 'chartjs', burst_url . 'assets/chartjs/Chart.min.css', false, burst_version );
+	            wp_enqueue_style( 'chartjs' );
+	            wp_enqueue_script( 'chartjs', burst_url . "assets/chartjs/Chart.min.js", array(), burst_version, true );
+            }
 
-			$minified = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? ''
-				: '.min';
+			$minified = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-			wp_register_style( 'burst-admin',
-				trailingslashit( burst_url ) . "assets/css/admin$minified.css", "",
-				burst_version );
+			wp_register_style( 'burst-admin', trailingslashit( burst_url ) . "assets/css/admin$minified.css", "", burst_version );
 			wp_enqueue_style( 'burst-admin' );
 
-			wp_enqueue_script( 'burst-admin',
-				burst_url . "assets/js/admin$minified.js",
-				array( 'jquery' ), burst_version, false );
+			wp_enqueue_script( 'burst-admin', burst_url . "assets/js/admin$minified.js", array( 'jquery' ), burst_version, false );
+
+			if (isset($_GET['page']) && $_GET['page'] ==='burst') {
+				wp_enqueue_script( 'burst-dashboard', burst_url . "assets/js/dashboard$minified.js", array( 'burst-admin' ), burst_version, false );
+			}
 
 			wp_localize_script(
 				'burst-admin',
