@@ -105,7 +105,7 @@ jQuery(document).ready(function ($) {
                         ticks: {
                             beginAtZero: true,
                             min: 0,
-                            max: 1,
+                            max: 10,
                             stepSize: 5
                         }
                     }]
@@ -134,6 +134,7 @@ jQuery(document).ready(function ($) {
                     if (response.success == true) {
                         var i = 0;
                         response.data.datasets.forEach(function (dataset) {
+                            console.log(dataset);
                             if (config.data.datasets.hasOwnProperty(i)) {
                                 config.data.datasets[i] = dataset;
                             } else {
@@ -143,9 +144,10 @@ jQuery(document).ready(function ($) {
 
                             i++;
                         });
+
                         config.data.labels = response.data.labels;
                         config.options.title.text = response.title;
-                        config.options.scales.yAxes[0].ticks.max = parseInt(response.data.max);
+                        config.options.scales.yAxes[0].ticks.max = 20;//parseInt(response.data.max);
                         window.conversionGraph.update();
                         burstEnableStartStopBtns();
                     } else {

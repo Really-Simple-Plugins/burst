@@ -40,7 +40,7 @@ if ( ! class_exists( "burst_statistics" ) ) {
 					$date = date( get_option( 'date_format' ), $unix_day);
 					$data['labels'][] = $date;
 				}
-
+error_log(print_r($data['labels'], true));
 				//generate a dataset for each category
 				$i=0;
 				$test_versions = array(
@@ -56,7 +56,7 @@ if ( ! class_exists( "burst_statistics" ) ) {
 
 					//get hits grouped per timeslot. default day
 					$hits = $this->get_grouped_statistics_array($experiment_id, $test_version, $date_start, $date_end);
-
+error_log(print_r($hits, true));
 					$data['datasets'][] = array(
 						'data' => $hits,
 						'backgroundColor' => $this->get_graph_color($i, 'background'),
@@ -68,21 +68,21 @@ if ( ! class_exists( "burst_statistics" ) ) {
 					$i++;
 				}
 				//test data
-				//		$data = array(
-				//			'labels' => array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
-				//			'datasets' => array( array(
-				//				'data' =>[8, 13, 8, 9, 6, 0, false],
-				//				'backgroundColor' => 'rgba(231, 126, 35, 0.2)',
-				//				'borderColor' => 'rgba(231, 126, 35, 1)',
-				//				'label' => 'control'
-				//			),
-				//				array(
-				//					'data' => array(8, 9, 12, 20, 6, 2.5 ,3),
-				//					'backgroundColor' => 'rgba(51, 152, 219, 0.2)',
-				//					'borderColor' => 'rgba(51, 152, 219, 1)',
-				//					'label' => 'variant'
-				//				))
-				//		);
+//						$data = array(
+//							'labels' => array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
+//							'datasets' => array( array(
+//								'data' =>[8, 13, 8, 9, 6, 0, false],
+//								'backgroundColor' => 'rgba(231, 126, 35, 0.2)',
+//								'borderColor' => 'rgba(231, 126, 35, 1)',
+//								'label' => 'control'
+//							),
+//							array(
+//								'data' => array(8, 9, 12, 20, 6, 2.5 ,3),
+//								'backgroundColor' => 'rgba(51, 152, 219, 0.2)',
+//								'borderColor' => 'rgba(51, 152, 219, 1)',
+//								'label' => 'variant'
+//							))
+//						);
 
 			}
 
@@ -100,7 +100,6 @@ if ( ! class_exists( "burst_statistics" ) ) {
 				);
 				$data['max'] = 5;
 			}
-
 			$return  = array(
 				'success' => !$error,
 				'data'    => $data,
@@ -130,20 +129,19 @@ if ( ! class_exists( "burst_statistics" ) ) {
 			$results = $wpdb->get_results($sql);
 			$nr_of_periods = $this->get_nr_of_periods('DAY', $start, $end );
 			$end_date_days_ago = $this->nr_of_periods_ago('DAY', $end );
-
 			$data = array();
 
 			//count back from end until zero days.
-			for ($i = $nr_of_periods-1; $i >= 0; $i--) {
+			for ($i = $nr_of_periods-1; $i >= 0; --$i) {
 				$days = $i + $end_date_days_ago;
 				$unix_day = strtotime("-$days days");
 				$day_of_year = date("z", $unix_day ) + 1;
 				$year = date('Y', $unix_day);
 				$index = array_search( $year.'-'.$day_of_year, array_column( $results, 'period' ) );
 				if ( $index === false ) {
-					$data[$nr_of_periods-$i] = false;
+					$data[$nr_of_periods-$i-1] = 0;
 				} else {
-					$data[$nr_of_periods-$i] = $results[$index]->hit_count;
+					$data[$nr_of_periods-$i-1] = $results[$index]->hit_count;
 				}
 			}
 
