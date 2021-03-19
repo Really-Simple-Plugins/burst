@@ -23,7 +23,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			add_action( 'admin_init', array($this, 'init_grid') );
 			add_action( 'edit_form_top', array( $this, 'add_experiment_info_below_title' ));
-			add_action( 'admin_init',array( $this, 'process_burst_metaboxes' ) );
 			add_action( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
             add_action( 'add_meta_boxes', array( $this, 'add_burst_metabox_to_classic_editor' ) );
 			add_action( 'admin_head', array( $this, 'hide_publish_button_on_experiments' ) );
@@ -236,226 +235,8 @@ if ( ! class_exists( "burst_admin" ) ) {
 			include( dirname( __FILE__ ) . "/experiments/metabox-variant.php" );
 		}
 
-		/**
-         * Function for post duplication. Dups appear as drafts. User is redirected to the edit screen
-		 */
-
-		public function process_burst_metaboxes()
-		{
-			if (!burst_user_can_manage()) return;
-			if (!isset($_POST['post_ID'])) return;
-            $post_id = intval($_POST['post_ID']);
-			if ( isset( $_POST["burst_create_experiment_button"] ) ){
-				$redirect_id = $this->create_experiment($post_id);
-			} elseif ( isset( $_POST["burst_go_to_setup_experiment_button"] ) ){
-				$redirect_id = intval($_POST["burst_redirect_to_variant"]);
-			} elseif ( isset( $_POST["burst_start_experiment_button"] ) ){
-				$redirect_id = $post_id;
-				$experiment = new BURST_EXPERIMENT(false, $post_id );
-				// Set goal
-				$goal = !empty($_POST['burst_goal']) ? sanitize_title($_POST["burst_goal"]) : false;
-				$experiment->goal = $goal;
-				if ( $goal == 'visit' ) {
-					$experiment->goal_id = !empty($_POST['burst_goal_id']) ? intval($_POST["burst_goal_id"]) : false;
-				} elseif ( $goal == 'click' ) {
-					$experiment->goal_identifier = !empty($_POST['burst_goal_identifier']) ? sanitize_text_field($_POST["burst_goal_identifier"]) : false;
-				}
-
-				//Set timeline
-				$timeline_select = !empty($_POST['burst_timeline_select']) ? intval($_POST["burst_timeline_select"]) : false;
-				if ($timeline_select == 'custom') {
-					$amount_of_days = !empty($_POST['burst_timeline_custom']) ? intval($_POST["burst_timeline_custom"]) : false;
-				} else {
-					$amount_of_days = intval($timeline_select);
-				}
-				
-				$strtotime = "+".$amount_of_days." days";
-				$experiment->date_started = time();
-				$experiment->date_end = strtotime($strtotime);
 
 
-				$experiment->save();
-
-				$experiment->start();
-
-			} elseif ( isset( $_POST["burst_stop_experiment_button"] ) ){
-				$redirect_id = $post_id;
-				$experiment = new BURST_EXPERIMENT(false, $post_id );
-				$experiment->stop();
-			}
-
-			/*
-			* redirect to duplicated post also known as the variant
-			*/
-
-			if (isset($redirect_id)) {
-				$url = add_query_arg(array( 'post' => $redirect_id, 'action' => 'edit'), admin_url('post.php') );
-				if ( wp_redirect( $url ) ) {
-				    exit;
-				}
-
-			}
-
-		}
-
-		/**
-         * Create a new experiment for this post
-		 * @param int $post_ID
-		 *
-		 * @return false|int
-		 */
-		public function create_experiment( $post_id ){
-			if (!burst_user_can_manage()) {
-			    return false;
-			}
-
-			if (!$post_id) return false;
-
-			if ($_POST["burst_duplicate_or_choose_existing"] === 'duplicate') {
-				$variant_id = $this->duplicate_post($post_id);
-			} else {
-				$variant_id = intval($_POST["burst_variant_id"]);
-				$args = array(
-					'ID'                 => $variant_id,
-					'post_status'        => 'experiment',
-					'hidden_post_status' => 'experiment',
-				);
-				wp_update_post($args);
-			}
-
-			/**
-			* create experiment entry
-			*/
-			$experiment_title = !empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : __('Unnamed experiment', 'burst');
-			$experiment = new BURST_EXPERIMENT();
-			$experiment->title = $experiment_title;
-			$experiment->control_id = $post_id;
-			$experiment->variant_id = $variant_id;
-			$experiment->save();
-			return $variant_id;
-		}
-
-		/**
-		 * Function for post duplication. Dups appear as experiments. User is redirected to the edit screen
-		 * @param int $post_id
-		 */
-		public function duplicate_post($post_id)
-		{
-			if (!burst_user_can_manage()) return false;
-			global $wpdb;
-
-			$post = get_post($post_id);
-			$current_user = wp_get_current_user();
-			$new_post_author = $current_user->ID;
-			if (isset($post) && $post != null) {
-				$args = array(
-					'comment_status'     => $post->comment_status,
-					'post_status'        => 'experiment',
-					'hidden_post_status' => 'experiment',
-					'post_author'        => $new_post_author,
-					'post_content'       => $post->post_content,
-					'post_excerpt'       => $post->post_excerpt,
-					'post_parent'        => $post->post_parent,
-					'post_password'      => $post->post_password,
-					'post_title'         => __( 'Variant:', 'burst' ) . ' ' . $post->post_title,
-					'post_slug'          => $post->post_title,
-					'post_type'          => $post->post_type,
-					'to_ping'            => $post->to_ping,
-					'menu_order'         => $post->menu_order
-				);
-				$new_post_id = wp_insert_post($args);
-
-				/*
-				 * get all current post terms ad set them to the new post draft
-				 */
-				$taxonomies = get_object_taxonomies($post->post_type); // returns array of taxonomy names for post type, ex array("category", "post_tag");
-				foreach ($taxonomies as $taxonomy) {
-					$post_terms = wp_get_object_terms($post_id, $taxonomy, array('fields' => 'slugs'));
-					wp_set_object_terms($new_post_id, $post_terms, $taxonomy, false);
-				}
-
-				/*
-				 * duplicate all post meta just in two SQL queries
-				 */
-
-				$post_meta_infos = $wpdb->get_results($wpdb->prepare("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=%s"), intval($post_id));
-				if (count($post_meta_infos) != 0) {
-					$sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
-					foreach ($post_meta_infos as $meta_info) {
-						$meta_key = $meta_info->meta_key;
-						if ($meta_key == '_wp_old_slug') continue;
-						$meta_value = addslashes($meta_info->meta_value);
-						$sql_query_sel[] = "SELECT $new_post_id, '$meta_key', '$meta_value'";
-					}
-					$sql_query .= implode(" UNION ALL ", $sql_query_sel);
-					$wpdb->query($sql_query);
-				}
-				
-				return $new_post_id;
-			}
-		}
-
-		/**
-		 * Function for post copying
-		 * @param int $old_post_id
-		 * @param int $new_post_id
-         * @return bool
-		 */
-		public function copy_post( $old_post_id, $new_post_id )
-		{
-			if (!burst_user_can_manage()) return false;
-			global $wpdb;
-
-			$post = get_post($old_post_id);
-			$new_post = get_post($new_post_id);
-
-			if ( !$new_post || !$post ) return false;
-			if (isset($post) && $post != null) {
-				$args = array(
-					'ID'             => $new_post_id,
-					'comment_status' => $post->comment_status,
-					'post_author'    => $post->post_author,
-					'post_content'   => $post->post_content,
-					'post_excerpt'   => $post->post_excerpt,
-					'post_parent'    => $post->post_parent,
-					'post_password'  => $post->post_password,
-					'post_title'     => $post->post_title,
-					'post_slug'      => $post->post_title,
-					'post_type'      => $post->post_type,
-					'to_ping'        => $post->to_ping,
-					'menu_order'     => $post->menu_order
-				);
-				$new_post_id = wp_update_post($args);
-
-				/*
-				 * get all current post terms ad set them to the new post draft
-				 */
-				$taxonomies = get_object_taxonomies($post->post_type); // returns array of taxonomy names for post type, ex array("category", "post_tag");
-				foreach ($taxonomies as $taxonomy) {
-					$post_terms = wp_get_object_terms($old_post_id, $taxonomy, array('fields' => 'slugs'));
-					wp_set_object_terms($new_post_id, $post_terms, $taxonomy, false);
-				}
-
-				/*
-				 * duplicate all post meta just in two SQL queries
-				 */
-
-				$post_meta_infos = $wpdb->get_results($wpdb->prepare("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=%s"), intval($old_post_id));
-				if (count($post_meta_infos) != 0) {
-					$sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
-					foreach ($post_meta_infos as $meta_info) {
-						$meta_key = $meta_info->meta_key;
-						if ($meta_key == '_wp_old_slug') continue;
-						$meta_value = addslashes($meta_info->meta_value);
-						$sql_query_sel[] = "SELECT $new_post_id, '$meta_key', '$meta_value'";
-					}
-					$sql_query .= implode(" UNION ALL ", $sql_query_sel);
-					$wpdb->query($sql_query);
-				}
-
-				return true;
-			}
-		}
 
 		/**
 		 * Do upgrade on update
@@ -510,7 +291,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			wp_register_style( 'burst-admin', trailingslashit( burst_url ) . "assets/css/admin$minified.css", "", burst_version );
 			wp_enqueue_style( 'burst-admin' );
-
 			wp_enqueue_script( 'burst-admin', burst_url . "assets/js/admin$minified.js", array( 'jquery' ), burst_version, false );
 
 			if (isset($_GET['page']) && $_GET['page'] ==='burst') {
@@ -723,7 +503,7 @@ if ( ! class_exists( "burst_admin" ) ) {
                     'content' => '<div class="burst-skeleton"></div>',
                     'class' => 'small burst-load-ajax',
                     'type' => 'objective',
-                    'controls' => __("Last update", "burst"),
+                    'controls' => '',
                     'can_hide' => true,
                     'ajax_load' => true,
                     'page' => 'dashboard',

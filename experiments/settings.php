@@ -100,26 +100,27 @@ function burst_add_experiment_settings($fields){
 				),
 			),
 
-			'timeline_select' => array(
+			'minimum_samplesize' => array(
 				'source'             => 'BURST_EXPERIMENT',
 				'step'               => 'timeline',
 				'type'               => 'radio',
+				'default'            => 384,
 				'options' => array(
-					'7'  => __( "7 days", 'burst' ),
-					'14'  => __( "14 days", 'burst' ),
-					'28'  => __( "28 days (recommended)", 'burst' ),
-					'custom'  => __( "Custom number of days", 'burst' ),
+					'384'  => sprintf(__( "%s visits", 'burst' ), 384),
+					'1000'  => sprintf(__( "%s visits", 'burst' ), 100),
+					'5000'  => sprintf(__( "%s visits", 'burst' ), 5000),
+					'-1'  => __( "Custom number of visits", 'burst' ),
 				),
 				'label'       => __( "Timeline", 'burst' ),
-				'default' => '28',
 			),
 
-			'timeline_custom' => array(
+			'minimum_samplesize_custom' => array(
 				'source'             => 'BURST_EXPERIMENT',
 				'step'               => 'timeline',
 				'type'               => 'number',
+				'minimum'            => 384,
 				'condition' => array(
-					'timeline_select' => 'custom',
+					'minimum_samplesize' => -1,
 				),
 			),
 

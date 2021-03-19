@@ -14,8 +14,6 @@ if ( burst_wp_has_consent() ) {
 					event.preventDefault();
 					// Remember the link href
 					var href = event.srcElement.attributes.href.textContent;
-				} else {
-					console.log("no link");
 				}
 
 				// Do the async thing
@@ -29,6 +27,7 @@ if ( burst_wp_has_consent() ) {
 }
 
 function burst_track_hit(callback) {
+	console.log("track hit function");
 	var request = new XMLHttpRequest();
 	request.open('POST', burst.url, true);
 	var url = location.pathname;
