@@ -5,6 +5,8 @@ if ( ! class_exists( "burst_admin" ) ) {
 		private static $_this;
 		public $error_message = "";
 		public $success_message = "";
+		public $grid_items;
+		public $default_grid_item;
 		function __construct() {
 			if ( isset( self::$_this ) ) {
 				wp_die( sprintf( '%s is a singleton class and you cannot create a second instance.',
@@ -12,6 +14,15 @@ if ( ! class_exists( "burst_admin" ) ) {
 			}
 
 			self::$_this = $this;
+			$this->default_grid_item = array(
+				'title' => '',
+				'class' => '',
+				'type' => '',
+				'can_hide' => false,
+				'controls' => '',
+				'page' => '',
+				'body' => '',
+			);
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 			add_action( 'admin_menu', array( $this, 'register_admin_page' ), 20 );
 
@@ -488,62 +499,56 @@ if ( ! class_exists( "burst_admin" ) ) {
                 <i class="dashicons dashicons-arrow-down-alt2"></i>
             </div>';
 
-            $this->grid_items = array(
+            $grid_items = apply_filters( 'burst_grid_items', array(
                 1 => array(
                     'title' => __("Your last experiment", "burst"),
                     'class' => 'table-overview',
-                    'type' => 'no-type',
+                    'type' => 'statistics',
                     'controls' => $date_control,
                     'can_hide' => true,
                     'page' => 'dashboard',
-                    'body' => 'dashboard/statistics.php',
                 ),
                 2 => array(
                     'title' => __("Objective", "burst"),
-                    'content' => '<div class="burst-skeleton"></div>',
+                    'body' => '<div class="burst-skeleton"></div>',
                     'class' => 'small burst-load-ajax',
                     'type' => 'objective',
-                    'controls' => '',
                     'can_hide' => true,
                     'ajax_load' => true,
                     'page' => 'dashboard',
-                    'body'=> '',
                 ),
                 3 => array(
                     'title' => __("Indicators", "burst"),
-                    'content' => '<div class="burst-skeleton"></div>',
+                    'body' => '<div class="burst-skeleton"></div>',
                     'class' => 'small burst-load-ajax',
                     'type' => 'indicators',
-                    'controls' => '',
                     'can_hide' => true,
                     'ajax_load' => true,
                     'page' => 'dashboard',
-                    'body'=> '',
                 ),
                 4 => array(
                     'title' => __("Tips & Tricks", "burst"),
-                    'content' => $this->generate_tips_tricks(),
-                    'type' => 'no-type',
+                    'type' => 'tipstricks',
                     'class' => 'half-height burst-tips-tricks',
                     'can_hide' => true,
-                    'controls' => '',
                     'page' => 'dashboard',
-                    'body'=> '',
 
                 ),
                 5 => array(
                     'title' => __("Our Plugins", "burst"),
-                    'content' => $this->generate_other_plugins(),
                     'class' => 'half-height no-border no-background upsell-grid-container upsell',
-                    'type' => 'no-type',
+                    'type' => 'ourplugins',
                     'can_hide' => false,
                     'controls' => '<div class="rsp-logo"><a href="https://really-simple-plugins.com/"><img src="'. trailingslashit(burst_url) .'assets/images/really-simple-plugins.png" /></a></div>',
                     'page' => 'dashboard',
-                    'body'=> '',
-
                 ),
 
-            );
+
+            ));
+            foreach ( $grid_items as $key => $grid_item ) {
+	            $grid_items[ $key ] = wp_parse_args($grid_item, $this->default_grid_item );
+            }
+            $this->grid_items = $grid_items;
         }
 
 		/**
@@ -625,111 +630,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 			echo burst_get_template('admin_wrap.php', $args );
 		}
 
-		/**
-		 * Get output for displaying the other Really Simple Plugins in the dashboard
-		 */
-		public function generate_other_plugins()
-        {
-            $items = array(
-                1 => array(
-                    'title' => '<div class="rsp-yellow burst-bullet"></div>',
-                    'content' => __("Really Simple SSL - Easily migrate your website to SSL"),
-                    'link' => 'https://wordpress.org/plugins/burst/',
-                    'class' => 'burst',
-                    'constant_free' => 'burst_plugin',
-                    'constant_premium' => 'burst_pro_plugin',
-                    'website' => 'https://burst.com/pro',
-                    'search' => 'Really+Simple+SSL+Burst',
-                ),
-                2 => array(
-                    'title' => '<div class="rsp-blue burst-bullet"></div>',
-                    'content' => __("Complianz Privacy Suite - Cookie Consent Management as it should be ", "burst"),
-                    'link' => 'https://wordpress.org/plugins/complianz-gdpr/',
-                    'class' => 'cmplz',
-                    'constant_free' => 'cmplz_plugin',
-                    'constant_premium' => 'cmplz_premium',
-                    'website' => 'https://complianz.io/pricing',
-                    'search' => 'complianz',
-                ),
-                3 => array(
-                    'title' => '<div class="rsp-pink burst-bullet"></div>',
-                    'content' => __("Zip Recipes - Beautiful recipes optimized for Google ", "burst"),
-                    'link' => 'https://wordpress.org/plugins/zip-recipes/',
-                    'class' => 'zip',
-                    'constant_free' => 'ZRDN_PLUGIN_BASENAME',
-                    'constant_premium' => 'ZRDN_PREMIUM',
-                    'website' => 'https://ziprecipes.net/premium/',
-                    'search' => 'zip+recipes+recipe+maker+really+simple+plugins',                ),
-            );
-
-            $element = $this->get_template('dashboard/upsell-element.php');
-            $output = '';
-            foreach ($items as $item) {
-                $output .= str_replace(array(
-                    '{title}',
-                    '{link}',
-                    '{content}',
-                    '{status}',
-                    '{class}',
-                ), array(
-                    $item['title'],
-                    $item['link'],
-                    $item['content'],
-                    $this->get_status_link($item),
-                    $item['class'],
-                    '',
-                ), $element);
-            }
-
-            return '<div>'.$output.'</div>';
-        }
-
-        /**
-		 * Get output for displaying relevant articles from wpburst.com
-		 */
-        public function generate_tips_tricks()
-        {
-            $items = array(
-                1 => array(
-                    'content' => __("Writing Content for Google", "burst"),
-                    'link'    => 'https://wpburst.com/writing-content-for-google/',
-                ),
-                2 => array(
-                    'content' => __("WP Search Insights Beginner's Guide", "burst"),
-                    'link' => 'https://wpburst.com/burst-beginners-guide/',
-                ),
-                3 => array(
-                    'content' => __("Using CSV/Excel Exports", "burst"),
-                    'link' => 'https://wpburst.com/using-csv-excel-exports/',
-                ),
-                4 => array(
-                    'content' => __("Improving your Search Result Page", "burst"),
-                    'link' => 'https://wpburst.com/improving-your-search-result-page/',
-                ),
-                5 => array(
-                    'content' => __("The Search Filter", "burst"),
-                    'link' => 'https://wpburst.com/the-search-filter/',
-                ),
-                6 => array(
-                    'content' => __("Positioning your search form", "burst"),
-                    'link' => 'https://wpburst.com/about-search-forms/',
-                ),
-            );
-	        $button = '<a href="https://wpburst.com/tips-tricks/" target="_blank"><button class="button button-upsell">'.__("View all" , "burst").'</button></a>';
-
-	        $container = $this->get_template('dashboard/tipstricks.php');
-	        $output = "";
-            foreach ($items as $item) {
-	            $output .= str_replace(array(
-                    '{link}',
-                    '{content}',
-                ), array(
-                    $item['link'],
-                    $item['content'],
-                ), $container);
-            }
-            return '<div>'.$output.'</div>'.$button;
-        }
 
         /**
 		 * General settings page
@@ -779,52 +679,6 @@ if ( ! class_exists( "burst_admin" ) ) {
             </span>
 			<?php
 		}
-
-		/**
-		 * Get templates for parts of the dashboard
-		 * @param  string $file template file name
-		 * @param  string $path path to the template file
-		 * @param  array  $args
-		 * @return string   Returns the code with with dynamic content within the template
-		 */
-		public function get_template($file, $path = burst_path, $args = array())
-        {
-
-            $file = trailingslashit($path) . 'templates/' . $file;
-            $theme_file = trailingslashit(get_stylesheet_directory()) . dirname(burst_path) . $file;
-
-            if (file_exists($theme_file)) {
-                $file = $theme_file;
-            }
-
-            if (isset($args['tooltip'])) {
-                $args['tooltip'] = BURST::$help->get_title_help_tip($args['tooltip']);
-            } else {
-	            $args['tooltip'] = '';
-            }
-
-            if (strpos($file, '.php') !== false) {
-                ob_start();
-                require $file;
-                $contents = ob_get_clean();
-            } else {
-                $contents = file_get_contents($file);
-            }
-
-	        if (isset($args['type']) && ($args['type'] === 'settings' || $args['type'] === 'license')) {
-		        $form_open =  '<form action="'.esc_url( add_query_arg(array('burst_redirect_to' => sanitize_title($args['type'])), admin_url( 'options.php' ))).'" method="post">';
-                $form_close = '</form>';
-		        $button = burst_save_button();
-		        $contents = str_replace('{content}', $form_open.'{content}'.$button.$form_close, $contents);
-
-	        }
-
-            foreach ($args as $key => $value ){
-                $contents = str_replace('{'.$key.'}', $value, $contents);
-            }
-
-	        return $contents;
-        }
 
 	    /**
          * Get status link for plugin, depending on installed, or premium availability

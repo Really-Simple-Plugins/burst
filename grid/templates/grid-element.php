@@ -7,5 +7,6 @@
 			</div>
 		</div>
 		<div class="item-content">{body}</div>
+        <div class="item-footer">{footer}</div>
 	</div>
 </div>

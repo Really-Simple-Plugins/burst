@@ -144,6 +144,10 @@ if ( ! function_exists( 'burst_get_template' ) ) {
 			$file = $theme_file;
 		}
 
+		if ( !file_exists($file) ) {
+			return false;
+		}
+
 		if ( strpos( $file, '.php' ) !== false ) {
 			ob_start();
 			require $file;
