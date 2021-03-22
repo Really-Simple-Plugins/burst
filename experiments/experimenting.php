@@ -78,9 +78,28 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 				if ( wp_redirect( $url ) ) {
 					exit;
 				}
-
 			}
+		}
 
+		/**
+		 * Get an activate experiment_id
+		 */
+
+		public function get_selected_experiment_id(){
+			if (isset( $_GET['experiment_id'] )) {
+				$experiment_id = intval( $_GET['experiment_id'] );
+				error_log("store $experiment_id");
+				update_user_meta(get_current_user_id(), 'burst_selected_experiment_id', $experiment_id);
+			} else {
+				if ( get_user_meta(get_current_user_id(), 'burst_selected_experiment_id' ) ) {
+					$experiment_id = get_user_meta(get_current_user_id(), 'burst_selected_experiment_id', true );
+				} else {
+					$experiment_id = burst_get_default_experiment_id();
+				}
+			}
+error_log("selected eid ");
+			error_log(print_r($experiment_id, true));
+			return $experiment_id;
 		}
 
 		/**

@@ -3,7 +3,7 @@
     /**
      * file is loaded with ajax, where experiment id is posted.
      */
-    $experiment_id = intval( $_GET['experiment_id'] );
+    $experiment_id = BURST::$experimenting->get_selected_experiment_id();
     $experiment = new BURST_EXPERIMENT($experiment_id);
     $args = array(
         'test_version' => 'control',
@@ -52,7 +52,7 @@
 	    <?php echo $count_variant_completed?>/<?php echo $count_variant_all?>
     </div>
 </div>
-
+<div class="burst-divider"></div>
 <div class="burst-objective-total-container">
     <div class="burst-objective-text"><?php _e("Probability of improvement","burst")?></div>
 </div>

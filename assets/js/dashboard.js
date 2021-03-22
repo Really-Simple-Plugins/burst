@@ -4,7 +4,7 @@ jQuery(document).ready(function ($) {
      * Start and stop experiment from the dashboard statistics overview
      */
 
-    $(document).on('click', '.burst-statistics-action', function(){
+    $(document).on('click', '.burst-statistics-action', function () {
 
         var type = $(this).data('experiment_action');
         var experiment_id = $('select[name=burst_selected_experiment_id]').val();
@@ -25,7 +25,7 @@ jQuery(document).ready(function ($) {
                     burstEnableStartStopBtns();
                     $('.burst-experiment-start').hide();
                     $('.burst-experiment-stop').hide();
-                    if (type==='start') {
+                    if (type === 'start') {
                         $('.burst-experiment-stop').show();
                     } else {
                         $('.burst-experiment-start').show();
@@ -37,17 +37,20 @@ jQuery(document).ready(function ($) {
         });
     });
 
-    function burstEnableStartStopBtns(){
+    function burstEnableStartStopBtns() {
         $('.burst-experiment-start button').removeAttr('disabled');
         $('.burst-experiment-stop button').removeAttr('disabled');
     }
 
-    function burstDisableStartStopBtns(){
+    function burstDisableStartStopBtns() {
         $('.burst-experiment-start button').attr('disabled', true);
         $('.burst-experiment-stop button').attr('disabled', true);
     }
 
-    function burstInitChartJS() {
+    function burstInitChartJS(date_start, date_end) {
+        var useExperimentDate = typeof date_start === 'undefined';
+        date_start = typeof date_start !== 'undefined' ? date_start : parseInt($('input[name=burst_experiment_start]').val());
+        date_end = typeof date_end !== 'undefined' ? date_end : parseInt($('input[name=burst_experiment_end]').val());
         burstDisableStartStopBtns();
 
         var XscaleLabelDisplay = false;
@@ -71,8 +74,8 @@ jQuery(document).ready(function ($) {
                 ]
             },
             options: {
-                legend:{
-                    display:legend,
+                legend: {
+                    display: legend,
                 },
                 responsive: true,
                 maintainAspectRatio: false,
@@ -115,11 +118,10 @@ jQuery(document).ready(function ($) {
 
         var ctx = document.getElementsByClassName('burst-chartjs-stats');
         window.conversionGraph = new Chart(ctx, config);
-        var date_start = localStorage.getItem('burst_range_start');
-        var date_end = localStorage.getItem('burst_range_end');
+
 
         var experiment_id = $('select[name=burst_selected_experiment_id]').val();
-        if (experiment_id>0) {
+        if (experiment_id > 0) {
             $.ajax({
                 type: "get",
                 dataType: "json",
@@ -132,9 +134,14 @@ jQuery(document).ready(function ($) {
                 },
                 success: function (response) {
                     if (response.success == true) {
+                        if (useExperimentDate) {
+                            $('input[name=burst_experiment_start]').val(response.data.date_start);
+                            $('input[name=burst_experiment_end]').val(response.data.date_end);
+                            burstUpdateDate(moment.unix(response.data.date_start), moment.unix(response.data.date_end));
+                        }
+
                         var i = 0;
                         response.data.datasets.forEach(function (dataset) {
-                            console.log(dataset);
                             if (config.data.datasets.hasOwnProperty(i)) {
                                 config.data.datasets[i] = dataset;
                             } else {
@@ -158,94 +165,89 @@ jQuery(document).ready(function ($) {
         }
     }
 
+    initDatePicker();
+    function initDatePicker() {
+        var strToday = burstLocalizeString('Today');
+        var strYesterday = burstLocalizeString('Yesterday');
+        var strLast7 = burstLocalizeString('Last 7 days');
+        var strLast30 = burstLocalizeString('Last 30 days');
+        var strThisMonth = burstLocalizeString('This Month');
+        var strLastMonth = burstLocalizeString('Last Month');
 
-    var strToday= burstLocalizeString('Today');
-    var strYesterday = burstLocalizeString('Yesterday');
-    var strLast7= burstLocalizeString('Last 7 days');
-    var strLast30= burstLocalizeString('Last 30 days');
-    var strThisMonth= burstLocalizeString('This Month');
-    var strLastMonth= burstLocalizeString('Last Month');
+        var ranges = {}
+        ranges[strToday] = [todayStart, todayEnd];
+        ranges[strYesterday] = [yesterdayStart, yesterdayEnd];
+        ranges[strLast7] = [lastWeekStart, lastWeekEnd];
+        ranges[strLast30] = [moment().subtract(31, 'days'), yesterdayEnd];
+        ranges[strThisMonth] = [moment().startOf('month'), moment().endOf('month')];
+        ranges[strLastMonth] = [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')];
 
-    var ranges = {}
-    ranges[strToday] = [todayStart, todayEnd];
-    ranges[strYesterday] = [yesterdayStart, yesterdayEnd];
-    ranges[strLast7] = [lastWeekStart, lastWeekEnd];
-    ranges[strLast30] = [moment().subtract(31, 'days'), yesterdayEnd];
-    ranges[strThisMonth] = [moment().startOf('month'), moment().endOf('month')];
-    ranges[strLastMonth] = [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')];
+        var unixStart = parseInt($('input[name=burst_experiment_start]').val());
+        var unixEnd = parseInt($('input[name=burst_experiment_end]').val());
 
-    var unixStart = localStorage.getItem('burst_range_start');
-    var unixEnd = localStorage.getItem('burst_range_end');
+        if (unixStart === null || unixEnd === null) {
+            unixStart = moment().endOf('day').subtract(1, 'week').unix();
+            unixEnd = moment().endOf('day').unix();
+        }
 
-    if (unixStart === null || unixEnd === null ) {
-        unixStart = moment().endOf('day').subtract(1, 'week').unix();
-        unixEnd = moment().endOf('day').unix();
-        localStorage.setItem('burst_range_start', unixStart);
-        localStorage.setItem('burst_range_end', unixEnd);
+        unixStart = parseInt(unixStart);
+        unixEnd = parseInt(unixEnd);
+        //burstUpdateDate(moment.unix(unixStart), moment.unix(unixEnd));
+        burstInitChartJS();
+
+        var todayStart = moment().endOf('day').subtract(1, 'days').add(1, 'minutes');
+        var todayEnd = moment().endOf('day');
+        var yesterdayStart = moment().endOf('day').subtract(2, 'days').add(1, 'minutes');
+
+        var yesterdayEnd = moment().endOf('day').subtract(1, 'days');
+        var lastWeekStart = moment().endOf('day').subtract(8, 'days').add(1, 'minutes');
+        var lastWeekEnd = moment().endOf('day').subtract(1, 'days');
+        $('.burst-date-container.burst-date-range').daterangepicker(
+            {
+                ranges: ranges,
+                "locale": {
+                    "format": burstLocalizeString("date_format", "burst"),
+                    "separator": " - ",
+                    "applyLabel": burstLocalizeString("Apply", "burst"),
+                    "cancelLabel": burstLocalizeString("Cancel", "burst"),
+                    "fromLabel": burstLocalizeString("From", "burst"),
+                    "toLabel": burstLocalizeString("To", "burst"),
+                    "customRangeLabel": burstLocalizeString("Custom", "burst"),
+                    "weekLabel": burstLocalizeString("W", "burst"),
+                    "daysOfWeek": [
+                        burstLocalizeString("Mo", "burst"),
+                        burstLocalizeString("Tu", "burst"),
+                        burstLocalizeString("We", "burst"),
+                        burstLocalizeString("Th", "burst"),
+                        burstLocalizeString("Fr", "burst"),
+                        burstLocalizeString("Sa", "burst"),
+                        burstLocalizeString("Su", "burst"),
+                    ],
+                    "monthNames": [
+                        burstLocalizeString("January"),
+                        burstLocalizeString("February"),
+                        burstLocalizeString("March"),
+                        burstLocalizeString("April"),
+                        burstLocalizeString("May"),
+                        burstLocalizeString("June"),
+                        burstLocalizeString("July"),
+                        burstLocalizeString("August"),
+                        burstLocalizeString("September"),
+                        burstLocalizeString("October"),
+                        burstLocalizeString("November"),
+                        burstLocalizeString("December")
+                    ],
+                    "firstDay": 1
+                },
+                "alwaysShowCalendars": true,
+                startDate: moment.unix(unixStart),
+                endDate: moment.unix(unixEnd),
+                "opens": "left",
+            }, function (start, end, label) {
+                burstUpdateDate(start, end);
+                burstInitChartJS(start.unix(), end.unix());
+            });
     }
-
-    unixStart = parseInt(unixStart);
-    unixEnd = parseInt(unixEnd);
-    burstUpdateDate(moment.unix(unixStart), moment.unix(unixEnd));
-    burstInitChartJS();
-
-    function burstUpdateDate(start, end) {
-        $('.burst-date-container span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-        localStorage.setItem('burst_range_start', start.add( moment().utcOffset(), 'm' ).unix());
-        localStorage.setItem('burst_range_end', end.add( moment().utcOffset(), 'm' ).unix());
-    }
-    var todayStart = moment().endOf('day').subtract(1, 'days').add(1, 'minutes');
-    var todayEnd = moment().endOf('day');
-    var yesterdayStart = moment().endOf('day').subtract(2, 'days').add(1, 'minutes');
-
-    var yesterdayEnd = moment().endOf('day').subtract(1, 'days');
-    var lastWeekStart = moment().endOf('day').subtract(8, 'days').add(1, 'minutes');
-    var lastWeekEnd = moment().endOf('day').subtract(1, 'days');
-    $('.burst-date-container.burst-date-range').daterangepicker(
-        {
-            ranges: ranges,
-            "locale": {
-                "format": burstLocalizeString("date_format","burst"),
-                "separator": " - ",
-                "applyLabel": burstLocalizeString("Apply","burst"),
-                "cancelLabel": burstLocalizeString("Cancel","burst"),
-                "fromLabel": burstLocalizeString("From","burst"),
-                "toLabel": burstLocalizeString("To","burst"),
-                "customRangeLabel": burstLocalizeString("Custom","burst"),
-                "weekLabel": burstLocalizeString("W","burst"),
-                "daysOfWeek": [
-                    burstLocalizeString("Mo","burst"),
-                    burstLocalizeString("Tu","burst"),
-                    burstLocalizeString("We","burst"),
-                    burstLocalizeString("Th","burst"),
-                    burstLocalizeString("Fr","burst"),
-                    burstLocalizeString("Sa","burst"),
-                    burstLocalizeString("Su","burst"),
-                ],
-                "monthNames": [
-                    burstLocalizeString("January"),
-                    burstLocalizeString("February"),
-                    burstLocalizeString("March"),
-                    burstLocalizeString("April"),
-                    burstLocalizeString("May"),
-                    burstLocalizeString("June"),
-                    burstLocalizeString("July"),
-                    burstLocalizeString("August"),
-                    burstLocalizeString("September"),
-                    burstLocalizeString("October"),
-                    burstLocalizeString("November"),
-                    burstLocalizeString("December")
-                ],
-                "firstDay": 1
-            },
-            "alwaysShowCalendars": true,
-            startDate: moment.unix(unixStart),
-            endDate: moment.unix(unixEnd),
-            "opens": "left",
-        }, function (start, end, label) {
-            burstUpdateDate(start, end);
-            burstInitChartJS();
-        });
 
     $(document).on('change', 'select[name=burst_selected_experiment_id]', function(){
         burstInitChartJS();
@@ -255,8 +257,10 @@ jQuery(document).ready(function ($) {
     burstLoadGridBlocks();
     function burstLoadGridBlocks(){
         var experiment_id = $('select[name=burst_selected_experiment_id]').val();
-        var date_start = localStorage.getItem('burst_range_start');
-        var date_end = localStorage.getItem('burst_range_end');
+        // var date_start = localStorage.getItem('burst_range_start');
+        // var date_end = localStorage.getItem('burst_range_end');
+        var date_start = parseInt($('input[name=burst_experiment_start]').val());
+        var date_end = parseInt($('input[name=burst_experiment_end]').val());
 
         $('.burst-load-ajax').each(function(){
             var gridContainer = $(this);
@@ -273,13 +277,16 @@ jQuery(document).ready(function ($) {
                     type:type,
                 },
                 success: function (response) {
-                    console.log(response);
                     if (response.success) {
                         gridContainer.find('.item-content').html(response.html);
                     }
                 }
             })
         });
+    }
+
+    function burstUpdateDate(start, end) {
+        $('.burst-date-container span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
     }
 
 
