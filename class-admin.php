@@ -313,6 +313,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 				'burst',
 				array(
 					'ajaxurl' => admin_url( 'admin-ajax.php' ),
+					'experiment_time_ranges' => array(
+
+                    ),
 					'strings' => array(
 						'Today'        => __( 'Today', 'burst' ),
 						'Yesterday'    => __( 'Yesterday', 'burst' ),

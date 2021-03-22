@@ -6,15 +6,14 @@
 			<div class="burst-header-right">
                 <?php
                 $experiments = burst_get_experiments();
-                $default_experiment = $experiments;
-                $default_experiment = reset($default_experiment);
+                $selected_experiment_id = BURST::$experimenting->get_selected_experiment_id();
                 if (isset($_GET['page']) && $_GET['page'] === 'burst') { ?>
                     <select name="burst_selected_experiment_id">
                         <option value=""><?php _e("Select an experiment", "burst")?></option>
 		                <?php
 		                foreach ($experiments as $experiment){
 			                ?>
-                            <option value="<?php echo $experiment->ID?>" <?php if ( $default_experiment->ID == $experiment->ID) echo 'selected'?> ><?php echo $experiment->title?></option>
+                            <option value="<?php echo $experiment->ID?>" <?php if ( $selected_experiment_id == $experiment->ID) echo 'selected'?> ><?php echo $experiment->title?></option>
 			                <?php
 		                }
 		                ?>

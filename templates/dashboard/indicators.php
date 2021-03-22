@@ -3,7 +3,7 @@
 /**
  * file is loaded with ajax, where experiment id is posted.
  */
-$experiment_id = intval( $_GET['experiment_id'] );
+$experiment_id = BURST::$experimenting->get_selected_experiment_id();
 $experiment = new BURST_EXPERIMENT($experiment_id);
 $args = array(
 	'test_version' => 'control',
@@ -42,3 +42,5 @@ $significance = $significance ? 100 * (1-$significance) : 0;
 		    _e("No","burst");
 	    } ?></div>
 </div>
+<div class="burst-divider"></div>
+

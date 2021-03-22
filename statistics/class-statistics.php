@@ -40,7 +40,6 @@ if ( ! class_exists( "burst_statistics" ) ) {
 					$date = date( get_option( 'date_format' ), $unix_day);
 					$data['labels'][] = $date;
 				}
-error_log(print_r($data['labels'], true));
 				//generate a dataset for each category
 				$i=0;
 				$test_versions = array(
@@ -56,7 +55,6 @@ error_log(print_r($data['labels'], true));
 
 					//get hits grouped per timeslot. default day
 					$hits = $this->get_grouped_statistics_array($experiment_id, $test_version, $date_start, $date_end);
-error_log(print_r($hits, true));
 					$data['datasets'][] = array(
 						'data' => $hits,
 						'backgroundColor' => $this->get_graph_color($i, 'background'),
@@ -86,9 +84,10 @@ error_log(print_r($hits, true));
 
 			}
 
-			if (isset($data['datasets'])) {
+			if (isset($data['datasets']['data']) && count($data['datasets']['data'])>0 ) {
 				//get highest hit count for max value
-				$max = max(array_map('max',array_column( $data['datasets'], 'data' )));
+				error_log(print_r($data['datasets'], true));
+				$max = max(array_map('max', array_column( $data['datasets'], 'data' )));
 				$data['max'] = $max > 5 ? $max : 5;
 			} else {
 				$data['datasets'][] = array(
@@ -100,6 +99,11 @@ error_log(print_r($hits, true));
 				);
 				$data['max'] = 5;
 			}
+
+			$experiment = new BURST_EXPERIMENT($experiment_id);
+			$data['date_start'] = empty($experiment->date_started) ? time() : $experiment->date_started;
+			$data['date_end'] = empty($experiment->date_end) ? time() : $experiment->date_end;
+
 			$return  = array(
 				'success' => !$error,
 				'data'    => $data,

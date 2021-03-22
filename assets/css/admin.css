@@ -227,6 +227,9 @@
   list-style-type: disc;
   margin-left: 22px;
 }
+#burst .burst-grid.statistics .item-content {
+  border-bottom: 0;
+}
 #burst .burst-tips-tricks .item-content,
 #burst .upsell-grid-container .item-content {
   display: flex !important;
@@ -361,6 +364,11 @@
 #burst .burst-progress-bar-container .burst-progress .burst-percentage {
   height: 100%;
   background-color: #22932e;
+}
+#burst .burst-divider {
+  border-bottom: 1px solid #DEDEDE;
+  padding: 10px;
+  margin: 10px;
 }
 .burst-bullet {
   height: 15px;
