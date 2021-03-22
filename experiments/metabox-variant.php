@@ -28,7 +28,7 @@ if (intval($experiment_id)) {
 					</div>
 				</div>
 
-				<?php wp_nonce_field( 'burst_start_experiment', 'burst_nonce' ); ?>
+				<?php wp_nonce_field( 'burst_save', 'burst_nonce' ); ?>
 
 			
 				

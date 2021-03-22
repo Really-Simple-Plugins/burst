@@ -20,44 +20,15 @@ if ( ! class_exists( "burst_field" ) ) {
 			self::$_this = $this;
 
 			add_action( 'plugins_loaded', array( $this, 'process_save' ), 20 );
-			add_action( 'burst_register_translation',
-				array( $this, 'register_translation' ), 10, 2 );
-
-			add_action( 'burst_before_label',
-				array( $this, 'before_label' ), 10, 1 );
-			add_action( 'burst_before_label', array( $this, 'show_errors' ),
-				10, 1 );
-			add_action( 'burst_after_label', array( $this, 'after_label' ),
-				10, 1 );
-			add_action( 'burst_after_field', array( $this, 'after_field' ),
-				10, 1 );
-
+			add_action( 'burst_before_label', array( $this, 'before_label' ), 10, 1 );
+			add_action( 'burst_before_label', array( $this, 'show_errors' ), 10, 1 );
+			add_action( 'burst_after_label', array( $this, 'after_label' ), 10, 1 );
+			add_action( 'burst_after_field', array( $this, 'after_field' ), 10, 1 );
 			$this->load();
 		}
 
 		static function this() {
 			return self::$_this;
-		}
-
-
-		/**
-		 * Register each string in supported string translation tools
-		 *
-		 */
-
-		public function register_translation( $fieldname, $string ) {
-			//polylang
-			if ( function_exists( "pll_register_string" ) ) {
-				pll_register_string( $fieldname, $string, 'burst' );
-			}
-
-			//wpml
-			if ( function_exists( 'icl_register_string' ) ) {
-				icl_register_string( 'burst', $fieldname, $string );
-			}
-
-			do_action( 'wpml_register_single_string', 'burst', $fieldname,
-				$string );
 		}
 
 
@@ -82,18 +53,16 @@ if ( ! class_exists( "burst_field" ) ) {
 				'warn'               => false,
 				'cols'               => false,
 			);
-
-
 		}
 
 		public function process_save() {
-
 
 			if ( ! burst_user_can_manage() ) {
 				return;
 			}
 
 			if ( isset( $_POST['burst_nonce'] ) ) {
+
 				//check nonce
 				if ( ! isset( $_POST['burst_nonce'] )
 				     || ! wp_verify_nonce( $_POST['burst_nonce'],
@@ -102,84 +71,13 @@ if ( ! class_exists( "burst_field" ) ) {
 					return;
 				}
 
-				$fields = BURST::$config->fields();
-
-				//remove multiple field
-				if ( isset( $_POST['burst_remove_multiple'] ) ) {
-					$fieldnames = array_map( function ( $el ) {
-						return sanitize_title( $el );
-					}, $_POST['burst_remove_multiple'] );
-
-					foreach ( $fieldnames as $fieldname => $key ) {
-
-						$page    = $fields[ $fieldname ]['source'];
-						$options = get_option( 'burst_options_' . $page );
-
-						$multiple_field = $this->get_value( $fieldname,
-							array() );
-
-						unset( $multiple_field[ $key ] );
-
-						$options[ $fieldname ] = $multiple_field;
-						if ( ! empty( $options ) ) {
-							update_option( 'burst_options_' . $page,
-								$options );
-						}
-					}
-				}
-
-				//add multiple field
-				if ( isset( $_POST['burst_add_multiple'] ) ) {
-					$fieldname
-						= $this->sanitize_fieldname( $_POST['burst_add_multiple'] );
-					$this->add_multiple_field( $fieldname );
-				}
-
-				//save multiple field
-				if ( ( isset( $_POST['burst-save'] )
-				       || isset( $_POST['burst-next'] ) )
-				     && isset( $_POST['burst_multiple'] )
-				) {
-					$fieldnames
-						= $this->sanitize_array( $_POST['burst_multiple'] );
-					$this->save_multiple( $fieldnames );
-				}
-
 				//save data
-				$posted_fields = array_filter( $_POST,
-					array( $this, 'filter_burst_fields' ),
-					ARRAY_FILTER_USE_KEY );
+				$posted_fields = array_filter( $_POST, array( $this, 'filter_burst_fields' ), ARRAY_FILTER_USE_KEY );
 				foreach ( $posted_fields as $fieldname => $fieldvalue ) {
 					$this->save_field( $fieldname, $fieldvalue );
 				}
 			}
 		}
-
-
-
-		/**
-		 * santize an array for save storage
-		 *
-		 * @param $array
-		 *
-		 * @return mixed
-		 */
-
-		public function sanitize_array( $array ) {
-			foreach ( $array as &$value ) {
-				if ( ! is_array( $value ) ) {
-					$value = sanitize_text_field( $value );
-				} //if ($value === 'on') $value = true;
-				else {
-					$this->sanitize_array( $value );
-				}
-			}
-
-			return $array;
-
-		}
-
-
 
 		/**
 		 * Check if this is a conditional field
@@ -200,67 +98,6 @@ if ( ! class_exists( "burst_field" ) ) {
 			return false;
 		}
 
-		/**
-		 * Check if this is a multiple field
-		 *
-		 * @param $fieldname
-		 *
-		 * @return bool
-		 */
-
-		public function is_multiple_field( $fieldname ) {
-			$fields = BURST::$config->fields();
-			if ( isset( $fields[ $fieldname ]['type'] )
-			     && ( $fields[ $fieldname ]['type'] == 'thirdparties' )
-			) {
-				return true;
-			}
-			if ( isset( $fields[ $fieldname ]['type'] )
-			     && ( $fields[ $fieldname ]['type'] == 'processors' )
-			) {
-				return true;
-			}
-
-			return false;
-		}
-
-
-		public function save_multiple( $fieldnames ) {
-			if ( ! burst_user_can_manage() ) {
-				return;
-			}
-
-			$fields = BURST::$config->fields();
-			foreach ( $fieldnames as $fieldname => $saved_fields ) {
-
-				if ( ! isset( $fields[ $fieldname ] ) ) {
-					return;
-				}
-
-				$page           = $fields[ $fieldname ]['source'];
-				$type           = $fields[ $fieldname ]['type'];
-				$options        = get_option( 'burst_options_' . $page );
-				$multiple_field = $this->get_value( $fieldname, array() );
-
-
-				foreach ( $saved_fields as $key => $value ) {
-					$value = is_array( $value )
-						? array_map( 'sanitize_text_field', $value )
-						: sanitize_text_field( $value );
-					//store the fact that this value was saved from the back-end, so should not get overwritten.
-					$value['saved_by_user'] = true;
-					$multiple_field[ $key ] = $value;
-
-				}
-
-				$options[ $fieldname ] = $multiple_field;
-				if ( ! empty( $options ) ) {
-					update_option( 'burst_options_' . $page, $options );
-				}
-			}
-		}
-
-
 		public function save_field( $fieldname, $fieldvalue ) {
 			if ( ! burst_user_can_manage() ) {
 				return;
@@ -277,9 +114,12 @@ if ( ! class_exists( "burst_field" ) ) {
 			}
 
 			$type     = $fields[ $fieldname ]['type'];
-			$page     = $fields[ $fieldname ]['source'];
-			$required = isset( $fields[ $fieldname ]['required'] )
-				? $fields[ $fieldname ]['required'] : false;
+			$source     = $fields[ $fieldname ]['source'];
+
+			//only save settings of type settings_general
+			if ($source !== 'settings') return;
+
+			$required = isset( $fields[ $fieldname ]['required'] ) ? $fields[ $fieldname ]['required'] : false;
 
 			$fieldvalue = $this->sanitize( $fieldvalue, $type );
 			if ( ! $this->is_conditional( $fieldname ) && $required
@@ -288,71 +128,20 @@ if ( ! class_exists( "burst_field" ) ) {
 				$this->form_errors[] = $fieldname;
 			}
 
-			//make translatable
-			if ( $type == 'text' || $type == 'textarea' || $type == 'editor' ) {
-				if ( isset( $fields[ $fieldname ]['translatable'] )
-				     && $fields[ $fieldname ]['translatable']
-				) {
-					do_action( 'burst_register_translation', $fieldname,
-						$fieldvalue );
-				}
-			}
 
-			$options = get_option( 'burst_options_' . $page );
+			$options = get_option( 'burst_options_' . $source );
 			if ( ! is_array( $options ) ) {
 				$options = array();
 			}
-			$prev_value = isset( $options[ $fieldname ] )
-				? $options[ $fieldname ] : false;
-			do_action( "burst_before_save_" . $page . "_option", $fieldname,
-				$fieldvalue, $prev_value, $type );
+			$prev_value = isset( $options[ $fieldname ] ) ? $options[ $fieldname ] : false;
+			do_action( "burst_before_save_" . $source . "_option", $fieldname, $fieldvalue, $prev_value, $type );
 			$options[ $fieldname ] = $fieldvalue;
 
 			if ( ! empty( $options ) ) {
-				update_option( 'burst_options_' . $page, $options );
+				update_option( 'burst_options_' . $source, $options );
 			}
 
-			do_action( "burst_after_save_" . $page . "_option", $fieldname,
-				$fieldvalue, $prev_value, $type );
-		}
-
-
-		public function add_multiple_field( $fieldname, $cookie_type = false ) {
-			if ( ! burst_user_can_manage() ) {
-				return;
-			}
-
-			$fields = BURST::$config->fields();
-
-			$page    = $fields[ $fieldname ]['source'];
-			$options = get_option( 'burst_options_' . $page );
-
-			$multiple_field = $this->get_value( $fieldname, array() );
-			if ( $fieldname === 'used_cookies' && ! $cookie_type ) {
-				$cookie_type = 'custom_' . time();
-			}
-			if ( ! is_array( $multiple_field ) ) {
-				$multiple_field = array( $multiple_field );
-			}
-
-			if ( $cookie_type ) {
-				//prevent key from being added twice
-				foreach ( $multiple_field as $index => $cookie ) {
-					if ( $cookie['key'] === $cookie_type ) {
-						return;
-					}
-				}
-
-				$multiple_field[] = array( 'key' => $cookie_type );
-			} else {
-				$multiple_field[] = array();
-			}
-
-			$options[ $fieldname ] = $multiple_field;
-
-			if ( ! empty( $options ) ) {
-				update_option( 'burst_options_' . $page, $options );
-			}
+			do_action( "burst_after_save_" . $source . "_option", $fieldname, $fieldvalue, $prev_value, $type );
 		}
 
 		public function sanitize( $value, $type ) {
@@ -639,7 +428,7 @@ if ( ! class_exists( "burst_field" ) ) {
 				type="number"
 				value="<?php echo esc_html( $value ) ?>"
 				name="<?php echo esc_html( $fieldname ) ?>"
-				min="0" step="<?php echo isset($args["validation_step"]) ? intval($args["validation_step"]) : 1?>"
+				min="<?php echo isset($args["minimum"]) ? intval($args["minimum"]) : 0?>" step="<?php echo isset($args["validation_step"]) ? intval($args["validation_step"]) : 1?>"
 				>
 			<?php do_action( 'burst_after_field', $args ); ?>
 			<?php
@@ -1216,9 +1005,6 @@ if ( ! class_exists( "burst_field" ) ) {
 					case 'textarea':
 						$this->textarea( $args );
 						break;
-					case 'multiple':
-						$this->multiple( $args );
-						break;
 					case 'radio':
 						$this->radio( $args );
 						break;
@@ -1517,52 +1303,6 @@ if ( ! class_exists( "burst_field" ) ) {
 				name="<?php echo esc_html( $fieldname ) ?>">
 			<?php do_action( 'burst_after_field', $args ); ?>
 			<?php
-		}
-
-		public
-		function multiple(
-			$args
-		) {
-			$values = $this->get_value( $args['fieldname'] );
-			if ( ! $this->show_field( $args ) ) {
-				return;
-			}
-			?>
-			<?php do_action( 'burst_before_label', $args ); ?>
-			<label><?php echo esc_html( $args['label'] ) ?><?php echo $this->get_help_tip_btn( $args ); ?></label>
-			<?php do_action( 'burst_after_label', $args ); ?>
-			<button class="button" type="submit" name="burst_add_multiple"
-			        value="<?php echo esc_html( $args['fieldname'] ) ?>"><?php _e( "Add new",
-					'burst' ) ?></button>
-			<br><br>
-			<?php
-			if ( $values ) {
-				foreach ( $values as $key => $value ) {
-					?>
-
-					<div>
-						<div>
-							<label><?php _e( 'Description',
-									'burst' ) ?></label>
-						</div>
-						<div>
-                        <textarea class="burst_multiple"
-                                  name="burst_multiple[<?php echo esc_html( $args['fieldname'] ) ?>][<?php echo $key ?>][description]"><?php if ( isset( $value['description'] ) )
-		                        echo esc_html( $value['description'] ) ?></textarea>
-						</div>
-
-					</div>
-					<button class="button burst-remove" type="submit"
-					        name="burst_remove_multiple[<?php echo esc_html( $args['fieldname'] ) ?>]"
-					        value="<?php echo $key ?>"><?php _e( "Remove",
-							'burst' ) ?></button>
-					<?php
-				}
-			}
-			?>
-			<?php do_action( 'burst_after_field', $args ); ?>
-			<?php
-
 		}
 
 		/**

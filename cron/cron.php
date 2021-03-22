@@ -12,9 +12,9 @@ function burst_schedule_cron() {
 		if ( ! wp_next_scheduled( 'burst_every_day_hook' ) ) {
 			wp_schedule_event( time(), 'burst_daily', 'burst_every_day_hook' );
 		}
-		//add_action( 'burst_every_day_hook', array( BURST::$experimenting, 'maybe_activate_winner' ) );
+		add_action( 'burst_every_day_hook', array( BURST::$experimenting, 'maybe_stop_experiment' ) );
 	} else {
-		//add_action( 'init', array( BURST::$experimenting, 'maybe_activate_winner' ), 100 );
+		add_action( 'init', array( BURST::$experimenting, 'maybe_stop_experiment' ), 100 );
 	}
 }
 
