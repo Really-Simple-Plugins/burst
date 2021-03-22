@@ -52,9 +52,32 @@ function burst_grid_element($grid_item){
 		$contents = file_get_contents($file);
 	}
 
-	$template_part = $grid_item['body'];
-	$template_part = !empty($template_part) ? burst_get_template($template_part) : "";
-	$content = empty($grid_item['content']) ? $template_part : $grid_item['content'];
+	// Controls
+	if ( ! $grid_item['controls'] ) {
+		$controls = apply_filters('cmplz_controls_'.$grid_item['body'], $grid_item['controls']);
+	} else {
+		$controls = $grid_item['controls'];
+	}
+
+	// Body
+	if ( ! $grid_item['body'] ) {
+		$body = $grid_item['page'] . '/' . $grid_item['type'] . '.php';
+		$body = burst_get_template($body);
+	} else {
+		$body = $grid_item['body'];
+	}
+
+	// Footer
+	$template_part_footer = $grid_item['page'].'/'.$grid_item['type'].'-footer.php';
+	$template_part_footer = burst_get_template($template_part_footer);
+	if ($template_part_footer) {
+		$footer = $template_part_footer;
+	} else {
+		$template_part_footer = $grid_item['page'].'/footer.php';
+		$footer = burst_get_template($template_part_footer, array('footer' => '') );
+	}
+
+
 	$contents = str_replace( array(
 		'{class}',
 		'{header}',
@@ -62,13 +85,17 @@ function burst_grid_element($grid_item){
 		'{body}',
 		'{index}',
 		'{type}',
+		'{footer}',
+
 	), array(
 		$grid_item['class'],
 		$grid_item['title'],
-		$grid_item['controls'],
-		$content,
+		$controls,
+		$body,
 		$grid_item['index'],
 		$grid_item['type'],
+		$footer,
+
 	), $contents );
 
 

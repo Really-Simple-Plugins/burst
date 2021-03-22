@@ -287,13 +287,12 @@
    */
 
 	.burst-tips-tricks, .upsell-grid-container {
-		.item-content > div {
+		.item-content {
 			display: flex !important;
 			flex-direction: column;
 			flex-wrap: wrap;
-			height: 100px;
 			margin-bottom: 10px;
-			border-bottom: 1px solid @border-color;
+
 			@media screen and (max-width: 480px) {
 				flex-direction: row;
 				overflow: hidden;
@@ -344,12 +343,6 @@
 
 	.burst-statistics-container {
 		height:360px;
-	}
-
-	.burst-grid {
-		button {
-			margin-top:@default-margin;
-		}
 	}
 
 	/*

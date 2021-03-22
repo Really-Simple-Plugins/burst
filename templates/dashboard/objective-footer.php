@@ -1,0 +1,1 @@
+<a href=""><?php _e("Instructions", "burst")?></a>

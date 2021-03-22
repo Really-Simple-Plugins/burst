@@ -108,7 +108,7 @@
   z-index: 3;
 }
 .burst-grid .burst-grid .burst-grid-header {
-  border-bottom: 1px solid #cecece;
+  border-bottom: 1px solid #ededed;
   padding: 0;
   height: 60px;
 }
@@ -137,9 +137,16 @@
 .burst-grid .burst-grid .item-container .item-content {
   clear: both;
   margin: 15px;
-  height: calc(100% - 100px);
-  padding-top: 0px;
+  height: calc(100% - 152px);
+  padding-top: 0;
   padding-bottom: 10px;
+  border-bottom: 1px solid #DEDEDE;
+}
+.burst-grid .burst-grid .item-footer {
+  padding: 7px 20px;
+}
+.burst-grid .burst-grid .item-footer button {
+  margin-top: 0;
 }
 .burst-grid .burst-grid.no-border .item-container {
   border: none;
@@ -154,3 +161,4 @@
 .burst-grid .upsell-grid-container .item-container {
   box-shadow: none;
 }
+/*# sourceMappingURL=muuri.css.map */
