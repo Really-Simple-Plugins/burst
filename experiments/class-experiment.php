@@ -432,6 +432,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		 * @return bool
 		 */
 		public function is_statistical_significant(){
+
 			$significance = $this->get_significance();
 			if ( $significance && $this->alpha_level > $significance ) {
 				return true;
@@ -595,6 +596,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		 *
 		 * Look up $df, and closest $t value, and return $p.
 		 */
+
 		private function get_significance_from_t_table($df, $t){
 
 			$p = array(
@@ -654,7 +656,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				$df=0;
 			}
 			$row = $table[$df];
-			$t = 2.323;
+
 			$index = $this->get_closest_value($t, $row);
 			return $p[$index];
 		}
