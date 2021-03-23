@@ -97,7 +97,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 					$experiment_id = burst_get_default_experiment_id();
 				}
 			}
-error_log("selected eid ");
+			error_log("selected eid ");
 			error_log(print_r($experiment_id, true));
 			return $experiment_id;
 		}

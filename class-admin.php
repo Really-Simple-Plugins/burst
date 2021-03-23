@@ -183,10 +183,10 @@ if ( ! class_exists( "burst_admin" ) ) {
             $this->maybe_sort_metabox('burst_edit_meta_box');
 			$this->enqueue_assets('burst');
 
-			wp_register_style( 'burst-metabox-css',
+			wp_register_style( 'burst-metabox',
 				trailingslashit( burst_url ) . 'assets/css/metabox.css', "",
 				burst_version );
-			wp_enqueue_style( 'burst-metabox-css' );
+			wp_enqueue_style( 'burst-metabox' );
 		}
 
 
@@ -833,7 +833,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 	                $('#burst_close_tb_window').click(tb_remove);
 	                $(document).on('click', '#deactivate-burst-a-b-split-testing', function(e){
 	                    e.preventDefault();
-	                    tb_show( '', '#TB_inline?height=420&inlineId=deactivate_keep_ssl', 'null');
+	                    tb_show( '', '#TB_inline?height=420&inlineId=deactivate_and_delete_data', 'null');
 	                    $("#TB_window").addClass('burst-deactivation-popup');
 
 	                });
@@ -919,7 +919,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 		    if (!current_user_can('activate_plugins')) return;
 
 		    $options = array(
-			    'cmplz_activation_time',
+			    'cmplz_activation_time', 
 			    'burst_abdb_version',
                 'burst-current-version',
                 'burst_options_settings',

@@ -51,7 +51,6 @@ function burst_track_hit(WP_REST_Request $request){
 	global $wpdb;
 	$update_array = array(
 		'page_url'            		=> sanitize_text_field( $url ),
-		'page_id'                   => intval( url_to_postid( $url ) ),
 		'time'               		=> time(),
 		'uid'               		=> sanitize_title($burst_uid),
 		'test_version'				=> burst_sanitize_test_version($data['test_version']),

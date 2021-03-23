@@ -271,13 +271,11 @@ function burst_install_statistics_table() {
 		$table_name = $wpdb->prefix . 'burst_statistics';
 		$sql        = "CREATE TABLE $table_name (
 			`ID` int(11) NOT NULL AUTO_INCREMENT ,
-            `page_id` int(11) NOT NULL,
             `experiment_id` int(11) NOT NULL,
             `test_version` varchar(255) NOT NULL,
             `page_url` varchar(255) NOT NULL,
             `time` varchar(255) NOT NULL,
             `uid` varchar(255) NOT NULL,
-            `test_version` varchar(255) NOT NULL,
             `conversion` int(11) NOT NULL,
               PRIMARY KEY  (ID)
             ) $charset_collate;";

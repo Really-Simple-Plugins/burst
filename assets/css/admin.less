@@ -79,68 +79,6 @@
   			}
   		}
   	}
-
-  	/* tooltip styles */  	
-	.burst-tooltip{
-		font-weight: 400;
-		font-size: 13px;
-	  	position:relative; /* making the .tooltip span a container for the tooltip text */
-	  	margin-left: 5px;
-	  	&:before {
-			content: attr(data-text); /* here's the magic */
-			position:absolute;
-
-			/* vertically center */
-			top:50%;
-			transform:translateY(-50%);
-
-			/* move to right */
-			left:100%;
-			margin-left:15px; /* and add a small left margin */
-
-			/* basic styles */
-			width:600px;
-			padding:10px;
-			border-radius:10px;
-			background: #252525;
-			color: #fff;
-			text-align:center;
-
-			display: none;
-			//opacity:0;
-  			transition:.3s opacity;   
-		}
-		&:hover:before, &:hover:after {
-			display: flex;
-		}
-		&.left:before {
-			/* reset defaults */
-			left:initial;
-			margin:initial;
-
-			/* set new values */
-			right:100%;
-			margin-right:15px;
-		}
-		&::after {
-			content: "";
-			position:absolute;
-
-			/* position tooltip correctly */
-			left:100%;
-			margin-left:-5px;
-
-			/* vertically center */
-			top:50%;
-			transform:translateY(-50%);
-
-			/* the arrow */
-			border:10px solid #000;
-			border-color: transparent black transparent transparent;
-
-			display:none;
-		}
-	}
 	.upsell-grid-container{
 		//display: flex !important; //we need important here, because the grid switch overrides it on element level
 		//justify-content: space-between;
@@ -416,6 +354,83 @@
 
 
 }
+
+  	/* tooltip styles */  	
+	.burst-tooltip{
+		font-weight: 400;
+		font-size: 13px;
+	  	position:relative; /* making the .tooltip span a container for the tooltip text */
+	  	margin-left: 5px;
+	  	cursor: pointer;
+	  	&:before {
+			content: attr(data-text); /* here's the magic */
+			position:absolute;
+
+			/* vertically center */
+			top:50%;
+			transform:translateY(-50%);
+
+			/* basic styles */
+			width:200px;
+			padding:10px;
+			border-radius:10px;
+			background: #252525;
+			color: #fff;
+			text-align:center;
+
+			display: none;
+			//opacity:0;
+  			transition:.3s opacity;   
+		}
+		&:hover:before, &:hover:after {
+			display: flex;
+		}
+		&.left:before {
+			/* reset defaults */
+			left:initial;
+			margin:initial;
+
+			/* set new values */
+			right:100%;
+			margin-right:15px;
+		}
+		&.right:before {
+			/* reset defaults */
+			left:initial;
+			margin:initial;
+
+			/* move to right */
+			left:100%;
+			margin-left:15px; /* and add a small left margin */
+		}
+		&::after {
+			content: "";
+			position:absolute;
+
+			/* vertically center */
+			top:50%;
+			transform:translateY(-50%);
+
+			/* the arrow */
+			border:10px solid #000;
+			display:none;
+		}
+		&.left::after{
+			right:100%;
+			margin-right:-5px;
+
+			border-color: transparent transparent transparent #252525;
+		}
+		&.right::after{
+			left:100%;
+			margin-left:-5px;
+
+			border-color: transparent #252525 transparent transparent;
+		}
+		img{
+			width: 1em;
+		}
+	}
 
 .burst-bullet{
 	height: 15px;

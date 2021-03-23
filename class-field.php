@@ -1406,7 +1406,7 @@ if ( ! class_exists( "burst_field" ) ) {
 			$output = '';
 			if ( isset( $args['help'] ) ) {
 				$output
-					= '<span data-text="'. wp_kses_post( $args['help'] ) .'" class="burst-tooltip"><img width="15px" src="'. trailingslashit(burst_url) .'assets/icons/question-circle-solid.svg"></span>';
+					= '<span data-text="'. wp_kses_post( $args['help'] ) .'" class="burst-tooltip left"><img width="15px" src="'. trailingslashit(burst_url) .'assets/icons/question-circle-solid.svg"></span>';
 			}
 
 			return $output;
