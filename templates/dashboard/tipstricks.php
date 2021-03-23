@@ -26,7 +26,7 @@ $items = array(
         'link' => 'https://wpburst.com/about-search-forms/',
     ),
 );
-$container = '<div class="burst-tips-tricks-element"><a href="{link}" target="_blank"><div class="burst-bullet"></div>{content}<div class="burst-tips-tricks-content"></div></a></div>';
+$container = '<div class="burst-tips-tricks-element"><a href="{link}" target="_blank"><div class="burst-bullet"></div><div class="burst-tips-tricks-content">{content}</div></a></div>';
 $output = "";
 
 foreach ($items as $item) {

@@ -84,10 +84,13 @@ if ( ! class_exists( "burst_statistics" ) ) {
 
 			}
 
-			if (isset($data['datasets']['data']) && count($data['datasets']['data'])>0 ) {
-				//get highest hit count for max value
-				error_log(print_r($data['datasets'], true));
-				$max = max(array_map('max', array_column( $data['datasets'], 'data' )));
+			if ( isset($data['datasets']) ) {
+				$max = 5;
+				if (isset($data['datasets']['data']) && count($data['datasets']['data'])>0){
+					//get highest hit count for max value
+					$max = max(array_map('max', array_column( $data['datasets'], 'data' )));
+				}
+
 				$data['max'] = $max > 5 ? $max : 5;
 			} else {
 				$data['datasets'][] = array(
