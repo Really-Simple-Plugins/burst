@@ -120,7 +120,8 @@ if ( ! class_exists( 'BURST' ) ) {
 		}
 
 		private function includes() {
-
+			require_once( burst_path . 'integrations/integrations.php');
+			
 			if ( is_admin() ) {
 				require_once( burst_path . 'class-admin.php' );
 				require_once( burst_path . 'class-field.php');
@@ -128,7 +129,6 @@ if ( ! class_exists( 'BURST' ) ) {
 				require_once( burst_path . 'class-review.php' );
 				require_once( burst_path . 'shepherd/tour.php' );
 			}
-
 			require_once( burst_path . 'statistics/class-statistics.php' );
 			require_once( burst_path . 'experiments/class-experiment.php' );
 			require_once( burst_path . 'experiments/experimenting.php' );

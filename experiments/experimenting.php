@@ -13,7 +13,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			}
 
 			add_action( 'init', array($this, 'add_experiment_post_status') );
-			add_filter( 'the_content', array($this, 'load_experiment_content') );
+			//add_filter( 'the_content', array($this, 'load_experiment_content') );
 			add_action('wp_enqueue_scripts', array($this,'enqueue_assets') );
 			add_action('admin_footer-post.php', array($this,'add_variant_status_add_in_post_page') );
 		    add_action('admin_footer-post-new.php', array($this,'add_variant_status_add_in_post_page') );
@@ -158,6 +158,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 					$sql_query .= implode(" UNION ALL ", $sql_query_sel);
 					$wpdb->query($sql_query);
 				}
+				do_action( 'burst_after_duplicate_post', $post_id, $new_post_id);
 
 				return $new_post_id;
 			}

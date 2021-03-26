@@ -943,7 +943,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			    $sql = "DROP TABLE IF EXISTS $table_name";
 			    $wpdb->query($sql);
 		    }
-
+		    // Delete post meta like burst_experiment_id? 
 	    }
 
 	}
