@@ -97,8 +97,6 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 					$experiment_id = burst_get_default_experiment_id();
 				}
 			}
-			error_log("selected eid ");
-			error_log(print_r($experiment_id, true));
 			return $experiment_id;
 		}
 
@@ -146,7 +144,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 				 * duplicate all post meta just in two SQL queries
 				 */
 
-				$post_meta_infos = $wpdb->get_results($wpdb->prepare("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=%s"), intval($post_id));
+				$post_meta_infos = $wpdb->get_results($wpdb->prepare("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=%s", intval($post_id)));
 				if (count($post_meta_infos) != 0) {
 					$sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
 					foreach ($post_meta_infos as $meta_info) {
@@ -404,7 +402,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 				 * duplicate all post meta just in two SQL queries
 				 */
 
-				$post_meta_infos = $wpdb->get_results($wpdb->prepare("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=%s"), intval($old_post_id));
+				$post_meta_infos = $wpdb->get_results($wpdb->prepare("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=%s", intval($old_post_id)));
 				if (count($post_meta_infos) != 0) {
 					$sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
 					foreach ($post_meta_infos as $meta_info) {
