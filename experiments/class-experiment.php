@@ -19,6 +19,8 @@ function burst_install_experiments_table() {
             `title` varchar(255) NOT NULL,
             `variant_id` int(11) NOT NULL,
             `control_id` int(11) NOT NULL,
+            `variant_url_parameter` varchar(255) NOT NULL,
+            `control_url_parameter` varchar(255) NOT NULL,
             `status` varchar(255) NOT NULL,
             `date_created` varchar(255) NOT NULL,
             `date_modified` varchar(255) NOT NULL,
@@ -43,6 +45,8 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		public $title;
 		public $variant_id = false;
 		public $control_id = false;
+		public $variant_url_parameter = false;
+		public $control_url_parameter = false;
 		public $status = 'draft';
 		public $date_created = false;
 		public $date_modified = false;
@@ -181,20 +185,22 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			}
 			$experiment = $wpdb->get_row( $wpdb->prepare( "select * from {$wpdb->prefix}burst_experiments where ID = %s", intval( $this->id ) ) );
 			if ( $experiment ) {
-				$this->title          		= $experiment->title;
-				$this->variant_id 			= $experiment->variant_id;
-				$this->control_id 			= $experiment->control_id;
-				$this->status 		        = $experiment->status;
-				$this->date_created 		= $experiment->date_created;
-				$this->date_modified 		= $experiment->date_modified;
-				$this->date_started 		= $experiment->date_started;
-				$this->date_end 			= $experiment->date_end;
-				$this->goal 				= $experiment->goal;
-				$this->goal_id 		        = $experiment->goal_id;
+				$this->title          				= $experiment->title;
+				$this->variant_id 					= $experiment->variant_id;
+				$this->control_id 					= $experiment->control_id;
+				$this->variant_url_parameter 		= $experiment->variant_url_parameter;
+				$this->control_url_parameter 		= $experiment->control_url_parameter;
+				$this->status 		        		= $experiment->status;
+				$this->date_created 				= $experiment->date_created;
+				$this->date_modified 				= $experiment->date_modified;
+				$this->date_started 				= $experiment->date_started;
+				$this->date_end 					= $experiment->date_end;
+				$this->goal 						= $experiment->goal;
+				$this->goal_id 		        		= $experiment->goal_id;
 				$this->minimum_samplesize 		    = $experiment->minimum_samplesize;
 				$this->minimum_samplesize_custom	= $experiment->minimum_samplesize_custom;
-				$this->goal_identifier 		= $experiment->goal_identifier;
-				$this->statistics 			= $experiment->statistics;
+				$this->goal_identifier 				= $experiment->goal_identifier;
+				$this->statistics 					= $experiment->statistics;
 			}
 		}
 
@@ -234,11 +240,17 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			if ( ! $this->id ) {
 				$this->add();
 			}
+			$variant_url_parameter = burst_random_str('12');
+			$control_url_parameter = burst_random_str('12');
+			error_log('control url parameter');
+			error_log($control_url_parameter);
 
 			$update_array = array(
 				'title'                     => sanitize_text_field( $this->title ),
 				'variant_id'                => intval( $this->variant_id ),
 				'control_id'                => intval( $this->control_id ),
+				'variant_url_parameter'     => sanitize_text_field( $variant_url_parameter ),
+				'control_url_parameter'     => sanitize_text_field( $control_url_parameter ),
 				'status'                    => burst_sanitize_experiment_status( $this->status ),
 				'date_created'              => sanitize_text_field( $this->date_created ),
 				'date_modified'             => time(),

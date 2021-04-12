@@ -402,7 +402,6 @@ if ( ! function_exists( 'burst_get_all_post_statuses' ) ) {
 			}
 		}
 		$filtered_post_statuses[] = 'experiment';
-		error_log(print_r($filtered_post_statuses, true));
 		
 		return $filtered_post_statuses;
 	}

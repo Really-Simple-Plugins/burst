@@ -7,6 +7,10 @@ $burst_integrations_list = apply_filters( 'burst_integrations', array(
 			'constant_or_function' => 'ELEMENTOR_VERSION',
 			'label'                => 'Elementor Website Builder',
 	),
+	'wp-rocket' => array(
+		'constant_or_function' => 'WP_ROCKET_VERSION',
+		'label'                => 'WP Rocket',
+	),
 ));
 
 foreach ( $burst_integrations_list as $plugin => $details ) {
