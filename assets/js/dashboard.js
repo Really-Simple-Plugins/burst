@@ -63,8 +63,8 @@ jQuery(document).ready(function ($) {
                 labels: ['...', '...', '...', '...', '...', '...', '...'],
                 datasets: [{
                     label: '...',
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    borderColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgb(41, 182, 246)',
+                    borderColor: 'rgb(41, 182, 246)',
                     data: [
                         0, 0, 0, 0, 0, 0, 0,
                     ],

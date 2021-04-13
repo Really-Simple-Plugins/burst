@@ -193,9 +193,9 @@ if ( ! class_exists( "burst_statistics" ) ) {
 			$o = $type = 'background' ? '1' : '1';
 			switch ($index) {
 				case 0:
-					return "rgba(255, 99, 132, $o)";
+					return "rgba(41, 182, 246, $o)";
 				case 1:
-					return "rgba(255, 159, 64, $o)";
+					return "rgba(244, 191, 62, $o)";
 				case 2:
 					return "rgba(255, 205, 86, $o)";
 				case 3:

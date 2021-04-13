@@ -41,12 +41,12 @@
 </div>
 
 <div class="burst-objective-bullets-container">
-    <div class="burst-column-1"><div class="burst-bullet rsp-green"></div></div>
+    <div class="burst-column-1"><div class="burst-experiment-dot control"></div></div>
     <div class="burst-column-2">
-        <?php _e("Original","burst")?>
+        <?php _e("Control","burst")?>
         <?php echo $count_control_completed?>/<?php echo $count_control_all?>
     </div>
-    <div class="burst-column-3"><div class="burst-bullet rsp-red"></div></div>
+    <div class="burst-column-3"><div class="burst-experiment-dot variant"></div></div>
     <div class="burst-column-4">
 	    <?php _e("Variant","burst")?>
 	    <?php echo $count_variant_completed?>/<?php echo $count_variant_all?>
@@ -58,12 +58,12 @@
 </div>
 
 <div class="burst-objective-bullets-container">
-    <div class="burst-column-1"><div class="burst-bullet rsp-green"></div></div>
+    <div class="burst-column-1"><div class="burst-experiment-dot control"></div></div>
     <div class="burst-column-2">
-		<?php _e("Original","burst")?>
+		<?php _e("Control","burst")?>
 	    <?php echo $experiment->probability_of_improvement()?>%
     </div>
-    <div class="burst-column-3"><div class="burst-bullet rsp-red"></div></div>
+    <div class="burst-column-3"><div class="burst-experiment-dot variant"></div></div>
     <div class="burst-column-4">
 		<?php _e("Variant","burst")?>
 		<?php _e("Baseline", "burst")?>

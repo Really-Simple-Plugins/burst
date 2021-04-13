@@ -348,7 +348,7 @@
   margin: 10px;
   margin-top: 20px;
   grid-gap: 20px;
-  min-height: calc(100vh - 32px - 8px - 20px - 20px);
+  min-height: calc(100vh - 32px - 80px - 20px - 20px);
 }
 #burst .burst-general-settings #burst-content-area .burst-grid h1,
 #burst .burst-general-settings #burst-content-area .burst-grid h2,
