@@ -1,6 +1,12 @@
 .burst-noticed-hook-element {
   display: none;
 }
+.burst-block {
+  background: #fff;
+  box-shadow: 1px 1px #dedede;
+  border-radius: 5px;
+  margin: 0;
+}
 .burst-date-container {
   background: #fff;
   cursor: pointer;
@@ -39,6 +45,7 @@
   /*
 	  Progress bar
 	 */
+  /* Settings page */
 }
 #burst #burst-header {
   display: flex;
@@ -206,7 +213,7 @@
 #burst .upsell-grid-container .item-content .burst-tips-tricks-element a:hover,
 #burst .burst-tips-tricks .item-content .plugin-text a:hover,
 #burst .upsell-grid-container .item-content .plugin-text a:hover {
-  color: #22932e;
+  color: #61CE70;
 }
 #burst .burst-tips-tricks .item-content .burst-tips-tricks-element .burst-bullet,
 #burst .upsell-grid-container .item-content .burst-tips-tricks-element .burst-bullet,
@@ -220,7 +227,7 @@
 #burst .upsell-grid-container .item-content .burst-tips-tricks-element .burst-bullet:hover,
 #burst .burst-tips-tricks .item-content .plugin-text .burst-bullet:hover,
 #burst .upsell-grid-container .item-content .plugin-text .burst-bullet:hover {
-  background-color: #22932e;
+  background-color: #61CE70;
 }
 #burst .burst-tips-tricks .item-content .burst-tips-tricks-element .burst-tips-tricks-content,
 #burst .upsell-grid-container .item-content .burst-tips-tricks-element .burst-tips-tricks-content,
@@ -308,12 +315,62 @@
 }
 #burst .burst-progress-bar-container .burst-progress .burst-percentage {
   height: 100%;
-  background-color: #22932e;
+  background-color: #61CE70;
 }
 #burst .burst-divider {
   border-bottom: 1px solid #DEDEDE;
   padding: 10px;
   margin: 10px;
+}
+#burst .burst-general-settings #burst-content-area .burst-grid {
+  display: grid;
+  grid-template-columns: repeat(4, calc(25% - 15px) [col-start]);
+  margin: 10px;
+  margin-top: 20px;
+  grid-gap: 20px;
+}
+#burst .burst-general-settings #burst-content-area .burst-grid h1,
+#burst .burst-general-settings #burst-content-area .burst-grid h2,
+#burst .burst-general-settings #burst-content-area .burst-grid h3,
+#burst .burst-general-settings #burst-content-area .burst-grid h4,
+#burst .burst-general-settings #burst-content-area .burst-grid h5,
+#burst .burst-general-settings #burst-content-area .burst-grid h6,
+#burst .burst-general-settings #burst-content-area .burst-grid p {
+  color: #3c434a;
+}
+#burst .burst-general-settings #burst-content-area .burst-grid .wrap {
+  background: #fff;
+  box-shadow: 1px 1px #dedede;
+  border-radius: 5px;
+  margin: 0;
+}
+#burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-header {
+  border-bottom: 1px solid #ededed;
+  padding: 10px 15px;
+}
+#burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-header h1 {
+  font-size: 20px;
+  font-weight: bold;
+}
+#burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-content {
+  padding: 10px 15px;
+}
+#burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-footer {
+  padding: 10px 15px;
+  border-top: 1px solid #ededed;
+}
+#burst .burst-button {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+#burst .burst-checkbox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#burst .burst-checkbox .burst-field {
+  margin: 0;
 }
 /* tooltip styles */
 .burst-tooltip {
@@ -405,7 +462,7 @@
   background-color: #D7263D;
 }
 .rsp-green {
-  background-color: #22932e;
+  background-color: #61CE70;
 }
 .rsp-blue-yellow {
   background: #29b6f6;
@@ -551,7 +608,7 @@
   border-radius: 20px;
 }
 input:checked + .burst-slider {
-  background-color: #22932e;
+  background-color: #61CE70;
 }
 input:checked + .burst-slider:before {
   -webkit-transform: translateX(17px);
@@ -559,8 +616,8 @@ input:checked + .burst-slider:before {
   transform: translateX(17px);
 }
 input:checked:disabled + .burst-slider {
-  background-color: #99e8a2;
+  background-color: #fdfefd;
 }
 input:focus + .burst-slider {
-  box-shadow: 0 0 1px #22932e;
+  box-shadow: 0 0 1px #61CE70;
 }

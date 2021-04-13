@@ -4,7 +4,12 @@
 .burst-noticed-hook-element {
   display:none;
 }
-
+.burst-block{
+	background: #fff;
+	box-shadow: @box-shadow;
+	border-radius: @border-radius;
+	margin: 0;
+}
 
 
 .burst-date-container {
@@ -349,9 +354,49 @@
 		padding: @small-padding;
 		margin: @small-margin;
 	}
+	/* Settings page */
+	.burst-general-settings #burst-content-area .burst-grid{
+		display: grid;
+		grid-template-columns: repeat(4, calc(25% - 15px) [col-start]); // We use calc because of the grid gap
+		margin: @grid_margin;
+		margin-top: @grid_margin * 2;
+		grid-gap: @grid_margin * 2;
+		h1, h2, h3, h4, h5 ,h6, p{
+			color: @text-color;
+		}
+		.wrap{
+			.burst-block;
+		}
+		.burst-grid-header{
+			h1{
+				font-size: 20px;
+				font-weight: bold;
+			}
+			border-bottom: @border;
+			padding: 10px 15px;
+		}
 
-
-
+		.burst-grid-content{
+			padding: 10px 15px;
+		}
+		.burst-grid-footer{
+			padding: 10px 15px;
+			border-top: @border;
+		}
+	}
+	.burst-button{
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+	}
+	.burst-checkbox{
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		.burst-field{
+			margin: 0;
+		}
+	}
 
 }
 

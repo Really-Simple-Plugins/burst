@@ -1214,14 +1214,12 @@ if ( ! class_exists( "burst_field" ) ) {
 		public
 		function save_button() {
 			wp_nonce_field( 'burst_save', 'burst_nonce' );
-			?>
-			<th></th>
-			<td>
-				<input class="button button-primary" type="submit"
+			?>	
+				<div class="burst-button">
+					<input class="button button-primary" type="submit"
 				       name="burst-save"
 				       value="<?php _e( "Save", 'burst' ) ?>">
-
-			</td>
+				</div>
 			<?php
 		}
 
