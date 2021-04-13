@@ -67,12 +67,14 @@
 #burst #burst-header {
   display: flex;
   justify-content: space-between;
+  height: 80px;
+  box-sizing: border-box;
   padding: 20px;
   background-color: #fff;
 }
 #burst #burst-header img {
   margin-left: 15px;
-  width: 120px;
+  width: 111px;
 }
 #burst #burst-header .burst-header-right {
   display: flex;
@@ -346,7 +348,7 @@
   margin: 10px;
   margin-top: 20px;
   grid-gap: 20px;
-  min-height: calc(100vh - 32px - 81px - 20px - 20px);
+  min-height: calc(100vh - 32px - 8px - 20px - 20px);
 }
 #burst .burst-general-settings #burst-content-area .burst-grid h1,
 #burst .burst-general-settings #burst-content-area .burst-grid h2,
@@ -483,8 +485,8 @@
   width: 1em;
 }
 .burst-bullet {
-  height: 15px;
-  width: 15px;
+  height: 17px;
+  width: 17px;
   border-radius: 50%;
   margin-right: 10px;
   display: inline-block;
@@ -582,6 +584,27 @@
 .burst-experiment-info-below-title.variant {
   background-color: #fefbf4;
   border: 1px solid #f4bf3e;
+}
+.burst-experiment-status {
+  display: flex;
+  padding: 5px 7px;
+  margin: 6px 0;
+  border-radius: 5px;
+  justify-content: flex-start;
+  align-items: center;
+}
+.burst-experiment-status span {
+  margin: 0;
+  padding: 0;
+}
+.burst-experiment-status span.burst-bullet {
+  margin-right: 5px;
+}
+.burst-experiment-settings-info .burst-experiment-status {
+  border: 1px solid #ededed;
+  background: #f1f1f1;
+  font-weight: 600;
+  font-size: 13px;
 }
 .toplevel_page_burst #wpbody-content,
 .burst-1_page_burst-experiments #wpbody-content,

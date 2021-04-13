@@ -19,7 +19,13 @@ if (intval($experiment_id)) {
 				<!-- Check if post already has experiment -->
 			<?php if (intval($experiment_id) && !empty($experiment->variant_id)) { ?>
 				<!-- Experiment exists -->
+
 				<div class="burst-experiment-settings-info">
+					<?php
+					if ($experiment->status !== 'draft') {
+						echo burst_display_experiment_status($experiment->status); 
+					}
+					?>
 					<h4><?php echo $experiment->title; ?></h4>
 					<div class="burst-experiment-settings-info_container control">
 						<span class="burst-experiment-dot control"></span>
@@ -37,7 +43,6 @@ if (intval($experiment_id)) {
 							<a href="<?php echo get_edit_post_link($experiment->variant_id) ?>"><?php _e('Edit', 'burst') ?></a>
 						</div>
 					</div>
-					
 				</div>
 
 				<input type="hidden" value="<?php echo $experiment->variant_id ?>" name="burst_redirect_to_variant">
@@ -49,11 +54,12 @@ if (intval($experiment_id)) {
 				</div>
 				<p class="burst-info-box">
 					<?php 
-						_e( "When you click 'Edit variant and setup experiment', you will be redirected to the page you have selected as your variant.", "burst")
-                        .' '.
-						_e( "Over there you can continue the setup and start the experiment!", "burst")
-						.' '.
-                        _e("Happy experimenting!", "burst");
+						echo 
+						__( "When you click 'Edit variant and setup experiment', you will be redirected to the page you have selected as your variant.", "burst")
+                        .'&nbsp;'.
+						__( "Over there you can continue the setup and start the experiment!", "burst")
+						.'&nbsp;'.
+                        __("Happy experimenting!", "burst");
 					?>			
 				</p>
 
@@ -84,8 +90,13 @@ if (intval($experiment_id)) {
 				</div>
 				<p class="burst-info-box">
 					<?php 
-						_e( "When you click 'Save and edit variant', you will be redirected to the page you have selected as your variant.", "burst"); 
-						_e( "Over there you can continue the setup and start the experiment! Happy experimenting!", "burst"); 
+						echo                      
+						__( "When you click 'Save and edit variant', you will be redirected to the page you have selected as your variant.", "burst")
+						.'&nbsp;'.
+						__( "Over there you can continue the setup and start the experiment!", "burst")
+						.'&nbsp;'.
+                        __("Happy experimenting!", "burst");
+					?>			
 					?>			
 				</p>
 			<?php } ?>

@@ -418,6 +418,33 @@ if ( ! function_exists( 'burst_get_all_post_statuses' ) ) {
 	}
 
 }
+if ( ! function_exists( 'burst_display_experiment_status' ) ) {
+
+	function burst_display_experiment_status($experiment_status){
+		switch( $experiment_status ) {
+				case 'archived':
+					$status = __( 'Archived', 'burst' );
+					$color = 'grey';
+					break;
+				case 'active':
+					$color = 'rsp-blue-yellow';
+					$status = __( 'Active', 'burst' );
+					break;
+				case 'completed':
+					$status = __( 'Completed', 'burst' );
+					$color = 'rsp-green';
+					break;
+				case 'draft':
+				default:
+					$status = __( 'Draft', 'burst' );
+					$color = 'grey';
+					break;
+			}
+			$status =  '<div class="burst-experiment-status"><span class="burst-bullet ' . $color . '"></span><span>' . $status . '</span></div>';
+			error_log($status);
+			return $status;
+	}
+}
 
 
 

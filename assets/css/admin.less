@@ -42,14 +42,15 @@
 	#burst-header {
 		display: flex;
 		justify-content: space-between;
+		height: 80px;
+    	box-sizing: border-box;
+		padding: @default-padding;
+		background-color: #fff;
 
 		img {
 		  margin-left:@default-margin;
-		  width: 120px;
+		  width: 111px;
 		}
-
-		padding: @default-padding;
-		background-color: #fff;
 
 		.burst-header-right {
 			display: flex;
@@ -372,7 +373,7 @@
 		margin: @grid_margin;
 		margin-top: @grid_margin * 2;
 		grid-gap: @grid_margin * 2;
-		min-height: calc(100vh - 32px - 81px - 20px - 20px); //32px = wordpress bar, 81px = burst bar, 20px = margin-top, 20px is grid gap
+		min-height: calc(100vh - 32px - 8px - 20px - 20px); //32px = wordpress bar, 80px = burst bar, 20px = margin-top, 20px is grid gap
 
 		h1, h2, h3, h4, h5 ,h6, p{
 			color: @text-color;
@@ -511,8 +512,8 @@
 	}
 
 .burst-bullet{
-	height: 15px;
-	width: 15px;
+	height: 17px;
+	width: 17px;
 	border-radius: 50%;
 	margin-right: 10px;
 	display: inline-block;
@@ -617,6 +618,29 @@
 	&.variant{
 		background-color: lighten(@rsp-yellow, 63%, relative);
 		border: 1px solid @rsp-yellow;
+	}
+}
+.burst-experiment-status{
+	display: flex;
+	padding: 5px 7px;
+	margin: 6px 0;
+	border-radius: @border-radius;
+	justify-content: flex-start;
+	align-items: center;
+	span{
+		margin: 0;
+		padding: 0;
+		&.burst-bullet{
+			margin-right: 5px;
+		}
+	}
+}
+.burst-experiment-settings-info{
+	.burst-experiment-status{
+		border: @border;
+		background: #f1f1f1;
+		font-weight: 600;
+		font-size: 13px;
 	}
 }
 

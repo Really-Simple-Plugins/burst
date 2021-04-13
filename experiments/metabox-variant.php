@@ -10,6 +10,11 @@ if (intval($experiment_id)) {
 	<form action="" method="post">
 		<div id='burst-metabox-experiment-settings'>
 				<div class="burst-experiment-settings-info">
+					<?php
+					if ($experiment->status !== 'draft') {
+						echo burst_display_experiment_status($experiment->status); 
+					}
+					?>
 					<h4><?php echo $experiment->title; ?></h4>
 					<div class="burst-experiment-settings-info_container control">
 						<span class="burst-experiment-dot control"></span>

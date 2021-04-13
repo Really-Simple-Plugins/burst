@@ -223,26 +223,7 @@ class burst_experiment_Table extends WP_List_Table {
 	}
 
 	public function column_status( $item ) {
-		switch( $item['status'] ) {
-			case 'archived':
-				$status = __( 'Archived', 'burst' );
-				$color = 'grey';
-				break;
-			case 'active':
-				$color = 'rsp-blue-yellow';
-				$status = __( 'Active', 'burst' );
-				break;
-			case 'completed':
-				$status = __( 'Completed', 'burst' );
-				$color = 'rsp-green';
-				break;
-			case 'draft':
-			default:
-				$status = __( 'Draft', 'burst' );
-				$color = 'grey';
-				break;
-		}
-		$status =  '<span class="burst-bullet ' . $color . '"></span><span>' . $status . '</span>';
+		$status = burst_display_experiment_status( $item['status'] );
 		return apply_filters( 'burst_experiment_status', $status );
 	}
 
