@@ -325,9 +325,11 @@
 #burst .burst-general-settings #burst-content-area .burst-grid {
   display: grid;
   grid-template-columns: repeat(4, calc(25% - 15px) [col-start]);
+  grid-template-rows: 50%;
   margin: 10px;
   margin-top: 20px;
   grid-gap: 20px;
+  min-height: calc(100vh - 32px - 81px - 20px - 20px);
 }
 #burst .burst-general-settings #burst-content-area .burst-grid h1,
 #burst .burst-general-settings #burst-content-area .burst-grid h2,
@@ -344,7 +346,17 @@
   border-radius: 5px;
   margin: 0;
 }
+#burst .burst-general-settings #burst-content-area .burst-grid form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  flex-direction: column;
+  flex-basis: 100%;
+  height: 100%;
+}
 #burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-header {
+  width: 100%;
+  box-sizing: border-box;
   border-bottom: 1px solid #ededed;
   padding: 10px 15px;
 }
@@ -353,11 +365,17 @@
   font-weight: bold;
 }
 #burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-content {
+  width: 100%;
+  box-sizing: border-box;
   padding: 10px 15px;
+  flex-grow: 100;
 }
 #burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-footer {
+  width: 100%;
+  box-sizing: border-box;
   padding: 10px 15px;
   border-top: 1px solid #ededed;
+  align-self: flex-end;
 }
 #burst .burst-button {
   display: flex;

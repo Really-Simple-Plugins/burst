@@ -358,16 +358,29 @@
 	.burst-general-settings #burst-content-area .burst-grid{
 		display: grid;
 		grid-template-columns: repeat(4, calc(25% - 15px) [col-start]); // We use calc because of the grid gap
+		grid-template-rows: 50%;
 		margin: @grid_margin;
 		margin-top: @grid_margin * 2;
 		grid-gap: @grid_margin * 2;
+		min-height: calc(100vh - 32px - 81px - 20px - 20px); //32px = wordpress bar, 81px = burst bar, 20px = margin-top, 20px is grid gap
+
 		h1, h2, h3, h4, h5 ,h6, p{
 			color: @text-color;
 		}
 		.wrap{
 			.burst-block;
 		}
+		form{
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: flex-start;
+			flex-direction: column;
+			flex-basis: 100%;
+			height: 100%;
+		}
 		.burst-grid-header{
+			width: 100%;
+			box-sizing: border-box;
 			h1{
 				font-size: 20px;
 				font-weight: bold;
@@ -377,11 +390,17 @@
 		}
 
 		.burst-grid-content{
+			width: 100%;
+			box-sizing: border-box;
 			padding: 10px 15px;
+			flex-grow: 100;
 		}
 		.burst-grid-footer{
+			width: 100%;
+			box-sizing: border-box;
 			padding: 10px 15px;
 			border-top: @border;
+			align-self: flex-end;
 		}
 	}
 	.burst-button{
