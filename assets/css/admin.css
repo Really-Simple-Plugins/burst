@@ -24,7 +24,7 @@
 }
 #burst {
   margin: 0 0 0 -20px;
-  font-size: 14px;
+  font-size: 15px;
   /* field styles */
   /*
 	Animated skeleton screen using CSS.
@@ -46,6 +46,23 @@
 	  Progress bar
 	 */
   /* Settings page */
+}
+#burst h1,
+#burst h2,
+#burst h3,
+#burst h4,
+#burst h5,
+#burst h6,
+#burst p {
+  color: #3c434a;
+}
+#burst p,
+#burst label {
+  font-size: 15px;
+  font-weight: 500;
+}
+#burst .burst-grid-title {
+  font-size: 18px;
 }
 #burst #burst-header {
   display: flex;
@@ -325,7 +342,7 @@
 #burst .burst-general-settings #burst-content-area .burst-grid {
   display: grid;
   grid-template-columns: repeat(4, calc(25% - 15px) [col-start]);
-  grid-template-rows: 50%;
+  grid-template-rows: repeat(min-content);
   margin: 10px;
   margin-top: 20px;
   grid-gap: 20px;
@@ -340,6 +357,11 @@
 #burst .burst-general-settings #burst-content-area .burst-grid p {
   color: #3c434a;
 }
+#burst .burst-general-settings #burst-content-area .burst-grid p,
+#burst .burst-general-settings #burst-content-area .burst-grid label {
+  font-size: 15px;
+  font-weight: 500;
+}
 #burst .burst-general-settings #burst-content-area .burst-grid .wrap {
   background: #fff;
   box-shadow: 1px 1px #dedede;
@@ -352,7 +374,7 @@
   justify-content: flex-start;
   flex-direction: column;
   flex-basis: 100%;
-  height: 100%;
+  min-height: 100%;
 }
 #burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-header {
   width: 100%;
@@ -361,8 +383,8 @@
   padding: 10px 15px;
 }
 #burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-header h1 {
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 17px;
+  font-weight: 600;
 }
 #burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-content {
   width: 100%;
