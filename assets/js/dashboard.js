@@ -69,9 +69,16 @@ jQuery(document).ready(function ($) {
                         0, 0, 0, 0, 0, 0, 0,
                     ],
                     fill: false,
-                }
-
-                ]
+                },
+                {
+                    label: '...',
+                    backgroundColor: 'rgb(244, 191, 62)',
+                    borderColor: 'rgb(244, 191, 62)',
+                    data: [
+                        0, 0, 0, 0, 0, 0, 0,
+                    ],
+                    fill: false,
+                }]
             },
             options: {
                 legend: {
