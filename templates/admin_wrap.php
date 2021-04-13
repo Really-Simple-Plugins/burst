@@ -5,7 +5,14 @@
 			<img src="<?php echo trailingslashit(burst_url)?>assets/images/burst-logo.svg">
 			<div class="burst-header-right">
                 <?php
-                $experiments = burst_get_experiments();
+                $experiments = burst_get_experiments(
+                	array(
+	                	'status'  =>  array(
+					        'completed',
+					        'active',
+					    ),
+	                )
+                );
                 $selected_experiment_id = BURST::$experimenting->get_selected_experiment_id();
                 if (isset($_GET['page']) && $_GET['page'] === 'burst') { ?>
                     <select name="burst_selected_experiment_id">

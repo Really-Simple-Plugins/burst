@@ -41,12 +41,23 @@ if ( ! function_exists( 'burst_get_experiments' ) ) {
 		$order = strtoupper($args['order']) === 'DESC' ? 'DESC' : 'ASC';
 		global $wpdb;
 
-		if ( isset($args['status']) ) {
+		// array with multiple post statuses
+		if ( isset( $args['status'] ) && is_array($args['status']) ) {
+			foreach ($args['status'] as $status) {
+				$status = burst_sanitize_experiment_status($status);
+				$statuses[] = "'".$status."'";
+			}
+			$statuses = implode (", ", $statuses);
+			$sql .= "AND status IN ($statuses)";
+
+		// one post staus as a string		
+		} else if ( isset( $args['status'] ) ) {
 			$status = burst_sanitize_experiment_status($args['status']);
 			$sql .= " AND status = '$status'";
-		}
+		} 
 
 		$sql .= " ORDER BY $orderby $order";
+		error_log($sql);
 
 		return  $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments where 1=1 $sql" );
 	}
