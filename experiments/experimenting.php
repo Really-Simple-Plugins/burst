@@ -13,11 +13,11 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			}
 
 			add_action( 'init', array($this, 'add_experiment_post_status') );
-			//add_filter( 'the_content', array($this, 'load_experiment_content') );
-			add_action('wp_enqueue_scripts', array($this,'enqueue_assets') );
-			add_action('admin_footer-post.php', array($this,'add_variant_status_add_in_post_page') );
-		    add_action('admin_footer-post-new.php', array($this,'add_variant_status_add_in_post_page') );
-		    add_action('admin_footer-edit.php', array($this,'add_variant_status_add_in_quick_edit') );
+			add_filter( 'the_content', array($this, 'load_experiment_content'), 1, 2);
+			add_action( 'wp_enqueue_scripts', array($this,'enqueue_assets') );
+			add_action( 'admin_footer-post.php', array($this,'add_variant_status_add_in_post_page') );
+		    add_action( 'admin_footer-post-new.php', array($this,'add_variant_status_add_in_post_page') );
+		    add_action( 'admin_footer-edit.php', array($this,'add_variant_status_add_in_quick_edit') );
 		    add_filter( 'display_post_states', array( $this, 'add_display_post_states' ), 10, 2 );
 		    add_action( 'wp_ajax_burst_experiment_action', array($this, 'experiment_action'));
 			add_action( 'admin_init',array( $this, 'process_burst_metaboxes' ) );
@@ -321,11 +321,17 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 				$content .= '<script type="text/javascript">var burst_experiment_id = "' . $experiment->id . '";var burst_is_goal_page = true;</script>';
 			} else if ( $experiment->id && $experiment->variant_id ) {
 				$burst_uid     = isset( $_COOKIE['burst_uid'] ) ? sanitize_text_field( $_COOKIE['burst_uid'] ) : false;
+				$burst_id_parameter = isset( $_GET['bid'] ) ? sanitize_text_field( $_GET['bid'] ) : false;
 				$page_url      = burst_get_current_url();
 				$test_version  = false;
 
+				// get the test version this user has already seen
 				if ( $burst_uid ) {
 					$test_version = BURST::$statistics->get_latest_visit_data( $burst_uid, $page_url, 'test_version' );
+				}
+				// get the test version by URL parameter
+				if ( $burst_id_parameter && !$test_version ) {
+					$test_version = ($burst_id_parameter == $experiment->variant_url_parameter) ? 'variant' : false;
 				}
 
 				if ( ! $test_version ) {
@@ -343,7 +349,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 					$content = get_the_content( null, false, $experiment->control_id );
 				}
 
-				// $content = apply_filters( 'the_content', $content );
+				//$content = apply_filters( 'the_content', $content );
 				// Causes infinite loop
 				$content = str_replace( ']]>', ']]&gt;', $content );
 
