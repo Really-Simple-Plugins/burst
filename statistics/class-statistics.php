@@ -247,13 +247,9 @@ if ( ! class_exists( "burst_statistics" ) ) {
 				} else {
 					return $statistics;
 				}
-
 			}
-
 		}
-
 	}
-
 }
 
 /**
@@ -277,7 +273,6 @@ function burst_install_statistics_table() {
             `page_url` varchar(255) NOT NULL,
             `time` varchar(255) NOT NULL,
             `uid` varchar(255) NOT NULL,
-            `test_version` varchar(255) NOT NULL,
             `conversion` int(11) NOT NULL,
               PRIMARY KEY  (ID)
             ) $charset_collate;";
