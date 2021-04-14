@@ -27,6 +27,7 @@
 }
 
 #burst {
+	padding-bottom: 60px;
 	h1, h2, h3, h4, h5 ,h6, p{
 		color: @text-color;
 	}
@@ -107,8 +108,10 @@
 			display: flex !important; //we need important here, because the grid switch overrides it on element level
 			flex-direction: row;
 			padding: 6px;
+			justify-content: space-between;
 			align-items: center;
 			color: @light-text-color;
+			width: 100%;
 
 			.plugin-status {
 				margin-left: auto;
@@ -236,7 +239,7 @@
 
 	}
 
-	.burst-grid.statistics .item-content {
+	.burst-grid.statistics .burst-grid-content {
 		border-bottom:0;
 	}
 	/*
@@ -244,9 +247,9 @@
    */
 
 	.burst-tips-tricks, .upsell-grid-container {
-		.item-content {
+		.burst-grid-content {
 			display: flex !important;
-			flex-direction: column;
+			flex-direction: row;
 			flex-wrap: wrap;
 			margin-bottom: 10px;
 
@@ -280,6 +283,9 @@
 					margin: 7px 0;
 					float: left;
 				}
+			}
+			.burst-tips-tricks-element{
+				width: 50%;
 			}
 		}
 	}
@@ -365,11 +371,11 @@
 		padding: @small-padding;
 		margin: @small-margin;
 	}
-	/* Settings page */
+	/* Grid */
 	#burst-content-area .burst-grid{
 		display: grid;
 		grid-template-columns: repeat(4, calc(25% - 15px) [col-start]); // We use calc because of the grid gap
-		grid-template-rows: repeat( min-content );
+		grid-template-rows: repeat(auto, min-content );
 		margin: @grid_margin;
 		margin-top: @grid_margin * 2;
 		grid-gap: @grid_margin * 2;
@@ -382,23 +388,54 @@
 			font-size: 15px;
     		font-weight: 500;
 		}
-		.wrap, .item-container{
+		.burst-grid-container{
 			.burst-block;
-		}
-		form, .item-container{
+			&.no-background{
+				background: none;
+				border: none;
+				box-shadow: none;
+			}
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: flex-start;
 			flex-direction: column;
 			flex-basis: 100%;
 			min-height: 100%;
+			&.statistics{
+				grid-column: span 2;
+			}
+			&.tipstricks{
+				grid-column: span 2;
+			}
+			&.ourplugins{
+				grid-column: span 2;
+			}
+			@media screen and (max-width: 780px) {
+				grid-column: span 4 !important;	
+			}
+			@media screen and (max-width: 1430px) {
+				grid-column: span 2;	
+				&.statistics{
+				grid-column: span 4;
+				}
+				&.tipstricks{
+					grid-column: span 4;
+				}
+				&.ourplugins{
+					grid-column: span 4;
+				}
+			}
 		}
 		.burst-grid-header{
 			width: 100%;
 			box-sizing: border-box;
-			h1{
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			.burst-grid-title{
 				font-size: 17px;
 				font-weight: 600;
+				padding: 9px 0 4px 0;
 			}
 			border-bottom: @border;
 			padding: 10px 15px;
@@ -411,11 +448,16 @@
 			flex-grow: 100;
 		}
 		.burst-grid-footer{
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
 			width: 100%;
+			min-height: 51px;
 			box-sizing: border-box;
 			padding: 10px 15px;
 			border-top: @border;
 			align-self: flex-end;
+
 		}
 	}
 	.burst-button{

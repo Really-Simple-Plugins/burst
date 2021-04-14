@@ -23,6 +23,7 @@
   }
 }
 #burst {
+  padding-bottom: 60px;
   margin: 0 0 0 -20px;
   font-size: 15px;
   /* field styles */
@@ -45,7 +46,7 @@
   /*
 	  Progress bar
 	 */
-  /* Settings page */
+  /* Grid */
 }
 #burst h1,
 #burst h2,
@@ -123,8 +124,10 @@
   display: flex !important;
   flex-direction: row;
   padding: 6px;
+  justify-content: space-between;
   align-items: center;
   color: #3c3c3c;
+  width: 100%;
 }
 #burst .upsell-grid-container .burst-upsell .plugin-status {
   margin-left: auto;
@@ -198,62 +201,66 @@
   list-style-type: disc;
   margin-left: 22px;
 }
-#burst .burst-grid.statistics .item-content {
+#burst .burst-grid.statistics .burst-grid-content {
   border-bottom: 0;
 }
-#burst .burst-tips-tricks .item-content,
-#burst .upsell-grid-container .item-content {
+#burst .burst-tips-tricks .burst-grid-content,
+#burst .upsell-grid-container .burst-grid-content {
   display: flex !important;
-  flex-direction: column;
+  flex-direction: row;
   flex-wrap: wrap;
   margin-bottom: 10px;
 }
 @media screen and (max-width: 480px) {
-  #burst .burst-tips-tricks .item-content,
-  #burst .upsell-grid-container .item-content {
+  #burst .burst-tips-tricks .burst-grid-content,
+  #burst .upsell-grid-container .burst-grid-content {
     flex-direction: row;
     overflow: hidden;
   }
 }
-#burst .burst-tips-tricks .item-content .burst-tips-tricks-element,
-#burst .upsell-grid-container .item-content .burst-tips-tricks-element,
-#burst .burst-tips-tricks .item-content .plugin-text,
-#burst .upsell-grid-container .item-content .plugin-text {
+#burst .burst-tips-tricks .burst-grid-content .burst-tips-tricks-element,
+#burst .upsell-grid-container .burst-grid-content .burst-tips-tricks-element,
+#burst .burst-tips-tricks .burst-grid-content .plugin-text,
+#burst .upsell-grid-container .burst-grid-content .plugin-text {
   color: #3c3c3c;
 }
-#burst .burst-tips-tricks .item-content .burst-tips-tricks-element a,
-#burst .upsell-grid-container .item-content .burst-tips-tricks-element a,
-#burst .burst-tips-tricks .item-content .plugin-text a,
-#burst .upsell-grid-container .item-content .plugin-text a {
+#burst .burst-tips-tricks .burst-grid-content .burst-tips-tricks-element a,
+#burst .upsell-grid-container .burst-grid-content .burst-tips-tricks-element a,
+#burst .burst-tips-tricks .burst-grid-content .plugin-text a,
+#burst .upsell-grid-container .burst-grid-content .plugin-text a {
   text-decoration: none;
   color: #3c3c3c;
 }
-#burst .burst-tips-tricks .item-content .burst-tips-tricks-element a:hover,
-#burst .upsell-grid-container .item-content .burst-tips-tricks-element a:hover,
-#burst .burst-tips-tricks .item-content .plugin-text a:hover,
-#burst .upsell-grid-container .item-content .plugin-text a:hover {
+#burst .burst-tips-tricks .burst-grid-content .burst-tips-tricks-element a:hover,
+#burst .upsell-grid-container .burst-grid-content .burst-tips-tricks-element a:hover,
+#burst .burst-tips-tricks .burst-grid-content .plugin-text a:hover,
+#burst .upsell-grid-container .burst-grid-content .plugin-text a:hover {
   color: #61CE70;
 }
-#burst .burst-tips-tricks .item-content .burst-tips-tricks-element .burst-bullet,
-#burst .upsell-grid-container .item-content .burst-tips-tricks-element .burst-bullet,
-#burst .burst-tips-tricks .item-content .plugin-text .burst-bullet,
-#burst .upsell-grid-container .item-content .plugin-text .burst-bullet {
+#burst .burst-tips-tricks .burst-grid-content .burst-tips-tricks-element .burst-bullet,
+#burst .upsell-grid-container .burst-grid-content .burst-tips-tricks-element .burst-bullet,
+#burst .burst-tips-tricks .burst-grid-content .plugin-text .burst-bullet,
+#burst .upsell-grid-container .burst-grid-content .plugin-text .burst-bullet {
   margin: 7px;
   background-color: #ededed;
   float: left;
 }
-#burst .burst-tips-tricks .item-content .burst-tips-tricks-element .burst-bullet:hover,
-#burst .upsell-grid-container .item-content .burst-tips-tricks-element .burst-bullet:hover,
-#burst .burst-tips-tricks .item-content .plugin-text .burst-bullet:hover,
-#burst .upsell-grid-container .item-content .plugin-text .burst-bullet:hover {
+#burst .burst-tips-tricks .burst-grid-content .burst-tips-tricks-element .burst-bullet:hover,
+#burst .upsell-grid-container .burst-grid-content .burst-tips-tricks-element .burst-bullet:hover,
+#burst .burst-tips-tricks .burst-grid-content .plugin-text .burst-bullet:hover,
+#burst .upsell-grid-container .burst-grid-content .plugin-text .burst-bullet:hover {
   background-color: #61CE70;
 }
-#burst .burst-tips-tricks .item-content .burst-tips-tricks-element .burst-tips-tricks-content,
-#burst .upsell-grid-container .item-content .burst-tips-tricks-element .burst-tips-tricks-content,
-#burst .burst-tips-tricks .item-content .plugin-text .burst-tips-tricks-content,
-#burst .upsell-grid-container .item-content .plugin-text .burst-tips-tricks-content {
+#burst .burst-tips-tricks .burst-grid-content .burst-tips-tricks-element .burst-tips-tricks-content,
+#burst .upsell-grid-container .burst-grid-content .burst-tips-tricks-element .burst-tips-tricks-content,
+#burst .burst-tips-tricks .burst-grid-content .plugin-text .burst-tips-tricks-content,
+#burst .upsell-grid-container .burst-grid-content .plugin-text .burst-tips-tricks-content {
   margin: 7px 0;
   float: left;
+}
+#burst .burst-tips-tricks .burst-grid-content .burst-tips-tricks-element,
+#burst .upsell-grid-container .burst-grid-content .burst-tips-tricks-element {
+  width: 50%;
 }
 #burst .burst-tips-tricks-container-title {
   border-bottom: 1px solid #DEDEDE;
@@ -344,7 +351,7 @@
 #burst #burst-content-area .burst-grid {
   display: grid;
   grid-template-columns: repeat(4, calc(25% - 15px) [col-start]);
-  grid-template-rows: repeat(min-content);
+  grid-template-rows: repeat(auto, min-content);
   margin: 10px;
   margin-top: 20px;
   grid-gap: 20px;
@@ -364,15 +371,11 @@
   font-size: 15px;
   font-weight: 500;
 }
-#burst #burst-content-area .burst-grid .wrap,
-#burst #burst-content-area .burst-grid .item-container {
+#burst #burst-content-area .burst-grid .burst-grid-container {
   background: #fff;
   box-shadow: 1px 1px #dedede;
   border-radius: 5px;
   margin: 0;
-}
-#burst #burst-content-area .burst-grid form,
-#burst #burst-content-area .burst-grid .item-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
@@ -380,15 +383,52 @@
   flex-basis: 100%;
   min-height: 100%;
 }
+#burst #burst-content-area .burst-grid .burst-grid-container.no-background {
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+#burst #burst-content-area .burst-grid .burst-grid-container.statistics {
+  grid-column: span 2;
+}
+#burst #burst-content-area .burst-grid .burst-grid-container.tipstricks {
+  grid-column: span 2;
+}
+#burst #burst-content-area .burst-grid .burst-grid-container.ourplugins {
+  grid-column: span 2;
+}
+@media screen and (max-width: 780px) {
+  #burst #burst-content-area .burst-grid .burst-grid-container {
+    grid-column: span 4 !important;
+  }
+}
+@media screen and (max-width: 1430px) {
+  #burst #burst-content-area .burst-grid .burst-grid-container {
+    grid-column: span 2;
+  }
+  #burst #burst-content-area .burst-grid .burst-grid-container.statistics {
+    grid-column: span 4;
+  }
+  #burst #burst-content-area .burst-grid .burst-grid-container.tipstricks {
+    grid-column: span 4;
+  }
+  #burst #burst-content-area .burst-grid .burst-grid-container.ourplugins {
+    grid-column: span 4;
+  }
+}
 #burst #burst-content-area .burst-grid .burst-grid-header {
   width: 100%;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   border-bottom: 1px solid #ededed;
   padding: 10px 15px;
 }
-#burst #burst-content-area .burst-grid .burst-grid-header h1 {
+#burst #burst-content-area .burst-grid .burst-grid-header .burst-grid-title {
   font-size: 17px;
   font-weight: 600;
+  padding: 9px 0 4px 0;
 }
 #burst #burst-content-area .burst-grid .burst-grid-content {
   width: 100%;
@@ -397,7 +437,11 @@
   flex-grow: 100;
 }
 #burst #burst-content-area .burst-grid .burst-grid-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   width: 100%;
+  min-height: 51px;
   box-sizing: border-box;
   padding: 10px 15px;
   border-top: 1px solid #ededed;
