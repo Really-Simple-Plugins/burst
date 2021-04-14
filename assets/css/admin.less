@@ -366,7 +366,7 @@
 		margin: @small-margin;
 	}
 	/* Settings page */
-	.burst-general-settings #burst-content-area .burst-grid{
+	#burst-content-area .burst-grid{
 		display: grid;
 		grid-template-columns: repeat(4, calc(25% - 15px) [col-start]); // We use calc because of the grid gap
 		grid-template-rows: repeat( min-content );
@@ -382,10 +382,10 @@
 			font-size: 15px;
     		font-weight: 500;
 		}
-		.wrap{
+		.wrap, .item-container{
 			.burst-block;
 		}
-		form{
+		form, .item-container{
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: flex-start;

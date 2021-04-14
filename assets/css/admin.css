@@ -341,7 +341,7 @@
   padding: 10px;
   margin: 10px;
 }
-#burst .burst-general-settings #burst-content-area .burst-grid {
+#burst #burst-content-area .burst-grid {
   display: grid;
   grid-template-columns: repeat(4, calc(25% - 15px) [col-start]);
   grid-template-rows: repeat(min-content);
@@ -350,27 +350,29 @@
   grid-gap: 20px;
   min-height: calc(100vh - 32px - 80px - 20px - 20px);
 }
-#burst .burst-general-settings #burst-content-area .burst-grid h1,
-#burst .burst-general-settings #burst-content-area .burst-grid h2,
-#burst .burst-general-settings #burst-content-area .burst-grid h3,
-#burst .burst-general-settings #burst-content-area .burst-grid h4,
-#burst .burst-general-settings #burst-content-area .burst-grid h5,
-#burst .burst-general-settings #burst-content-area .burst-grid h6,
-#burst .burst-general-settings #burst-content-area .burst-grid p {
+#burst #burst-content-area .burst-grid h1,
+#burst #burst-content-area .burst-grid h2,
+#burst #burst-content-area .burst-grid h3,
+#burst #burst-content-area .burst-grid h4,
+#burst #burst-content-area .burst-grid h5,
+#burst #burst-content-area .burst-grid h6,
+#burst #burst-content-area .burst-grid p {
   color: #3c434a;
 }
-#burst .burst-general-settings #burst-content-area .burst-grid p,
-#burst .burst-general-settings #burst-content-area .burst-grid label {
+#burst #burst-content-area .burst-grid p,
+#burst #burst-content-area .burst-grid label {
   font-size: 15px;
   font-weight: 500;
 }
-#burst .burst-general-settings #burst-content-area .burst-grid .wrap {
+#burst #burst-content-area .burst-grid .wrap,
+#burst #burst-content-area .burst-grid .item-container {
   background: #fff;
   box-shadow: 1px 1px #dedede;
   border-radius: 5px;
   margin: 0;
 }
-#burst .burst-general-settings #burst-content-area .burst-grid form {
+#burst #burst-content-area .burst-grid form,
+#burst #burst-content-area .burst-grid .item-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
@@ -378,23 +380,23 @@
   flex-basis: 100%;
   min-height: 100%;
 }
-#burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-header {
+#burst #burst-content-area .burst-grid .burst-grid-header {
   width: 100%;
   box-sizing: border-box;
   border-bottom: 1px solid #ededed;
   padding: 10px 15px;
 }
-#burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-header h1 {
+#burst #burst-content-area .burst-grid .burst-grid-header h1 {
   font-size: 17px;
   font-weight: 600;
 }
-#burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-content {
+#burst #burst-content-area .burst-grid .burst-grid-content {
   width: 100%;
   box-sizing: border-box;
   padding: 10px 15px;
   flex-grow: 100;
 }
-#burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-footer {
+#burst #burst-content-area .burst-grid .burst-grid-footer {
   width: 100%;
   box-sizing: border-box;
   padding: 10px 15px;

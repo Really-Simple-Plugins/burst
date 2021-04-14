@@ -1,7 +1,7 @@
 <?php
 defined( 'ABSPATH' ) or die( "you do not have access to this page!" );
 
-add_action( 'admin_enqueue_scripts', 'burst_enqueue_grid_assets' );
+// add_action( 'admin_enqueue_scripts', 'burst_enqueue_grid_assets' );
 function burst_enqueue_grid_assets( $hook ) {
 	if (   
 		   $hook !== 'toplevel_page_burst' 
