@@ -21,11 +21,6 @@ if (intval($experiment_id)) {
 				<!-- Experiment exists -->
 
 				<div class="burst-experiment-settings-info">
-					<?php
-					if ($experiment->status !== 'draft') {
-						echo burst_display_experiment_status($experiment->status); 
-					}
-					?>
 					<h4><?php echo $experiment->title; ?></h4>
 					<div class="burst-experiment-settings-info_container control">
 						<span class="burst-experiment-dot control"></span>
@@ -48,6 +43,11 @@ if (intval($experiment_id)) {
 				<input type="hidden" value="<?php echo $experiment->variant_id ?>" name="burst_redirect_to_variant">
 
 				<div class="burst-experiment-save-button">
+					<?php
+					if ($experiment->status !== 'draft') {
+						echo burst_display_experiment_status($experiment->status); 
+					}
+					?>
 					<input class="button button-secondary" name="burst_go_to_setup_experiment_button"
 					        type="submit" value="<?php _e( 'Edit variant and setup experiment',
 							'burst' ) ?>">
