@@ -263,6 +263,7 @@ jQuery(document).ready(function ($) {
 
     burstLoadGridBlocks();
     function burstLoadGridBlocks(){
+        console.log('running burstLoadGridBlocks');
         var experiment_id = $('select[name=burst_selected_experiment_id]').val();
         // var date_start = localStorage.getItem('burst_range_start');
         // var date_end = localStorage.getItem('burst_range_end');
@@ -285,7 +286,10 @@ jQuery(document).ready(function ($) {
                 },
                 success: function (response) {
                     if (response.success) {
-                        gridContainer.find('.item-content').html(response.html);
+                        console.log('succes');
+                        gridContainer.find('.burst-skeleton').fadeOut(500, function() {
+                            gridContainer.find('.burst-grid-content').html(response.html);
+                        })
                     }
                 }
             })
