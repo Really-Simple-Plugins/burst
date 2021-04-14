@@ -10,11 +10,6 @@ if (intval($experiment_id)) {
 	<form action="" method="post">
 		<div id='burst-metabox-experiment-settings'>
 				<div class="burst-experiment-settings-info">
-					<?php
-					if ($experiment->status !== 'draft') {
-						echo burst_display_experiment_status($experiment->status); 
-					}
-					?>
 					<h4><?php echo $experiment->title; ?></h4>
 					<div class="burst-experiment-settings-info_container control">
 						<span class="burst-experiment-dot control"></span>
@@ -39,7 +34,8 @@ if (intval($experiment_id)) {
 				
                     <?php if ($experiment->status == 'active') { ?>
                     	<div class="burst-experiment-save-button">
-                    		<input class="button button-primary" name="burst_stop_experiment_button"
+                    		<?php echo burst_display_experiment_status($experiment->status); ?>
+                    		<input class="button button-tertiary" name="burst_stop_experiment_button"
 					        	type="submit" value="<?php _e( 'Stop the experiment', 'burst' ) ?>">
 					    </div>
 
@@ -53,6 +49,11 @@ if (intval($experiment_id)) {
 						BURST::$field->get_fields( 'BURST_EXPERIMENT', 'timeline' );
 						?>
 						<div class="burst-experiment-save-button">
+							<?php
+							if ($experiment->status !== 'draft') {
+								echo burst_display_experiment_status($experiment->status); 
+							}
+							?>
 							<input class="button button-primary" name="burst_start_experiment_button"
 					        	type="submit" value="<?php _e( 'Start the experiment', 'burst' ) ?>">
 					    </div>

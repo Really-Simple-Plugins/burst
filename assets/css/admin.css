@@ -3,7 +3,7 @@
 }
 .burst-block {
   background: #fff;
-  box-shadow: 1px 1px #dedede;
+  box-shadow: 1px 1px #DEDEDE;
   border-radius: 5px;
   margin: 0;
 }
@@ -366,7 +366,7 @@
 }
 #burst .burst-general-settings #burst-content-area .burst-grid .wrap {
   background: #fff;
-  box-shadow: 1px 1px #dedede;
+  box-shadow: 1px 1px #DEDEDE;
   border-radius: 5px;
   margin: 0;
 }
@@ -381,7 +381,7 @@
 #burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-header {
   width: 100%;
   box-sizing: border-box;
-  border-bottom: 1px solid #ededed;
+  border-bottom: 1px solid #DEDEDE;
   padding: 10px 15px;
 }
 #burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-header h1 {
@@ -398,7 +398,7 @@
   width: 100%;
   box-sizing: border-box;
   padding: 10px 15px;
-  border-top: 1px solid #ededed;
+  border-top: 1px solid #DEDEDE;
   align-self: flex-end;
 }
 #burst .burst-button {
@@ -600,12 +600,6 @@
 .burst-experiment-status span.burst-bullet {
   margin-right: 5px;
 }
-.burst-experiment-settings-info .burst-experiment-status {
-  border: 1px solid #ededed;
-  background: #f1f1f1;
-  font-weight: 600;
-  font-size: 13px;
-}
 .toplevel_page_burst #wpbody-content,
 .burst-1_page_burst-experiments #wpbody-content,
 .burst-1_page_burst-settings #wpbody-content {
@@ -683,4 +677,12 @@ input:checked:disabled + .burst-slider {
 }
 input:focus + .burst-slider {
   box-shadow: 0 0 1px #61CE70;
+}
+.wp-core-ui .button.button-tertiary {
+  background-color: #D7263D;
+  color: white;
+  border-color: #96091b;
+}
+.wp-core-ui .button.button-tertiary:hover {
+  background-color: #b92538;
 }
