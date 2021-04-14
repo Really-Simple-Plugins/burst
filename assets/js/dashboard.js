@@ -288,7 +288,7 @@ jQuery(document).ready(function ($) {
                     if (response.success) {
                         console.log('succes');
                         gridContainer.find('.burst-skeleton').fadeOut(500, function() {
-                            gridContainer.find('.burst-grid-content').html(response.html);
+                            gridContainer.find('.burst-grid-content').hide().html(response.html).fadeIn(1000);
                         })
                     }
                 }
