@@ -635,14 +635,6 @@
 		}
 	}
 }
-.burst-experiment-settings-info{
-	.burst-experiment-status{
-		border: @border;
-		background: #f1f1f1;
-		font-weight: 600;
-		font-size: 13px;
-	}
-}
 
 .toplevel_page_burst, .burst-1_page_burst-experiments, .burst-1_page_burst-settings{
 	#wpbody-content{
@@ -737,4 +729,13 @@ input:checked:disabled + .burst-slider {
 
 input:focus + .burst-slider {
   box-shadow: 0 0 1px @brand-primary;
+}
+// red button for explecit actions
+.wp-core-ui .button.button-tertiary{
+	background-color: #D7263D;
+    color: white;
+    border-color: #96091b;
+    &:hover{
+    	background-color: #b92538;
+    }
 }

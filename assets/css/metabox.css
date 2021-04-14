@@ -48,4 +48,13 @@
 #burst-metabox-experiment-settings .burst-experiment-settings-info > :last-child {
   margin-bottom: 0;
 }
-/*# sourceMappingURL=metabox.css.map */
+#burst-metabox-experiment-settings .burst-experiment-save-button {
+  display: flex;
+  justify-content: space-between;
+}
+#burst-metabox-experiment-settings .burst-experiment-save-button .burst-experiment-status {
+  margin: 0;
+  background: #f1f1f1;
+  font-weight: 600;
+  font-size: 13px;
+}
