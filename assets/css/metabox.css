@@ -14,9 +14,6 @@
   vertical-align: baseline;
   font-weight: 600;
 }
-#burst-metabox-experiment-settings .burst-experiment-save-button {
-  margin-top: 15px;
-}
 #burst-metabox-experiment-settings .burst-experiment-settings-info .burst-experiment-settings-info_container {
   display: flex;
   margin: 6px 0;
@@ -49,13 +46,15 @@
   margin-bottom: 0;
 }
 #burst-metabox-experiment-settings .burst-experiment-save-button {
+  margin-top: 15px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
 }
 #burst-metabox-experiment-settings .burst-experiment-save-button .burst-experiment-status {
   margin: 0;
+  margin-bottom: 10px;
   background: #f1f1f1;
   font-weight: 600;
   font-size: 13px;
 }
-/*# sourceMappingURL=metabox.css.map */
