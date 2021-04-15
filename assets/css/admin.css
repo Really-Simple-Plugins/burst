@@ -440,6 +440,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
   min-height: 51px;
   box-sizing: border-box;
@@ -644,7 +645,20 @@
   padding: 0;
 }
 .burst-experiment-status span.burst-bullet {
+  transition: all 0.5s ease;
   margin-right: 5px;
+}
+.burst-experiment-status span.burst-bullet.loading {
+  animation: grow-and-shrink 1s infinite;
+}
+@keyframes grow-and-shrink {
+  0%,
+  100% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(1);
+  }
 }
 .toplevel_page_burst #wpbody-content,
 .burst-1_page_burst-experiments #wpbody-content,

@@ -239,6 +239,14 @@ if ( ! function_exists( 'burst_localize_date' ) ) {
 	}
 }
 
+if ( ! function_exists( 'burst_display_date' ) ) {
+
+	function burst_display_date( $date ) {
+		$display_date = date_i18n(get_option( 'date_format' ), $date);
+		return $display_date;
+	}
+}
+
 /**
  * Generate a random string, using a cryptographically secure 
  * pseudorandom number generator (random_int)
@@ -420,27 +428,40 @@ if ( ! function_exists( 'burst_get_all_post_statuses' ) ) {
 }
 if ( ! function_exists( 'burst_display_experiment_status' ) ) {
 
-	function burst_display_experiment_status($experiment_status){
+	function burst_display_experiment_status($experiment_status, $get_array = false) {
 		switch( $experiment_status ) {
 				case 'archived':
-					$status = __( 'Archived', 'burst' );
-					$color = 'grey';
+					$status_text = __( 'Archived', 'burst' );
+					$class = 'grey';
 					break;
 				case 'active':
-					$color = 'rsp-blue-yellow';
-					$status = __( 'Active', 'burst' );
+					$class = 'rsp-blue-yellow';
+					$status_text = __( 'Active', 'burst' );
 					break;
 				case 'completed':
-					$status = __( 'Completed', 'burst' );
-					$color = 'rsp-green';
+					$status_text = __( 'Completed', 'burst' );
+					$class = 'rsp-green';
+					break;
+				case 'loading':
+					$status_text = __( 'Loading...', 'burst' );
+					$class = 'grey loading initial-loading';
 					break;
 				case 'draft':
 				default:
-					$status = __( 'Draft', 'burst' );
-					$color = 'grey';
+					$status_text = __( 'Draft', 'burst' );
+					$class = 'grey';
 					break;
 			}
-			$status =  '<div class="burst-experiment-status"><span class="burst-bullet ' . $color . '"></span><span>' . $status . '</span></div>';
+			$status = false;
+			if ($get_array) {
+				$status = array(
+					'class' => $class,
+					'title' => $status_text,
+				);
+			} else {
+				$status =  '<div class="burst-experiment-status"><span class="burst-bullet ' . $class . '"></span><span class="burst-experiment-status__text">' . $status_text . '</span></div>';
+			}
+			
 			error_log($status);
 			return $status;
 	}
