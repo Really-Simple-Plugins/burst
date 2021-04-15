@@ -5,13 +5,14 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 	class burst_experimenting {
 		private static $_this;
 		public $experimenting_enabled = false;
+		public $cookie_expiration_days;
 
 		function __construct() {
 			if ( isset( self::$_this ) ) {
 				wp_die( sprintf( '%s is a singleton class and you cannot create a second instance.',
 					get_class( $this ) ) );
 			}
-
+			$this->cookie_expiration_days = apply_filters('burst_cookie_retention_days', 365);
 			add_action( 'init', array($this, 'add_experiment_post_status') );
 			add_filter( 'the_content', array($this, 'load_experiment_content'), 2, 2);
 			add_action( 'wp_enqueue_scripts', array($this,'enqueue_assets') );
@@ -283,7 +284,8 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			$localize_args = array(
 				'url' => get_rest_url() . 'burst/v1/',
 				'goal' => 'visit',
-				'goal_identifier' => ''
+				'goal_identifier' => '',
+				'cookie_retention_days' => BURST::$experimenting->cookie_expiration_days,
 			);
 
 			if ( $post ) {
@@ -315,55 +317,25 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 
 		public function load_experiment_content($content){
 			global $post;
-
 			$experiment = new BURST_EXPERIMENT(false, $post->ID );
 			//when this page is a goal
 			if ( $experiment->goal_id == $post->ID ) {
 				$content .= '<script type="text/javascript">var burst_experiment_id = "' . $experiment->id . '";var burst_is_goal_page = true;</script>';
 			} else if ( $experiment->id && $experiment->variant_id ) {
-//				$burst_uid     = isset( $_COOKIE['burst_uid'] ) ? sanitize_text_field( $_COOKIE['burst_uid'] ) : false;
-//				$burst_id_parameter = isset( $_GET['bid'] ) ? sanitize_text_field( $_GET['bid'] ) : false;
-//				$page_url      = burst_get_current_url();
-//				$test_version  = false;
-//
-//				// get the test version by URL parameter
-//				if ( $burst_id_parameter ) {
-//					$test_version = ($burst_id_parameter == $experiment->variant_url_parameter) ? 'variant' : false;
-//				}
-//
-//				// get the test version this user has already seen
-//				if ( $burst_uid && !$test_version ) {
-//					$test_version = BURST::$statistics->get_latest_visit_data( $burst_uid, $page_url, 'test_version' );
-//				}
-//
-//
-//				if ( ! $test_version ) {
-//					$choice = rand( 0, 1 );
-//					if ( $choice === 1 ) {
-//						$test_version = 'variant';
-//					} else {
-//						$test_version = 'control';
-//					}
-//				}
-//				error_log('test version');
-//				error_log($test_version);
-
 				$content_variant = get_the_content( null, false, $experiment->variant_id );
 				$content_control = get_the_content( null, false, $experiment->control_id );
-
-				$content = '<div id="burst_control" style="visibility: hidden">'.$content_control.'</div><div id="burst_variant" style="display: none">'.$content_variant.'</div>';
+				$content = '<div class="burst_control" style="visibility: hidden">'.$content_control.'</div><div class="burst_variant" style="display: none">'.$content_variant.'</div>';
 				//$content = apply_filters( 'the_content', $content );
 				// Causes infinite loop
 				// $content = str_replace( ']]>', ']]&gt;', $content );
 
 				$content .= '<script type="text/javascript">
-					var burst_experiment_id = ' . $experiment->id . ';
-					var burst_goal_identifier = "' . $experiment->goal_identifier . '";
-					</script>';
+								var burst_experiment_id = ' . $experiment->id . ';
+								var burst_goal_identifier = "' . $experiment->goal_identifier . '";
+							</script>';
 			}
 			return $content;
 		}
-
 
 		/**
 		 * Function for post copying

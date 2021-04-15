@@ -1,14 +1,24 @@
+window.burst_one_request_completed = false;
+
+if ( !burst_is_user_agent() ) {
+	burst_track_hit(function() {
+		// go to the link
+		window.burst_one_request_completed = true;
+	});
+}
+
 if ( burst_is_experiment_page() ) {
+	console.log("is experiment page");
 	if ( burst_is_user_agent() ) {
 		burst_show_content('control');
 	} else {
 		window.burst_test_version = burst_get_user_test_version();
+		console.log(window.burst_test_version);
+
 		burst_show_content(window.burst_test_version);
 	}
-}
-
-if ( !burst_is_user_agent() ) {
-	burst_track_hit();
+} else {
+	console.log("Not an experiment page");
 }
 
 if (window.burst_identifier !== undefined ) {
@@ -42,7 +52,7 @@ function burst_track_hit(callback) {
 
 	console.log("track hit function");
 	var request = new XMLHttpRequest();
-	request.open('POST', burst.url+'/hit', true);
+	request.open('POST', burst.url+'hit', true);
 	var url = location.pathname;
 	var conversion = false;
 
@@ -99,14 +109,23 @@ function burst_is_experiment_page(){
 function burst_show_content( test_type ){
 	//by default, the control is 'visibility:none', which ensures the right amount of space is taken in the dom.
 	//the variant is display:none, so not visible at all.
-
+	const variants = document.querySelectorAll(".burst_variant");
+	const controls = document.querySelectorAll(".burst_control");
 	if ( test_type === 'control' ) {
-		document.getElementById('burst_variant').style.display = 'none';
-		document.getElementById('burst_control').style.visibility = 'visible';
-		document.getElementById('burst_control').style.display = 'block';
+		for (const variant of variants) {
+			variant.style.display = 'none';
+		}
+		for (const control of controls) {
+			control.style.visibility = 'visible';
+			control.style.display = 'block';
+		}
 	} else {
-		document.getElementById('burst_control').style.display = 'none';
-		document.getElementById('burst_variant').style.display = 'block';
+		for (const control of controls) {
+			control.style.display = 'none';
+		}
+		for (const variant of variants) {
+			variant.style.display = 'block';
+		}
 	}
 }
 
@@ -126,8 +145,8 @@ function burst_get_user_test_version(){
 		} else {
 			window.burst_test_version = 'control';
 		}
-		burst_set_cookie('burst_v', window.burst_test_version, 365);
-		burst_set_uid();
+		burst_set_cookie('burst_v', window.burst_test_version );
+
 	} else {
 		window.burst_test_version = burst_get_cookie('burst_v');
 	}
@@ -161,34 +180,21 @@ function burst_get_cookie(name) {
  * @param days
  */
 
-function burst_set_cookie(name, value, days) {
+function burst_set_cookie(name, value) {
 	var cookiePath = '/';
 	var domain = '';
 	var secure = ";secure";
 	var date = new Date();
+	var days = burst.cookie_retention_days;
 	date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
 	var expires = ";expires=" + date.toGMTString();
 
-	if (window.location.protocol !== "https:") secure = '';
+	if ( window.location.protocol !== "https:" ) secure = '';
 
 	//if we want to dynamically be able to change the domain, we can use this.
-	if (domain.length > 0) {
+	if ( domain.length > 0 ) {
 		domain = ";domain=" + domain;
 	}
 	document.cookie = name + "=" + value + ";SameSite=Lax" + secure + expires + domain + ";path="+cookiePath;
-}
-
-function burst_set_uid(){
-	console.log("get uid");
-	var request = new XMLHttpRequest();
-	xhr.onreadystatechange = function() {
-		if (xhr.readyState === 4) {
-			console.log(xhr.response);
-			window.burst_uid = xhr.response;
-		}
-	}
-	request.open('GET', burst.url+'/uid', true);
-	request.setRequestHeader('Content-type', 'application/json');
-	request.send();
 }
 

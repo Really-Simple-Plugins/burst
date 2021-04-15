@@ -92,32 +92,6 @@ if ( !function_exists( 'burst_setcookie') ) {
 	}
 }
 
-if ( !function_exists( 'burst_get_uid' )) {
-	/**
-	 * Get a user's UID, or create one, and return it.
-	 *
-	 * @return string
-	 */
-	function burst_get_uid(){
-		$burst_uid = isset( $_COOKIE['burst_uid']) ? $_COOKIE['burst_uid'] : false;
-		if ( !$burst_uid ) {
-			// if user is logged in get burst meta user id
-			if (is_user_logged_in()) {
-				$burst_uid = get_user_meta(get_current_user_id(), 'burst_cookie_uid');
-				//if no user meta is found, add new unique ID
-				if (!isset($burst_uid)) {
-					//generate random string
-					$burst_uid = burst_random_str();
-					update_user_meta(get_current_user_id(), 'burst_cookie_uid', $burst_uid);
-				}
-			} else {
-				$burst_uid = burst_random_str();
-			}
-		}
-		return $burst_uid;
-	}
-}
-
 if ( !function_exists( 'burst_sanitize_experiment_status' )) {
 	/**
 	 * Sanitize the status

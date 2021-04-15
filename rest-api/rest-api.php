@@ -7,20 +7,6 @@ function burst_register_rest_routes(){
         'callback' => 'burst_track_hit',
         'permission_callback' => '__return_true',
     ));
-	register_rest_route('burst/v1', 'uid', array(
-		'methods' => 'GET',
-		'callback' => 'burst_rest_api_get_uid',
-		'permission_callback' => '__return_true',
-	));
-}
-
-function burst_rest_api_get_uid(WP_REST_Request $request){
-	$response = json_encode( array(
-		'uid' => burst_get_uid(),
-	) );
-	header( "Content-Type: application/json" );
-	echo $response;
-	exit;
 }
 
 /**
@@ -30,11 +16,29 @@ function burst_rest_api_get_uid(WP_REST_Request $request){
  */
 
 function burst_track_hit(WP_REST_Request $request){
-	//check if this user has a cookie 
-	$burst_uid = burst_get_uid();
-
-	burst_setcookie('burst_uid', $burst_uid, 1);
 	$data = $request->get_json_params();
+
+	//check if this user has a cookie 
+	$burst_uid = isset( $_COOKIE['burst_uid']) ? $_COOKIE['burst_uid'] : false;
+	if ( !$burst_uid ) {
+		// if user is logged in get burst meta user id
+		if (is_user_logged_in()) {
+			$burst_uid = get_user_meta(get_current_user_id(), 'burst_cookie_uid');
+			//if no user meta is found, add new unique ID
+			if (!isset($burst_uid)) {
+				//generate random string
+				$burst_uid = burst_random_str();
+				update_user_meta(get_current_user_id(), 'burst_cookie_uid', $burst_uid);
+			}
+		} else {
+			$burst_uid = burst_random_str();
+		}
+	}
+
+	//make sure it's set.
+	if (!isset( $_COOKIE['burst_uid'])) {
+		burst_setcookie('burst_uid', $burst_uid, BURST::$experimenting->cookie_expiration_days);
+	}
 
 	$default_data = array(
 		'test_version' => 'control',
