@@ -101,11 +101,12 @@ if ( ! class_exists( "burst_admin" ) ) {
 
                 // loop through active experiments and add to top menu
                 foreach ($active_experiments as $experiment) {
+                    $experiment = new BURST_EXPERIMENT($experiment->ID);
                     $admin_bar->add_menu(array(
-                        'id'     	=> 'burst-add-experiment-'. $experiment->ID,
+                        'id'     	=> 'burst-add-experiment-'. $experiment->id,
                         'parent' 	=> 'burst-active-experiments',
                         'title'  	=> $experiment->title,
-                        'href'   	=> add_query_arg(array('page'=> 'burst-experiments', 'id' => $experiment->ID, 'action' => 'edit' ), admin_url( 'admin.php' ) ),
+                        'href'   	=> add_query_arg(array('post' => $experiment->control_id, 'action' => 'edit' ), admin_url( 'post.php' ) ),
                     ) );
                 }
             }

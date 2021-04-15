@@ -6,10 +6,8 @@ function burst_register_rest_routes(){
         'methods' => 'POST',
         'callback' => 'burst_track_hit',
         'permission_callback' => '__return_true',
-    ));	
+    ));
 }
-
-
 
 /**
  * Add a new page visit to the database
@@ -18,6 +16,8 @@ function burst_register_rest_routes(){
  */
 
 function burst_track_hit(WP_REST_Request $request){
+	$data = $request->get_json_params();
+
 	//check if this user has a cookie 
 	$burst_uid = isset( $_COOKIE['burst_uid']) ? $_COOKIE['burst_uid'] : false;
 	if ( !$burst_uid ) {
@@ -35,8 +35,10 @@ function burst_track_hit(WP_REST_Request $request){
 		}
 	}
 
-	burst_setcookie('burst_uid', $burst_uid, 1);
-	$data = $request->get_json_params();
+	//make sure it's set.
+	if (!isset( $_COOKIE['burst_uid'])) {
+		burst_setcookie('burst_uid', $burst_uid, BURST::$experimenting->cookie_expiration_days);
+	}
 
 	$default_data = array(
 		'test_version' => 'control',
