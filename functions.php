@@ -57,7 +57,6 @@ if ( ! function_exists( 'burst_get_experiments' ) ) {
 		} 
 
 		$sql .= " ORDER BY $orderby $order";
-		error_log($sql);
 
 		return  $wpdb->get_results( "select * from {$wpdb->prefix}burst_experiments where 1=1 $sql" );
 	}
@@ -462,7 +461,6 @@ if ( ! function_exists( 'burst_display_experiment_status' ) ) {
 				$status =  '<div class="burst-experiment-status"><span class="burst-bullet ' . $class . '"></span><span class="burst-experiment-status__text">' . $status_text . '</span></div>';
 			}
 			
-			error_log($status);
 			return $status;
 	}
 }
