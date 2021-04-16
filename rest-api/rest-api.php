@@ -41,7 +41,7 @@ function burst_track_hit(WP_REST_Request $request){
 	}
 
 	$default_data = array(
-		'test_version' => 'control',
+		'test_version' => false,
 		'experiment_id' => false,
 		'conversion' => false,
 		'url' => '',
@@ -50,25 +50,33 @@ function burst_track_hit(WP_REST_Request $request){
 	$url = sanitize_text_field($data['url']);
 	$experiment_id = intval($data['experiment_id']);
 
+	$time = time();
+	$time_minus_threshold = strtotime("-30 minutes");
+
 	global $wpdb;
 	$update_array = array(
 		'page_url'            		=> sanitize_text_field( $url ),
-		'time'               		=> time(),
+		'time'               		=> $time,
 		'uid'               		=> sanitize_title($burst_uid),
 		'test_version'				=> burst_sanitize_test_version($data['test_version']),
 		'experiment_id'				=> $experiment_id,
 		'conversion'				=> intval($data['conversion']),
 	);
 
+	error_log('burst_track_hit');
 	//check if the current users' uid/experiment id combination is already in the database.
-	$id = $wpdb->get_var( $wpdb->prepare( "select ID from {$wpdb->prefix}burst_statistics where experiment_id = %s and uid = %s", $experiment_id, sanitize_title($burst_uid) ) );
-	if ($id) {
+	$prepare = $wpdb->prepare( "select `time` from {$wpdb->prefix}burst_statistics where experiment_id = %s and uid = %s order by time desc limit 1", $experiment_id, sanitize_title($burst_uid));
+	$last_visit_time = $wpdb->get_var($prepare);
+	// check if the last entry is smaller than the time_minus_threshold so that multiple visits will result in multiple entries and not just one. 
+	if ($last_visit_time > 0 && $last_visit_time > $time_minus_threshold) {
+		error_log('already in db, so we update');
 		$wpdb->update(
 			$wpdb->prefix . 'burst_statistics',
 			$update_array,
-			array('ID' => $id)
+			array('time' => $last_visit_time)
 		);
 	} else {
+		error_log('new entry');
 		$wpdb->insert(
 			$wpdb->prefix . 'burst_statistics',
 			$update_array
@@ -77,7 +85,7 @@ function burst_track_hit(WP_REST_Request $request){
 
 	//check if we can stop this experiment.
 	$experiment = new BURST_EXPERIMENT($experiment_id);
-	if ( time() > $experiment->date_end ) {
+	if ( $time > $experiment->date_end ) {
 		$experiment->stop();
 	}
 

@@ -292,8 +292,6 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 				if ($experiment->id) {
 					$localize_args['goal'] = $experiment->goal;
 					$localize_args['goal_identifier'] = $experiment->goal_identifier;
-					$localize_args['goal'] = 'visit';
-					$localize_args['goal_identifier'] = 'class';
 				}
 			}
 
@@ -317,10 +315,14 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		public function load_experiment_content($content){
 			global $post;
 			$experiment = new BURST_EXPERIMENT(false, $post->ID );
+			if ($experiment->status !== 'active') return $content;
+			error_log(print_r($experiment, true));
 			//when this page is a goal
 			if ( $experiment->goal_id == $post->ID ) {
+				error_log('is goal id');
 				$content .= '<script type="text/javascript">var burst_experiment_id = "' . $experiment->id . '";var burst_is_goal_page = true;</script>';
 			} else if ( $experiment->id && $experiment->variant_id ) {
+				error_log('is experiment');
 				$content_variant = get_the_content( null, false, $experiment->variant_id );
 				$content_control = get_the_content( null, false, $experiment->control_id );
 				$content = '<div class="burst_control" style="visibility: hidden">'.$content_control.'</div><div class="burst_variant" style="display: none">'.$content_variant.'</div>';
