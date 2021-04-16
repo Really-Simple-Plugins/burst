@@ -1,32 +1,6 @@
 <?php
 defined( 'ABSPATH' ) or die();
 
-add_action( 'admin_enqueue_scripts', 'burst_enqueue_grid_assets' );
-function burst_enqueue_grid_assets( $hook ) {
-	if (   
-		   $hook !== 'toplevel_page_burst' 
-		&& $hook !== 'burst-1_page_burst-insights' 
-		&& $hook !== 'burst-1_page_burst-experiments'
-	) return;
-
-	wp_register_style( ' burst-muuri',
-		trailingslashit( burst_url ) . "grid/css/muuri.css", "",
-		burst_version );
-	wp_enqueue_style( ' burst-muuri' );
-
-	wp_register_script( ' burst-muuri',
-		trailingslashit( burst_url )
-		. 'grid/js/muuri.min.js', array( "jquery" ),
-		burst_version );
-	wp_enqueue_script( ' burst-muuri' );
-
-	wp_register_script( ' burst-grid',
-		trailingslashit( burst_url )
-		. 'grid/js/grid.js', array( "jquery", " burst-muuri" ),
-		burst_version );
-	wp_enqueue_script( ' burst-grid' );
-}
-
 function burst_grid_container($content){
 	$file = trailingslashit(burst_path) . 'grid/templates/grid-container.php';
 

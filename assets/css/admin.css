@@ -23,6 +23,7 @@
   }
 }
 #burst {
+  padding-bottom: 60px;
   margin: 0 0 0 -20px;
   font-size: 15px;
   /* field styles */
@@ -45,7 +46,7 @@
   /*
 	  Progress bar
 	 */
-  /* Settings page */
+  /* Grid */
 }
 #burst .burst-notice {
   display: grid;
@@ -177,14 +178,16 @@
   display: flex !important;
   flex-direction: row;
   padding: 6px;
+  justify-content: space-between;
   align-items: center;
   color: #3c3c3c;
+  width: 100%;
 }
 #burst .upsell-grid-container .burst-upsell .plugin-status {
   margin-left: auto;
 }
 #burst .burst-skeleton:empty {
-  width: 350px;
+  width: 100%;
   height: 400px;
   /* change height to see repeat-y behavior */
   background-image: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 80%), linear-gradient(#dadada 20px, transparent 0), linear-gradient(#dadada 20px, transparent 0), linear-gradient(#dadada 20px, transparent 0), linear-gradient(#dadada 20px, transparent 0);
@@ -252,62 +255,66 @@
   list-style-type: disc;
   margin-left: 22px;
 }
-#burst .burst-grid.statistics .item-content {
+#burst .burst-grid.statistics .burst-grid-content {
   border-bottom: 0;
 }
-#burst .burst-tips-tricks .item-content,
-#burst .upsell-grid-container .item-content {
+#burst .burst-tips-tricks .burst-grid-content,
+#burst .upsell-grid-container .burst-grid-content {
   display: flex !important;
-  flex-direction: column;
+  flex-direction: row;
   flex-wrap: wrap;
   margin-bottom: 10px;
 }
 @media screen and (max-width: 480px) {
-  #burst .burst-tips-tricks .item-content,
-  #burst .upsell-grid-container .item-content {
+  #burst .burst-tips-tricks .burst-grid-content,
+  #burst .upsell-grid-container .burst-grid-content {
     flex-direction: row;
     overflow: hidden;
   }
 }
-#burst .burst-tips-tricks .item-content .burst-tips-tricks-element,
-#burst .upsell-grid-container .item-content .burst-tips-tricks-element,
-#burst .burst-tips-tricks .item-content .plugin-text,
-#burst .upsell-grid-container .item-content .plugin-text {
+#burst .burst-tips-tricks .burst-grid-content .burst-tips-tricks-element,
+#burst .upsell-grid-container .burst-grid-content .burst-tips-tricks-element,
+#burst .burst-tips-tricks .burst-grid-content .plugin-text,
+#burst .upsell-grid-container .burst-grid-content .plugin-text {
   color: #3c3c3c;
 }
-#burst .burst-tips-tricks .item-content .burst-tips-tricks-element a,
-#burst .upsell-grid-container .item-content .burst-tips-tricks-element a,
-#burst .burst-tips-tricks .item-content .plugin-text a,
-#burst .upsell-grid-container .item-content .plugin-text a {
+#burst .burst-tips-tricks .burst-grid-content .burst-tips-tricks-element a,
+#burst .upsell-grid-container .burst-grid-content .burst-tips-tricks-element a,
+#burst .burst-tips-tricks .burst-grid-content .plugin-text a,
+#burst .upsell-grid-container .burst-grid-content .plugin-text a {
   text-decoration: none;
   color: #3c3c3c;
 }
-#burst .burst-tips-tricks .item-content .burst-tips-tricks-element a:hover,
-#burst .upsell-grid-container .item-content .burst-tips-tricks-element a:hover,
-#burst .burst-tips-tricks .item-content .plugin-text a:hover,
-#burst .upsell-grid-container .item-content .plugin-text a:hover {
+#burst .burst-tips-tricks .burst-grid-content .burst-tips-tricks-element a:hover,
+#burst .upsell-grid-container .burst-grid-content .burst-tips-tricks-element a:hover,
+#burst .burst-tips-tricks .burst-grid-content .plugin-text a:hover,
+#burst .upsell-grid-container .burst-grid-content .plugin-text a:hover {
   color: #61CE70;
 }
-#burst .burst-tips-tricks .item-content .burst-tips-tricks-element .burst-bullet,
-#burst .upsell-grid-container .item-content .burst-tips-tricks-element .burst-bullet,
-#burst .burst-tips-tricks .item-content .plugin-text .burst-bullet,
-#burst .upsell-grid-container .item-content .plugin-text .burst-bullet {
+#burst .burst-tips-tricks .burst-grid-content .burst-tips-tricks-element .burst-bullet,
+#burst .upsell-grid-container .burst-grid-content .burst-tips-tricks-element .burst-bullet,
+#burst .burst-tips-tricks .burst-grid-content .plugin-text .burst-bullet,
+#burst .upsell-grid-container .burst-grid-content .plugin-text .burst-bullet {
   margin: 7px;
   background-color: #ededed;
   float: left;
 }
-#burst .burst-tips-tricks .item-content .burst-tips-tricks-element .burst-bullet:hover,
-#burst .upsell-grid-container .item-content .burst-tips-tricks-element .burst-bullet:hover,
-#burst .burst-tips-tricks .item-content .plugin-text .burst-bullet:hover,
-#burst .upsell-grid-container .item-content .plugin-text .burst-bullet:hover {
+#burst .burst-tips-tricks .burst-grid-content .burst-tips-tricks-element .burst-bullet:hover,
+#burst .upsell-grid-container .burst-grid-content .burst-tips-tricks-element .burst-bullet:hover,
+#burst .burst-tips-tricks .burst-grid-content .plugin-text .burst-bullet:hover,
+#burst .upsell-grid-container .burst-grid-content .plugin-text .burst-bullet:hover {
   background-color: #61CE70;
 }
-#burst .burst-tips-tricks .item-content .burst-tips-tricks-element .burst-tips-tricks-content,
-#burst .upsell-grid-container .item-content .burst-tips-tricks-element .burst-tips-tricks-content,
-#burst .burst-tips-tricks .item-content .plugin-text .burst-tips-tricks-content,
-#burst .upsell-grid-container .item-content .plugin-text .burst-tips-tricks-content {
+#burst .burst-tips-tricks .burst-grid-content .burst-tips-tricks-element .burst-tips-tricks-content,
+#burst .upsell-grid-container .burst-grid-content .burst-tips-tricks-element .burst-tips-tricks-content,
+#burst .burst-tips-tricks .burst-grid-content .plugin-text .burst-tips-tricks-content,
+#burst .upsell-grid-container .burst-grid-content .plugin-text .burst-tips-tricks-content {
   margin: 7px 0;
   float: left;
+}
+#burst .burst-tips-tricks .burst-grid-content .burst-tips-tricks-element,
+#burst .upsell-grid-container .burst-grid-content .burst-tips-tricks-element {
+  width: 50%;
 }
 #burst .burst-tips-tricks-container-title {
   border-bottom: 1px solid #DEDEDE;
@@ -395,36 +402,34 @@
   padding: 10px;
   margin: 10px;
 }
-#burst .burst-general-settings #burst-content-area .burst-grid {
+#burst #burst-content-area .burst-grid {
   display: grid;
   grid-template-columns: repeat(4, calc(25% - 15px) [col-start]);
-  grid-template-rows: repeat(min-content);
+  grid-template-rows: repeat(auto, min-content);
   margin: 10px;
   margin-top: 20px;
   grid-gap: 20px;
   min-height: calc(100vh - 32px - 80px - 20px - 20px);
 }
-#burst .burst-general-settings #burst-content-area .burst-grid h1,
-#burst .burst-general-settings #burst-content-area .burst-grid h2,
-#burst .burst-general-settings #burst-content-area .burst-grid h3,
-#burst .burst-general-settings #burst-content-area .burst-grid h4,
-#burst .burst-general-settings #burst-content-area .burst-grid h5,
-#burst .burst-general-settings #burst-content-area .burst-grid h6,
-#burst .burst-general-settings #burst-content-area .burst-grid p {
+#burst #burst-content-area .burst-grid h1,
+#burst #burst-content-area .burst-grid h2,
+#burst #burst-content-area .burst-grid h3,
+#burst #burst-content-area .burst-grid h4,
+#burst #burst-content-area .burst-grid h5,
+#burst #burst-content-area .burst-grid h6,
+#burst #burst-content-area .burst-grid p {
   color: #3c434a;
 }
-#burst .burst-general-settings #burst-content-area .burst-grid p,
-#burst .burst-general-settings #burst-content-area .burst-grid label {
+#burst #burst-content-area .burst-grid p,
+#burst #burst-content-area .burst-grid label {
   font-size: 15px;
   font-weight: 500;
 }
-#burst .burst-general-settings #burst-content-area .burst-grid .wrap {
+#burst #burst-content-area .burst-grid .burst-grid-container {
   background: #fff;
   box-shadow: 1px 1px #DEDEDE;
   border-radius: 5px;
   margin: 0;
-}
-#burst .burst-general-settings #burst-content-area .burst-grid form {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
@@ -432,24 +437,66 @@
   flex-basis: 100%;
   min-height: 100%;
 }
-#burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-header {
+#burst #burst-content-area .burst-grid .burst-grid-container.no-background {
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+#burst #burst-content-area .burst-grid .burst-grid-container.statistics {
+  grid-column: span 2;
+}
+#burst #burst-content-area .burst-grid .burst-grid-container.tipstricks {
+  grid-column: span 2;
+}
+#burst #burst-content-area .burst-grid .burst-grid-container.ourplugins {
+  grid-column: span 2;
+}
+@media screen and (max-width: 780px) {
+  #burst #burst-content-area .burst-grid .burst-grid-container {
+    grid-column: span 4 !important;
+  }
+}
+@media screen and (max-width: 1430px) {
+  #burst #burst-content-area .burst-grid .burst-grid-container {
+    grid-column: span 2;
+  }
+  #burst #burst-content-area .burst-grid .burst-grid-container.statistics {
+    grid-column: span 4;
+  }
+  #burst #burst-content-area .burst-grid .burst-grid-container.tipstricks {
+    grid-column: span 4;
+  }
+  #burst #burst-content-area .burst-grid .burst-grid-container.ourplugins {
+    grid-column: span 4;
+  }
+}
+#burst #burst-content-area .burst-grid .burst-grid-header {
   width: 100%;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   border-bottom: 1px solid #DEDEDE;
   padding: 10px 15px;
 }
-#burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-header h1 {
+#burst #burst-content-area .burst-grid .burst-grid-header .burst-grid-title {
   font-size: 17px;
   font-weight: 600;
+  padding: 9px 0 4px 0;
 }
-#burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-content {
+#burst #burst-content-area .burst-grid .burst-grid-content {
   width: 100%;
   box-sizing: border-box;
   padding: 10px 15px;
   flex-grow: 100;
 }
-#burst .burst-general-settings #burst-content-area .burst-grid .burst-grid-footer {
+#burst #burst-content-area .burst-grid .burst-grid-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
+  min-height: 51px;
   box-sizing: border-box;
   padding: 10px 15px;
   border-top: 1px solid #DEDEDE;
@@ -652,7 +699,20 @@
   padding: 0;
 }
 .burst-experiment-status span.burst-bullet {
+  transition: all 0.5s ease;
   margin-right: 5px;
+}
+.burst-experiment-status span.burst-bullet.loading {
+  animation: grow-and-shrink 1s infinite;
+}
+@keyframes grow-and-shrink {
+  0%,
+  100% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(1);
+  }
 }
 .toplevel_page_burst #wpbody-content,
 .burst-1_page_burst-experiments #wpbody-content,

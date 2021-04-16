@@ -242,8 +242,6 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			}
 			$variant_url_parameter = burst_random_str('12');
 			$control_url_parameter = burst_random_str('12');
-			error_log('control url parameter');
-			error_log($control_url_parameter);
 
 			$update_array = array(
 				'title'                     => sanitize_text_field( $this->title ),

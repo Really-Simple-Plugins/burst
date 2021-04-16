@@ -15,16 +15,19 @@
                 );
                 $selected_experiment_id = BURST::$experimenting->get_selected_experiment_id();
                 if (isset($_GET['page']) && $_GET['page'] === 'burst') { ?>
-                    <select name="burst_selected_experiment_id">
-                        <option value=""><?php _e("Select an experiment", "burst")?></option>
-		                <?php
-		                foreach ($experiments as $experiment){
-			                ?>
-                            <option value="<?php echo $experiment->ID?>" <?php if ( $selected_experiment_id == $experiment->ID) echo 'selected'?> ><?php echo $experiment->title?></option>
+                	<div class="burst_selected_experiment_id_wrapper">
+                		<label><?php _e('Show experiment data for:', 'burst') ?></label>
+	                    <select name="burst_selected_experiment_id">
+	                        <option value=""><?php _e("Select an experiment", "burst")?></option>
 			                <?php
-		                }
-		                ?>
-                    </select>
+			                foreach ($experiments as $experiment){
+				                ?>
+	                            <option value="<?php echo $experiment->ID?>" <?php if ( $selected_experiment_id == $experiment->ID) echo 'selected'?> ><?php echo $experiment->title?></option>
+				                <?php
+			                }
+			                ?>
+	                    </select>
+	                </div>
                 <?php }
                 ?>
 

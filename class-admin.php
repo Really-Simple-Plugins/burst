@@ -38,6 +38,8 @@ if ( ! class_exists( "burst_admin" ) ) {
             add_action( 'add_meta_boxes', array( $this, 'add_burst_metabox_to_classic_editor' ) );
 			add_action( 'admin_head', array( $this, 'hide_publish_button_on_experiments' ) );
 
+			add_action( 'wp_ajax_burst_load_status_info', array( $this, 'ajax_load_status_info') );
+
 			// deactivating
 			add_action( 'admin_footer', array($this, 'deactivate_popup'), 40);
 			add_action( 'admin_init', array($this, 'listen_for_deactivation'), 40);
@@ -644,113 +646,120 @@ if ( ! class_exists( "burst_admin" ) ) {
 			ob_start();
 			?>
 
-			<div class="wrap burst-settings">
-				<form action="" method="post" enctype="multipart/form-data">
-					<div class="burst-grid-header">
-						<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
-					</div>
-					<div class="burst-grid-content">
-						<?php
-						BURST::$field->get_fields( 'settings', 'general' );
-						?>
-					</div>
-					<div class="burst-grid-footer">
-						<?php
-						BURST::$field->save_button();
-						?>
-					</div>
-				</form>
-			</div>
+			<form class="burst-grid-container" action="" method="post" enctype="multipart/form-data">
+				<div class="burst-grid-header">
+					<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
+				</div>
+				<div class="burst-grid-content">
+					<?php
+					BURST::$field->get_fields( 'settings', 'general' );
+					?>
+				</div>
+				<div class="burst-grid-footer">
+					<?php
+					BURST::$field->save_button();
+					?>
+				</div>
+			</form>
 
-			<div class="wrap burst-settings">
-				<form action="" method="post" enctype="multipart/form-data">
-					<div class="burst-grid-header">
-						<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
-					</div>
-					<div class="burst-grid-content">
-						<?php
-						BURST::$field->get_fields( 'settings', 'general' );
-						?>
-					</div>
-					<div class="burst-grid-footer">
-						<?php
-						BURST::$field->save_button();
-						?>
-					</div>
-				</form>
-			</div>
+			<form class="burst-grid-container" action="" method="post" enctype="multipart/form-data">
+				<div class="burst-grid-header">
+					<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
+				</div>
+				<div class="burst-grid-content">
+					<?php
+					BURST::$field->get_fields( 'settings', 'general' );
+					?>
+				</div>
+				<div class="burst-grid-footer">
+					<?php
+					BURST::$field->save_button();
+					?>
+				</div>
+			</form>
 
-			<div class="wrap burst-settings">
-				<form action="" method="post" enctype="multipart/form-data">
-					<div class="burst-grid-header">
-						<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
-					</div>
-					<div class="burst-grid-content">
-						<?php
-						BURST::$field->get_fields( 'settings', 'general' );
-						?>
-					</div>
-					<div class="burst-grid-footer">
-						<?php
-						BURST::$field->save_button();
-						?>
-					</div>
-				</form>
-			</div>
+			<form class="burst-grid-container" action="" method="post" enctype="multipart/form-data">
+				<div class="burst-grid-header">
+					<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
+				</div>
+				<div class="burst-grid-content">
+					<?php
+					BURST::$field->get_fields( 'settings', 'general' );
+					?>
+				</div>
+				<div class="burst-grid-footer">
+					<?php
+					BURST::$field->save_button();
+					?>
+				</div>
+			</form>
 
-			<div class="wrap burst-settings">
-				<form action="" method="post" enctype="multipart/form-data">
-					<div class="burst-grid-header">
-						<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
-					</div>
-					<div class="burst-grid-content">
-						<?php
-						BURST::$field->get_fields( 'settings', 'general' );
-						?>
-					</div>
-					<div class="burst-grid-footer">
-						<?php
-						BURST::$field->save_button();
-						?>
-					</div>
-				</form>
-			</div>
+			<form class="burst-grid-container" action="" method="post" enctype="multipart/form-data">
+				<div class="burst-grid-header">
+					<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
+				</div>
+				<div class="burst-grid-content">
+					<?php
+					BURST::$field->get_fields( 'settings', 'general' );
+					?>
+				</div>
+				<div class="burst-grid-footer">
+					<?php
+					BURST::$field->save_button();
+					?>
+				</div>
+			</form>
 
-			<div class="wrap burst-settings">
-				<form action="" method="post" enctype="multipart/form-data">
-					<div class="burst-grid-header">
-						<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
-					</div>
-					<div class="burst-grid-content">
-						<?php
-						BURST::$field->get_fields( 'settings', 'general' );
-						?>
-					</div>
-					<div class="burst-grid-footer">
-						<?php
-						BURST::$field->save_button();
-						?>
-					</div>
-				</form>
-			</div>
 
-			<div class="wrap burst-settings">
-				<form action="" method="post" enctype="multipart/form-data">
-					<div class="burst-grid-header">
-						<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
-					</div>
-					<div class="burst-grid-content">
-						<?php
-						BURST::$field->get_fields( 'settings', 'general' );
-						?>
-					</div>
-					<div class="burst-grid-footer">
-						<?php
-						BURST::$field->save_button();
-						?>
-					</div>
-				</form>
-			</div>
+			<form class="burst-grid-container" action="" method="post" enctype="multipart/form-data">
+				<div class="burst-grid-header">
+					<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
+				</div>
+				<div class="burst-grid-content">
+					<?php
+					BURST::$field->get_fields( 'settings', 'general' );
+					?>
+				</div>
+				<div class="burst-grid-footer">
+					<?php
+					BURST::$field->save_button();
+					?>
+				</div>
+			</form>
+
+
+			<form class="burst-grid-container" action="" method="post" enctype="multipart/form-data">
+				<div class="burst-grid-header">
+					<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
+				</div>
+				<div class="burst-grid-content">
+					<?php
+					BURST::$field->get_fields( 'settings', 'general' );
+					?>
+				</div>
+				<div class="burst-grid-footer">
+					<?php
+					BURST::$field->save_button();
+					?>
+				</div>
+			</form>
+
+
+			<form class="burst-grid-container" action="" method="post" enctype="multipart/form-data">
+				<div class="burst-grid-header">
+					<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
+				</div>
+				<div class="burst-grid-content">
+					<?php
+					BURST::$field->get_fields( 'settings', 'general' );
+					?>
+				</div>
+				<div class="burst-grid-footer">
+					<?php
+					BURST::$field->save_button();
+					?>
+				</div>
+			</form>
 
 			<?php
 
@@ -824,6 +833,40 @@ if ( ! class_exists( "burst_admin" ) ) {
         	}
 
         }
+
+        /**
+		 * Function for getting statistics for display with Chart JS
+		 * @return json                     Returns a JSON that is compatible with Chart JS
+		 *
+		 */
+		public function ajax_load_status_info(){
+			$error = false;
+			if ( ! burst_user_can_manage() ) {
+				$error = true;
+			}
+
+			if ( !isset($_GET['experiment_id'])) {
+				$error = true;
+			}
+
+			if ( !$error ) {
+				$experiment_id = intval( $_GET['experiment_id'] );
+			}
+
+			if ( !$error ) {
+				$experiment = new BURST_EXPERIMENT($experiment_id);
+				$data['status'] = burst_display_experiment_status($experiment->status, true);
+				$data['date_end'] = burst_display_date($experiment->date_end);
+				$data['date_end_text'] = __('Experiment completed on', 'burst' ) .' '. burst_display_date ($experiment->date_end);
+			}
+
+			$return  = array(
+				'success' => !$error,
+				'data'    => $data,
+			);
+			echo json_encode( $return );
+			die;
+		}
 
 	    /**
 	     *

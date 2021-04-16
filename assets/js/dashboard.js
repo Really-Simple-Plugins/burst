@@ -63,11 +63,14 @@ jQuery(document).ready(function ($) {
     function burstEnableStartStopBtns() {
         $('.burst-experiment-start button').removeAttr('disabled');
         $('.burst-experiment-stop button').removeAttr('disabled');
+        $('.burst_selected_experiment_id_wrapper select').removeAttr('disabled');
+        
     }
 
     function burstDisableStartStopBtns() {
         $('.burst-experiment-start button').attr('disabled', true);
         $('.burst-experiment-stop button').attr('disabled', true);
+        $('.burst_selected_experiment_id_wrapper select').attr('disabled', true);
     }
 
     function burstInitChartJS(date_start, date_end) {
@@ -282,6 +285,7 @@ jQuery(document).ready(function ($) {
     $(document).on('change', 'select[name=burst_selected_experiment_id]', function(){
         burstInitChartJS();
         burstLoadGridBlocks();
+        burstLoadStatusInfo();
     });
 
     burstLoadGridBlocks();
@@ -294,6 +298,13 @@ jQuery(document).ready(function ($) {
 
         $('.burst-load-ajax').each(function(){
             var gridContainer = $(this);
+            // if there is no skeleton add a skeleton
+            if (gridContainer.find('.burst-skeleton').length == 0) {
+                 gridContainer.find('.burst-grid-content').fadeOut(200, function() {
+                        $(this).html('<div class="burst-skeleton"></div>').fadeIn(300);
+                });
+            }
+            
             var type = gridContainer.data('table_type');
             $.ajax({
                 type: "get",
@@ -308,7 +319,9 @@ jQuery(document).ready(function ($) {
                 },
                 success: function (response) {
                     if (response.success) {
-                        gridContainer.find('.item-content').html(response.html);
+                        gridContainer.find('.burst-grid-content').fadeOut(300, function() {
+                            $(this).html(response.html).fadeIn(200);
+                        })
                     }
                 }
             })
@@ -317,6 +330,52 @@ jQuery(document).ready(function ($) {
 
     function burstUpdateDate(start, end) {
         $('.burst-date-container span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+    }
+
+    burstLoadStatusInfo();
+    function burstLoadStatusInfo(){
+        var experiment_id = $('select[name=burst_selected_experiment_id]').val();
+
+        // animate status
+        if ( $('.burst-experiment-status').find('.loading').length == 0 ) {
+            $('.burst-experiment-status .burst-bullet').removeClass().addClass('burst-bullet grey loading');
+            $('.burst-experiment-status .burst-experiment-status__text').fadeOut(300, function() {
+                $(this).html('Loading...').fadeIn(200);
+            });
+            $('.burst-experiment-stop').fadeOut();
+            $('.burst-experiment-completed').fadeOut(200);
+
+        };
+
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: burst.ajaxurl,
+            data: {
+                action: "burst_load_status_info",
+                experiment_id: experiment_id,
+            },
+            success: function (response) {
+                if (response.success) {
+                    console.log(response);
+                    $('.burst-experiment-status .burst-bullet').removeClass().addClass('burst-bullet ' + response.data.status.class);
+                    $('.burst-experiment-status .burst-experiment-status__text').fadeOut(300, function() {
+                        $(this).html(response.data.status.title).fadeIn(200);
+                    });
+                    $('.burst-experiment-stop').hide();
+                    $('.burst-experiment-completed').hide();
+                    if (response.data.status.title === 'Active') {
+                        $('.burst-experiment-stop').show();
+                    } else if(response.data.status.title === 'Completed'){
+                        $('.burst-experiment-completed-text').html(response.data.date_end_text)
+                        $('.burst-experiment-completed').show();
+                    }
+                    // gridContainer.find('.burst-skeleton').fadeOut(500, function() {
+                    //     gridContainer.find('.burst-grid-content').hide().html(response.html).fadeIn(1000);
+                    // })
+                }
+            }
+        })
     }
 
 
