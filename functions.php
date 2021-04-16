@@ -114,6 +114,28 @@ if ( !function_exists( 'burst_sanitize_experiment_status' )) {
 	}
 }
 
+if ( !function_exists('burst_experiment_not_reached_sample_size')) {
+	/**
+	 * Check if any of the active expirements is running 30 days, and has not reached the sample size yet.
+	 *
+	 * @return bool
+	 */
+	function burst_experiment_not_reached_sample_size(){
+		$experiments = burst_get_experiments( array(
+			'status' => 'active',
+		));
+		foreach ( $experiments as $experiment ) {
+			$experiment = new BURST_EXPERIMENT($experiment->id);
+			$one_month_ago = strtotime('-30 days');
+			if ($one_month_ago > $experiment->date_started && !$experiment->has_reached_minimum_sample_size() ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+}
+
 if (!function_exists('burst_read_more')) {
 	/**
 	 * Create a generic read more text with link for help texts.

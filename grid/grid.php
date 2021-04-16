@@ -1,5 +1,5 @@
 <?php
-defined( 'ABSPATH' ) or die( "you do not have access to this page!" );
+defined( 'ABSPATH' ) or die();
 
 add_action( 'admin_enqueue_scripts', 'burst_enqueue_grid_assets' );
 function burst_enqueue_grid_assets( $hook ) {

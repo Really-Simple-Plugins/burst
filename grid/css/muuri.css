@@ -131,7 +131,7 @@
 .burst-grid .burst-grid .item-container {
   background-color: #fff;
   position: relative;
-  box-shadow: 1px 1px #dedede;
+  box-shadow: 1px 1px 1px 1px #DEDEDE;
   height: 100%;
 }
 .burst-grid .burst-grid .item-container .item-content {

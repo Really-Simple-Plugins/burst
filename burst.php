@@ -27,7 +27,7 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-defined( 'ABSPATH' ) or die( "you do not have access to this page!" );
+defined( 'ABSPATH' ) or die();
 define( 'burst_free', true );
 
 if ( ! function_exists( 'burst_activation_check' ) ) {
@@ -65,6 +65,7 @@ if ( ! class_exists( 'BURST' ) ) {
 		public static $field;
 		public static $config;
 		public static $tour;
+		public static $notices;
 
 		private function __construct() {
 			self::setup_constants();
@@ -80,6 +81,7 @@ if ( ! class_exists( 'BURST' ) ) {
 				self::$admin           = new burst_admin();
 				self::$field 		   = new burst_field();
 				self::$tour            = new burst_tour();
+				self::$notices         = new burst_notices();
 			}
 		}
 
@@ -128,6 +130,7 @@ if ( ! class_exists( 'BURST' ) ) {
 				require_once( burst_path . 'grid/grid.php' );
 				require_once( burst_path . 'class-review.php' );
 				require_once( burst_path . 'shepherd/tour.php' );
+				require_once( burst_path . 'config/notices.php' );
 			}
 			require_once( burst_path . 'statistics/class-statistics.php' );
 			require_once( burst_path . 'experiments/class-experiment.php' );
@@ -181,6 +184,21 @@ if ( ! function_exists( 'burst_start_tour' ) ) {
 		if ( ! get_site_option( 'burst_tour_shown_once' ) ) {
 			update_site_option( 'burst_tour_started', true );
 		}
+		$experiment_posts = get_posts(
+			array(
+				'post_status' => 'draft',
+				'meta_key'    => 'burst_deactivated_experiment',
+				'meta_value'  => true,
+			)
+		);
+		foreach ($experiment_posts as $experiment_post ) {
+			delete_post_meta($experiment_post->ID, 'burst_deactivated_experiment' );
+			$args = array(
+				'ID'            => $experiment_post->ID,
+				'post_status'   => 'experiment',
+			);
+			wp_update_post($args);
+		}
 	}
 
 	register_activation_hook( __FILE__, 'burst_start_tour' );
@@ -191,6 +209,21 @@ if ( !function_exists( 'burst_clear_scheduled_hooks' )) {
 	function burst_clear_scheduled_hooks() {
 		wp_clear_scheduled_hook( 'burst_every_week_hook' );
 		wp_clear_scheduled_hook( 'burst_every_day_hook' );
+
+		$experiment_posts = get_posts(
+			array(
+				'post_status' => 'experiment',
+			)
+		);
+		foreach ($experiment_posts as $experiment_post ) {
+			//add some meta data to signify that this is an experiment post
+			update_post_meta($experiment_post->ID, 'burst_deactivated_experiment', true);
+			$args = array(
+				'ID'             => $experiment_post->ID,
+				'post_status' => 'draft',
+			);
+			wp_update_post($args);
+		}
 	}
 }
 

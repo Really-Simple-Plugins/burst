@@ -1,5 +1,28 @@
 jQuery(document).ready(function ($) {
     'use strict';
+
+    $(document).on('click', '.burst-dismiss-notice', function(){
+        var notice_id = $(this).data('notice_id');
+        var btn = $(this);
+        btn.attr('disabled', 'disabled');
+        $.ajax({
+            type: "POST",
+            url: burst.ajaxurl,
+            dataType: 'json',
+            data: ({
+                action: 'burst_dismiss_notice',
+                id: notice_id,
+            }),
+            success: function (response) {
+                btn.removeAttr('disabled');
+                if (response.success) {
+                    btn.closest('.burst-notice').remove();
+                }
+            }
+        });
+    });
+
+
     /**
      * Start and stop experiment from the dashboard statistics overview
      */
