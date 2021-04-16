@@ -414,14 +414,14 @@ if ( ! class_exists( "burst_admin" ) ) {
 				return;
 			}
 
-			$warnings      = $this->get_warnings( true );
+			$warnings      = BURST::$notices->get_notices( array('plus_ones'=>true) );
 			$warning_count = count( $warnings );
-			$warning_title = esc_attr( sprintf( '%d plugin warnings',
-				$warning_count ) );
-			$menu_label    = sprintf( __( burst_plugin_name, 'burst' ),
+			$warning_title = esc_attr( sprintf( '%d plugin warnings', $warning_count ) );
+			$warning_count = count( $warnings );
+			$warning_title = esc_attr( sprintf( '%d plugin warnings', $warning_count ) );
+			$menu_label    = sprintf( __( 'Burst %s', 'complianz-gdpr' ),
 				"<span class='update-plugins count-$warning_count' title='$warning_title'><span class='update-count'>"
 				. number_format_i18n( $warning_count ) . "</span></span>" );
-
 
 			global $burst_admin_page;
 			$burst_admin_page = add_menu_page(

@@ -585,6 +585,9 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		public function probability_of_control_winning(){
 			$m1 = $this->get_average( 'control');
 			$m2 = $this->get_average( 'variant');
+			if ( $m1 + $m2 == 0 ) {
+				return 0;
+			}
 			return round(100 * $m1 / ($m1 + $m2), 1);
 		}
 

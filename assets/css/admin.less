@@ -27,6 +27,66 @@
 }
 
 #burst {
+	.burst-notice {
+		.burst-message {
+			font-size:12px;
+			padding:14px 0;
+		}
+		.burst-status {
+			display: block;
+			min-width: 60px;
+			text-align: center;
+			border-radius: 15px;
+			padding: 4px 8px 4px 8px;
+			font-size: 12px;
+			font-weight: 600;
+			height: 17px;
+			line-height:17px;
+			color: white;
+
+
+			&.burst-completed {
+				background-color: @color-success;
+			}
+
+			&.burst-open {
+				background-color: @color-open;
+			}
+
+			&.burst-urgent {
+				background-color: @color-warning;
+			}
+		}
+		.burst-plusone {
+			border-radius: 50%;
+			background-color: @color-error;
+			color: #fff;
+			padding: 2px 6px;
+			font-size: 10px;
+		}
+		display:grid;
+		grid-template-columns: 70px auto 50px;
+		grid-gap:20px;
+		>div {
+			padding: 10px 0;
+		}
+		>div:nth-child(3) {
+			padding:0;
+		}
+
+		button {
+			color: @grey-light;
+			margin-top:10px;
+			border: 0;
+			background-color: transparent;
+			cursor:pointer;
+			.cmplz-close-notice-x {
+				color: #ccc;
+				font-size: 0.9em;
+			}
+		}
+	}
+
 	padding-bottom: 60px;
 	h1, h2, h3, h4, h5 ,h6, p{
 		color: @text-color;

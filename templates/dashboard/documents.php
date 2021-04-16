@@ -1,4 +1,4 @@
-<?php defined( 'ABSPATH' ) or die( "you do not have access to this page!" );?>
+<?php defined( 'ABSPATH' ) or die();?>
 <table class="burst-dashboard-documents-table burst-dashboard-text">
 	<?php
 	echo "Table or something";
