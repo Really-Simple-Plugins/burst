@@ -48,6 +48,60 @@
 	 */
   /* Grid */
 }
+#burst .burst-notice {
+  display: grid;
+  grid-template-columns: 70px auto 50px;
+  grid-gap: 20px;
+}
+#burst .burst-notice .burst-message {
+  font-size: 12px;
+  padding: 14px 0;
+}
+#burst .burst-notice .burst-status {
+  display: block;
+  min-width: 60px;
+  text-align: center;
+  border-radius: 15px;
+  padding: 4px 8px 4px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  height: 17px;
+  line-height: 17px;
+  color: white;
+}
+#burst .burst-notice .burst-status.burst-completed {
+  background-color: #61CE70;
+}
+#burst .burst-notice .burst-status.burst-open {
+  background-color: #29b6f6;
+}
+#burst .burst-notice .burst-status.burst-urgent {
+  background-color: #f39c12;
+}
+#burst .burst-notice .burst-plusone {
+  border-radius: 50%;
+  background-color: #D7263D;
+  color: #fff;
+  padding: 2px 6px;
+  font-size: 10px;
+}
+#burst .burst-notice > div {
+  padding: 10px 0;
+}
+#burst .burst-notice > div:nth-child(3) {
+  padding: 0;
+}
+#burst .burst-notice button {
+  color: #ededed;
+  margin-top: 10px;
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+}
+#burst .burst-notice button .cmplz-close-notice-x {
+  color: #ccc;
+  font-size: 0.9em;
+}
 #burst h1,
 #burst h2,
 #burst h3,

@@ -61,7 +61,7 @@ if ( ! class_exists( "burst_statistics" ) ) {
 						'borderColor' => $this->get_graph_color($i),
 						'label' => $title,
 						'fill' => 'false',
-						'borderDash' => $borderDash,
+						//'borderDash' => $borderDash,
 					);
 					$i++;
 				}
