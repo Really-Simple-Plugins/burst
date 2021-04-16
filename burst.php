@@ -173,7 +173,6 @@ if ( ! function_exists( 'burst_set_activation_time_stamp' ) ) {
 	}
 
 	register_activation_hook( __FILE__, 'burst_set_activation_time_stamp' );
-
 }
 
 if ( ! function_exists( 'burst_start_tour' ) ) {
