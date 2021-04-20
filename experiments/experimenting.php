@@ -14,7 +14,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			}
 			$this->cookie_expiration_days = apply_filters('burst_cookie_retention_days', 365);
 			add_action( 'init', array($this, 'add_experiment_post_status') );
-			add_filter( 'the_content', array($this, 'load_experiment_content'), 2, 2);
+			add_filter( 'the_content', array($this, 'load_experiment_content'), 10, 2);
 			add_action( 'wp_enqueue_scripts', array($this,'enqueue_assets') );
 			add_action( 'admin_footer-post.php', array($this,'add_variant_status_add_in_post_page') );
 		    add_action( 'admin_footer-post-new.php', array($this,'add_variant_status_add_in_post_page') );
@@ -323,12 +323,10 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 				$content .= '<script type="text/javascript">var burst_experiment_id = "' . $experiment->id . '";var burst_is_goal_page = true;</script>';
 			} else if ( $experiment->id && $experiment->variant_id ) {
 				error_log('is experiment');
-				$content_variant = get_the_content( null, false, $experiment->variant_id );
-				$content_control = get_the_content( null, false, $experiment->control_id );
+				$content_control = $content;
+				$content_variant = $this->get_the_content( $experiment->variant_id );
+				
 				$content = '<div class="burst_control" style="visibility: hidden">'.$content_control.'</div><div class="burst_variant" style="display: none">'.$content_variant.'</div>';
-				//$content = apply_filters( 'the_content', $content );
-				// Causes infinite loop
-				// $content = str_replace( ']]>', ']]&gt;', $content );
 
 				$content .= '<script type="text/javascript">
 								var burst_experiment_id = ' . $experiment->id . ';
@@ -336,6 +334,11 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 							</script>';
 			}
 			return $content;
+		}
+
+
+		private function get_the_content($post_id) {
+			return apply_filters('burst_the_content', get_the_content( null, false, $post_id ), $post_id );
 		}
 
 		/**
