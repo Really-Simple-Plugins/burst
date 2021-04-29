@@ -124,7 +124,7 @@ if ( !function_exists('burst_experiment_not_reached_sample_size')) {
 			'status' => 'active',
 		));
 		foreach ( $experiments as $experiment ) {
-			$experiment = new BURST_EXPERIMENT($experiment->id);
+			$experiment = new BURST_EXPERIMENT($experiment->ID);
 			$one_month_ago = strtotime('-30 days');
 			if ($one_month_ago > $experiment->date_started && !$experiment->has_reached_minimum_sample_size() ) {
 				return true;
@@ -213,6 +213,52 @@ if ( ! function_exists( 'burst_array_filter_multidimensional' ) ) {
 	}
 }
 
+if ( !function_exists('burst_generate_test_data')){
+	function burst_generate_test_data(){
+		global $wpdb;
+
+
+		$experiment_id = 10;
+
+		for ( $i=30;$i>=0;$i--){
+			$daytime = strtotime("-$i days");
+			//generate random nr of hits between 4 and 100
+			$hitcount = rand(0,100);
+			for ( $hits=0;$hits<$hitcount;$hits++){
+				//divide day in seconds, equally divided by hits numer
+				$between_hits = round(DAY_IN_SECONDS / ($hitcount+1), 0);
+				$time = $daytime + ($hits * $between_hits);
+
+				$test_versions = array(
+					'control',
+					'variant',
+				);
+				$test_version_id = rand(0,1);
+				$conversion = rand(0,6);
+				$conversion = ($conversion==4);
+				$burst_uid = 'test_uid_'.time();
+				$test_version = $test_versions[$test_version_id];
+				$url = site_url();
+
+				$update_array = array(
+					'page_url'            		=> $url,
+					'time'               		=> $time,
+					'uid'               		=> $burst_uid,
+					'test_version'				=> $test_version,
+					'experiment_id'				=> $experiment_id,
+					'conversion'				=> $conversion,
+				);
+				$wpdb->insert(
+					$wpdb->prefix . 'burst_statistics',
+					$update_array
+				);
+			}
+		}
+
+
+	}
+}
+//burst_generate_test_data();
 
 add_action( 'wp_ajax_burst_get_posts', 'burst_get_posts_ajax_callback' ); // wp_ajax_{action}
 function burst_get_posts_ajax_callback(){

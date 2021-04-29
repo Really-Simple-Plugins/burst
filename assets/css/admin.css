@@ -48,6 +48,9 @@
 	 */
   /* Grid */
 }
+#burst .burst-notice-container {
+  min-height: 46px;
+}
 #burst .burst-notice {
   display: grid;
   grid-template-columns: 70px auto 50px;

@@ -609,6 +609,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 		 *
 		 * @return float
 		 */
+
 		public function get_margin_of_error(){
 			$n = $this->get_sample_size();
 			//without any data, it's 100%
