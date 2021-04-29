@@ -1,4 +1,5 @@
 window.burst_one_request_completed = false;
+window.burst_test_version = burst_get_user_test_version();
 
 if ( !burst_is_user_agent() ) {
 	burst_track_hit(function() {
@@ -22,8 +23,10 @@ if ( burst_is_experiment_page() ) {
 }
 
 if (window.burst_identifier !== undefined ) {
+	console.log('burst_identifier !== undefined');
 	document.querySelectorAll( window.burst_identifier ).forEach(item => {
 		item.addEventListener('click', event => {
+			console.log('click on');
 			var target = (event.currentTarget) ? event.currentTarget : event.srcElement;
 			var is_link = false;
 			if (target.tagName.toLowerCase() === "a" && target !== undefined) {
@@ -36,6 +39,7 @@ if (window.burst_identifier !== undefined ) {
 
 			// Do the async thing
 			burst_track_hit(function() {
+				console.log('burst_track_hit');
 				// go to the link
 				if (is_link) window.location = href;
 			});
@@ -59,7 +63,8 @@ function burst_track_hit(callback) {
 	if (window.burst_is_goal_page !== undefined) {
 		conversion = true;
 	}
-
+	console.log('test_version')
+	console.log(window.burst_test_version);
 	var data = {
 		'url': url,
 		'test_version': window.burst_test_version,
@@ -136,8 +141,8 @@ function burst_show_content( test_type ){
  */
 function burst_get_user_test_version(){
 	//get uid cookie
-	var uid = burst_get_cookie('burst_uid');
-	if ( uid.length == 0 ) {
+	var v = burst_get_cookie('burst_v');
+	if ( v.length == 0 ) {
 		//determine test_version randomly
 		var rand = Math.floor(Math.random() * 2);
 		if ( rand === 1 ) {

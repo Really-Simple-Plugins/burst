@@ -171,8 +171,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 			$post_id = isset($_GET['post']) ? intval($_GET['post']) : false;
 			$post_status = get_post_status($post_id);
+			$experiment_id = intval(get_post_meta($post_id, 'burst_experiment_id', true));
 
-			if ($post_status == 'experiment') {
+			if ($post_status == 'experiment' && $experiment_id) {
 				add_meta_box('burst_edit_meta_box', __('Setup experiment', 'burst'), array($this, 'show_burst_variant_metabox'), null, 'side', 'default', array(
 					//'__block_editor_compatible_meta_box' => true,
 				));			
