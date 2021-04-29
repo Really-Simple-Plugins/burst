@@ -54,6 +54,8 @@ if (intval($experiment_id)) {
 								echo burst_display_experiment_status($experiment->status); 
 							}
 							?>
+							<input class="button button-secondary" name="burst_save_experiment_button"
+					        	type="submit" value="<?php _e( 'Save settings', 'burst' ) ?>">
 							<input class="button button-primary" name="burst_start_experiment_button"
 					        	type="submit" value="<?php _e( 'Start the experiment', 'burst' ) ?>">
 					    </div>

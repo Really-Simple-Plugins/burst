@@ -58,12 +58,15 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 				$redirect_id = $this->create_experiment($post_id);
 			} elseif ( isset( $_POST["burst_go_to_setup_experiment_button"] ) ){
 				$redirect_id = intval($_POST["burst_redirect_to_variant"]);
+			} elseif ( isset( $_POST["burst_save_experiment_button"] ) ){
+				$redirect_id = $post_id;
+				$experiment = new BURST_EXPERIMENT(false, $post_id );
+				$experiment->process_form( $_POST );
 			} elseif ( isset( $_POST["burst_start_experiment_button"] ) ){
 				$redirect_id = $post_id;
 				$experiment = new BURST_EXPERIMENT(false, $post_id );
 				$experiment->process_form( $_POST );
 				$experiment->start();
-
 			} elseif ( isset( $_POST["burst_stop_experiment_button"] ) ){
 				$redirect_id = $post_id;
 				$experiment = new BURST_EXPERIMENT(false, $post_id );

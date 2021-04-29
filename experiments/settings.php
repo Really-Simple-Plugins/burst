@@ -13,6 +13,7 @@ function burst_add_experiment_settings($fields){
 				'label'       => __( "Experiment name", 'burst' ),
 				'placeholder' => __( 'For example: Red vs green buttons' ),
 				'help'        => __( 'This name is for internal use only. Try to give the experiment a clear name, so you can find this test again.', 'burst' ),
+				'required' => true,
 			),
 
 			'duplicate_or_choose_existing' => array(
@@ -25,6 +26,7 @@ function burst_add_experiment_settings($fields){
 					'existing-page'  => __( "Choose existing page", 'burst' ),
 				),
 				'default' => 'duplicate',
+				'required' => true,
 			),
 
 			'variant_id' => array(
@@ -41,28 +43,8 @@ function burst_add_experiment_settings($fields){
 				'condition' => array(
 					'duplicate_or_choose_existing' => 'existing-page',
 				),
+				'required' => true,
 			),
-
-			// 'control_id' => array(
-			// 	'source'             => 'BURST_EXPERIMENT',
-			// 	'step'               => 'variant',
-			// 	'type'               => 'select2variant',
-			// 	'label'              => __( "Variant",
-			// 		'burst' ),
-			// 	'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
-			// 		'burst' ),
-			// ),
-
-			// 'variant_id' => array(
-			// 	'source'             => 'BURST_EXPERIMENT',
-			// 	'step'               => 'general',
-			// 	'type'               => 'select2',
-			// 	'label'              => __( "Variant",
-			// 		'burst' ),
-			// 	'help'               => __( 'Select or make a variant page. The variant page is the page you want to test against your control page. The variant page should be an improvement compared to the control page. At least you should think it is an improvement. That is something you will find out by running the experiment.',
-			// 		'burst' ),
-			// ),
-
 
 			'goal' => array(
 				'source'      => 'BURST_EXPERIMENT',
@@ -75,6 +57,7 @@ function burst_add_experiment_settings($fields){
 				'label'       => __( "Goal", 'burst' ),
 				'default' => 'click-on-element',
 				'help'        => __( 'Select what metric you want to improve. For example a click on a button or a visit on a checkout page.', 'burst' ),
+				'required' => true,
 			),
 
 			'goal_identifier' => array(
@@ -85,6 +68,7 @@ function burst_add_experiment_settings($fields){
 				'condition' => array(
 					'goal' => 'click',
 				),
+				'required' => true,
 			),
 
 			'goal_id' => array(
@@ -98,6 +82,7 @@ function burst_add_experiment_settings($fields){
 				'condition' => array(
 					'goal' => 'visit',
 				),
+				'required' => true,
 			),
 
 			'minimum_samplesize' => array(
@@ -112,6 +97,7 @@ function burst_add_experiment_settings($fields){
 					'-1'  => __( "Custom number of visits", 'burst' ),
 				),
 				'label'       => __( "Timeline", 'burst' ),
+				'required' => true,
 			),
 
 			'minimum_samplesize_custom' => array(
@@ -122,6 +108,7 @@ function burst_add_experiment_settings($fields){
 				'condition' => array(
 					'minimum_samplesize' => -1,
 				),
+				'required' => true,
 			),
 
 

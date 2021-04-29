@@ -528,6 +528,7 @@
   content: attr(data-text);
   /* here's the magic */
   position: absolute;
+  z-index: 2;
   /* vertically center */
   top: 50%;
   transform: translateY(-50%);
@@ -800,4 +801,3 @@ input:focus + .burst-slider {
 .wp-core-ui .button.button-tertiary:hover {
   background-color: #b92538;
 }
-/*# sourceMappingURL=admin.css.map */
