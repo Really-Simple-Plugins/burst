@@ -29,6 +29,16 @@ if ( ! class_exists( "burst_statistics" ) ) {
 			if ( !$error ) {
 				$date_start = intval( $_GET['date_start'] );
 				$date_end = intval( $_GET['date_end'] );
+				$experiment = new BURST_EXPERIMENT($experiment_id);
+				$experiment_start = empty($experiment->date_started) ? time() : $experiment->date_started;
+				$experiment_end = empty($experiment->date_end) ? time() : $experiment->date_end;
+				$date_start = empty($date_start) ? $experiment_start : $date_start;
+				error_log("date_start ".$date_start);
+
+				$date_end = empty($date_end) ? $experiment_end : $date_end;
+
+
+				if ( $date_end==0 ) $date_end = time()-2*HOUR_IN_SECONDS;
 				//for each day, counting back from "now" to the first day, get the date.
 				$nr_of_periods = $this->get_nr_of_periods('DAY', $date_start , $date_end);
 				$end_date_days_ago = $this->nr_of_periods_ago('DAY', $date_end);
@@ -47,12 +57,9 @@ if ( ! class_exists( "burst_statistics" ) ) {
 					'variant',
 				);
 				foreach ($test_versions as $test_version ) {
-					$borderDash = array(0,0);
 					$title = ucfirst($test_version);
-					if ( $test_version === 'variant' ) {
-						$borderDash = array(10,10);
-					}
-
+					error_log($date_start);
+					error_log($date_end);
 					//get hits grouped per timeslot. default day
 					$hits = $this->get_grouped_statistics_array($experiment_id, $test_version, $date_start, $date_end);
 					$data['datasets'][] = array(
@@ -61,34 +68,21 @@ if ( ! class_exists( "burst_statistics" ) ) {
 						'borderColor' => $this->get_graph_color($i),
 						'label' => $title,
 						'fill' => 'false',
-						//'borderDash' => $borderDash,
 					);
 					$i++;
 				}
-				//test data
-//						$data = array(
-//							'labels' => array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
-//							'datasets' => array( array(
-//								'data' =>[8, 13, 8, 9, 6, 0, false],
-//								'backgroundColor' => 'rgba(231, 126, 35, 0.2)',
-//								'borderColor' => 'rgba(231, 126, 35, 1)',
-//								'label' => 'control'
-//							),
-//							array(
-//								'data' => array(8, 9, 12, 20, 6, 2.5 ,3),
-//								'backgroundColor' => 'rgba(51, 152, 219, 0.2)',
-//								'borderColor' => 'rgba(51, 152, 219, 1)',
-//								'label' => 'variant'
-//							))
-//						);
-
 			}
 
 			if ( isset($data['datasets']) ) {
 				$max = 5;
-				if (isset($data['datasets']['data']) && count($data['datasets']['data'])>0){
+				if (isset($data['datasets'][0]['data']) && count($data['datasets'][0]['data'])>0){
 					//get highest hit count for max value
 					$max = max(array_map('max', array_column( $data['datasets'], 'data' )));
+				}
+				if (isset($data['datasets'][1]['data']) && count($data['datasets'][1]['data'])>0){
+					//get highest hit count for max value
+					$max2 = max(array_map('max', array_column( $data['datasets'], 'data' )));
+					$max = $max2>$max ? $max2 : $max;
 				}
 
 				$data['max'] = $max > 5 ? $max : 5;
@@ -103,9 +97,10 @@ if ( ! class_exists( "burst_statistics" ) ) {
 				$data['max'] = 5;
 			}
 
-			$experiment = new BURST_EXPERIMENT($experiment_id);
-			$data['date_start'] = empty($experiment->date_started) ? time() : $experiment->date_started;
-			$data['date_end'] = empty($experiment->date_end) ? time() : $experiment->date_end;
+			if (!$error) {
+				$data['date_start'] = $date_start;
+				$data['date_end'] = $date_end;
+			}
 
 			$return  = array(
 				'success' => !$error,
@@ -130,9 +125,9 @@ if ( ! class_exists( "burst_statistics" ) ) {
 
 			$test_version = ( $test_version === 'variant') ? 'variant' : 'control';
 			$sql = "SELECT COUNT(*) as hit_count, CONCAT(YEAR(from_unixtime(time)),'-',DAYOFYEAR(from_unixtime(time)) ) as period
-					FROM {$wpdb->prefix}burst_statistics where experiment_id = $experiment_id AND test_version='$test_version' AND time>$start AND time<$end
+					FROM {$wpdb->prefix}burst_statistics where experiment_id = $experiment_id AND test_version='$test_version' AND conversion = 1 AND time>$start AND time<$end
 					GROUP BY CONCAT(YEAR(from_unixtime(time)),'-',DAYOFYEAR(from_unixtime(time)) ) order by period asc";
-
+			error_log($sql);
 			$results = $wpdb->get_results($sql);
 			$nr_of_periods = $this->get_nr_of_periods('DAY', $start, $end );
 			$end_date_days_ago = $this->nr_of_periods_ago('DAY', $end );

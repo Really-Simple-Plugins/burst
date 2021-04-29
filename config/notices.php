@@ -52,7 +52,7 @@ if ( ! class_exists( "burst_notices" ) ) {
 
 		public function get_notices( $args = array() ) {
 			$notices = apply_filters( 'burst_notices', array(
-					'upgraded_to_five' => array(
+					'not_reached_sample_size' => array(
 						'warning_condition' => 'burst_experiment_not_reached_sample_size',
 						//				'success_conditions'  => array(
 						//					'document->all_required_pages_created',
@@ -140,6 +140,8 @@ if ( ! class_exists( "burst_notices" ) ) {
 				set_transient( 'complianz_warnings', $active_notices, HOUR_IN_SECONDS );
 			}
 
+			if (!is_array($active_notices)) $active_notices = array();
+
 			//filtering outside cache if, to make sure all warnings are saved for the cache.
 			//filter by status
 			if ( $args['status'] !== 'all' ) {
@@ -188,6 +190,10 @@ if ( ! class_exists( "burst_notices" ) ) {
 			return $active_notices;
 		}
 
+		/**
+		 * Render a notice
+		 * @param $notice
+		 */
 		public function render_warning( $notice ) {
 			$id     = key( $notice );
 			$notice = $notice[ $id ];
