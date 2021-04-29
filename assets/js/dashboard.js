@@ -83,7 +83,7 @@ jQuery(document).ready(function ($) {
         var YscaleLabelDisplay = true;
         var titleDisplay = false;
         var legend = true;
-        var config = {
+        window.config = {
             type: 'line',
             data: {
                 labels: ['...', '...', '...', '...', '...', '...', '...'],
@@ -117,8 +117,9 @@ jQuery(document).ready(function ($) {
                     text: 'Select an experiment'
                 },
                 tooltips: {
-                    mode: 'index',
-                    intersect: false,
+                    // mode: 'index',
+                    // intersect: false,
+                    enabled: false
                 },
                 hover: {
                     mode: 'nearest',
@@ -150,8 +151,10 @@ jQuery(document).ready(function ($) {
         };
 
         var ctx = document.getElementsByClassName('burst-chartjs-stats');
-        window.conversionGraph = new Chart(ctx, config);
-
+        if ( window.conversionGraph != undefined ) {
+            window.conversionGraph.destroy();
+        }
+        window.conversionGraph = new Chart(ctx, window.config);
 
         var experiment_id = $('select[name=burst_selected_experiment_id]').val();
         if (experiment_id > 0) {
@@ -175,19 +178,19 @@ jQuery(document).ready(function ($) {
 
                         var i = 0;
                         response.data.datasets.forEach(function (dataset) {
-                            if (config.data.datasets.hasOwnProperty(i)) {
-                                config.data.datasets[i] = dataset;
+                            if (window.config.data.datasets.hasOwnProperty(i)) {
+                                window.config.data.datasets[i] = dataset;
                             } else {
                                 var newDataset = dataset;
-                                config.data.datasets.push(newDataset);
+                                window.config.data.datasets.push(newDataset);
                             }
 
                             i++;
                         });
 
-                        config.data.labels = response.data.labels;
-                        config.options.title.text = response.title;
-                        config.options.scales.yAxes[0].ticks.max = 20;//parseInt(response.data.max);
+                        window.config.data.labels = response.data.labels;
+                        window.config.options.title.text = response.title;
+                        window.config.options.scales.yAxes[0].ticks.max = parseInt(response.data.max);
                         window.conversionGraph.update();
                         burstEnableStartStopBtns();
                     } else {
@@ -357,7 +360,6 @@ jQuery(document).ready(function ($) {
             },
             success: function (response) {
                 if (response.success) {
-                    console.log(response);
                     $('.burst-experiment-status .burst-bullet').removeClass().addClass('burst-bullet ' + response.data.status.class);
                     $('.burst-experiment-status .burst-experiment-status__text').fadeOut(300, function() {
                         $(this).html(response.data.status.title).fadeIn(200);
@@ -370,9 +372,6 @@ jQuery(document).ready(function ($) {
                         $('.burst-experiment-completed-text').html(response.data.date_end_text)
                         $('.burst-experiment-completed').show();
                     }
-                    // gridContainer.find('.burst-skeleton').fadeOut(500, function() {
-                    //     gridContainer.find('.burst-grid-content').hide().html(response.html).fadeIn(1000);
-                    // })
                 }
             }
         })
