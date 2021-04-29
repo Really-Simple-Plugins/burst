@@ -487,5 +487,13 @@ if ( ! function_exists( 'burst_display_experiment_status' ) ) {
 	}
 }
 
-
-
+if ( ! function_exists( 'burst_get_report_url' ) ) {
+	/**
+	 * Get the URL that leads to the dashboard and show data for the experiment ID
+	 * @param  int $experiment_id
+	 * @return string Url to the dashboard
+	 */
+	function burst_get_report_url($experiment_id) {
+		return admin_url('admin.php?page=burst&experiment_id='. $experiment_id .'');
+	}
+}

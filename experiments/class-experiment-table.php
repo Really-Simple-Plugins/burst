@@ -260,6 +260,18 @@ class burst_experiment_Table extends WP_List_Table {
 		return $variant_id . $this->row_actions( $actions );
 	}
 
+	public function column_report( $item ) {
+		if ($item['status'] == 'draft') return false;
+		ob_start();
+		?>
+		<a href="<?php echo burst_get_report_url($item['ID']); ?>" class="button button-secondary">
+			<?php _e( 'View report', 'burst' ) ?> 
+		</a>
+		<?php
+		$report = ob_get_clean();
+		return $report;
+	}
+
 
 	/**
 	 * Retrieve the table columns
@@ -275,6 +287,7 @@ class burst_experiment_Table extends WP_List_Table {
 			'variant_id' => '<span class="burst-experiment-dot variant"></span>'. __( 'Variant', 'burst' ),
 			'goals' => __( 'Goal', 'burst' ),
 			'status' => __( 'Status', 'burst' ),
+			'report' => '',
 		);
 
 //not sure what this should do @hessel

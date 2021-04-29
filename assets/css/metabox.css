@@ -57,7 +57,6 @@
   font-weight: 600;
   font-size: 13px;
 }
-#burst-metabox-experiment-settings .burst-experiment-save-button input {
+#burst-metabox-experiment-settings .burst-experiment-save-button .button {
   margin-top: 15px;
 }
-/*# sourceMappingURL=metabox.css.map */

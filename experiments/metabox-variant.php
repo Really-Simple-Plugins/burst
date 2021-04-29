@@ -39,6 +39,13 @@ if (intval($experiment_id)) {
 					        	type="submit" value="<?php _e( 'Stop the experiment', 'burst' ) ?>">
 					    </div>
 
+                    <?php } else if ($experiment->status == 'completed') { ?>
+						<div class="burst-experiment-save-button">
+                    		<?php echo burst_display_experiment_status($experiment->status); ?>
+                    		<a href="<?php echo burst_get_report_url($experiment_id); ?>" class="button button-secondary">
+					        	<?php _e( 'View report', 'burst' ) ?> 
+					        </a>
+					    </div>
                     <?php } else {
 
 						if ( ! intval($experiment_id) ) { 
