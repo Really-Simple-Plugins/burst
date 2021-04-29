@@ -343,6 +343,18 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			global $wpdb;
 
 			if ( ! $error ) {
+				// delete post meta from experiment posts
+				delete_post_meta( $this->control_id, 'burst_experiment_id', $this->id );
+				delete_post_meta( $this->variant_id, 'burst_experiment_id', $this->id );
+				wp_update_post( array( 
+					'id' => $this->variant_id,
+					'post_status' => 'draft',
+					'hidden_post_status' => 'draft'
+				) );
+
+				if ( $this->goal_id > 0) {
+					delete_post_meta( $this->goal_id, 'burst_experiment_id', $this->id );
+				}
 
 				$wpdb->delete( $wpdb->prefix . 'burst_experiments', array(
 					'ID' => $this->id,
