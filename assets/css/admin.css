@@ -4,7 +4,6 @@
 .burst-block {
   background: #fff;
   box-shadow: 0 0 5px 5px rgba(222, 222, 222, 0.2);
-  border-radius: 3px;
   margin: 0;
 }
 .burst-date-container {
@@ -431,7 +430,6 @@
 #burst #burst-content-area .burst-grid .burst-grid-container {
   background: #fff;
   box-shadow: 0 0 5px 5px rgba(222, 222, 222, 0.2);
-  border-radius: 3px;
   margin: 0;
   display: flex;
   flex-wrap: wrap;
