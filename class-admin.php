@@ -508,7 +508,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 
             $grid_items = apply_filters( 'burst_grid_items', array(
                 1 => array(
-                    'title' => __("Your last experiment", "burst"),
+                    'title' => __("Your experiment", "burst"),
                     'class' => 'table-overview',
                     'type' => 'statistics',
                     'controls' => $date_control,
