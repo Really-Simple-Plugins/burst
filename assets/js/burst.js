@@ -1,11 +1,8 @@
-window.burst_one_request_completed = false;
 window.burst_test_version = burst_get_user_test_version();
 
 if ( !burst_is_user_agent() ) {
-	burst_track_hit(function() {
-		// go to the link
-		window.burst_one_request_completed = true;
-	});
+	conversion = window.burst_is_goal_page !== undefined;
+	burst_track_hit(conversion);
 }
 
 if ( burst_is_experiment_page() ) {
@@ -22,9 +19,9 @@ if ( burst_is_experiment_page() ) {
 	console.log("Not an experiment page");
 }
 
-if (window.burst_identifier !== undefined ) {
-	console.log('burst_identifier !== undefined');
-	document.querySelectorAll( window.burst_identifier ).forEach(item => {
+if (window.burst_goal_identifier !== undefined ) {
+	console.log('burst_goal_identifier !== undefined');
+	document.querySelectorAll( window.burst_goal_identifier ).forEach(item => {
 		item.addEventListener('click', event => {
 			console.log('click on');
 			var target = (event.currentTarget) ? event.currentTarget : event.srcElement;
@@ -38,8 +35,11 @@ if (window.burst_identifier !== undefined ) {
 			}
 
 			// Do the async thing
-			burst_track_hit(function() {
+			burst_track_hit(true, function() {
 				console.log('burst_track_hit');
+
+
+
 				// go to the link
 				if (is_link) window.location = href;
 			});
@@ -51,18 +51,14 @@ if (window.burst_identifier !== undefined ) {
  *
  * @param callback
  */
-function burst_track_hit(callback) {
+function burst_track_hit(conversion, callback) {
 	if ( !burst_wp_has_consent() ) return;
 
 	console.log("track hit function");
 	var request = new XMLHttpRequest();
 	request.open('POST', burst.url+'hit', true);
 	var url = location.pathname;
-	var conversion = false;
 
-	if (window.burst_is_goal_page !== undefined) {
-		conversion = true;
-	}
 	console.log('test_version')
 	console.log(window.burst_test_version);
 	var data = {
@@ -71,7 +67,8 @@ function burst_track_hit(callback) {
 		'experiment_id': window.burst_experiment_id,
 		'conversion': conversion,
 	};
-
+	console.log('conversion');
+	console.log(conversion);
 	request.setRequestHeader('Content-type', 'application/json')
 	request.send(JSON.stringify(data)) // Make sure to stringify
 
