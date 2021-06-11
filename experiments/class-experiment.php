@@ -488,7 +488,6 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			//one tailed test: We only Change page A into B, if B is better. Not if it's worse.
 			//https://blog.analytics-toolkit.com/2017/one-tailed-two-tailed-tests-significance-ab-testing/
 
-
 			//get standard deviation $s
 			$s_control = $this->get_standard_deviation('control');
 			$s_control_sample_size = $this->get_sample_size('control');
@@ -618,10 +617,10 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			if ($n==0) return 100;
 
 			//sample size $n0
-			$Z = 1.96; //based on assumption in article, where confidence of 95% suggests a Z of 1.96.
+			$Z = 1.96; //based on assumption in mentioned article, where confidence of 95% suggests a Z of 1.96.
 			$p = 0.5; //is the (estimated) proportion of the population which prefers the control variant. We assume 50%,
 			$q = 1-$p;
-			return round(100 * sqrt( $Z*$Z * $p * $q )/$n, 1);
+			return round(100 * sqrt( $Z*$Z * $p * $q )/$n, 3);
 		}
 
 		/**
