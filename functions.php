@@ -214,6 +214,13 @@ if ( ! function_exists( 'burst_array_filter_multidimensional' ) ) {
 }
 
 if ( !function_exists('burst_generate_test_data')){
+	/**
+	 * Function to be used only for testing purposes.
+	 * It will fill the database with random data.
+	 * - create an experiment.
+	 * - Get that experiment's id
+	 * - prefill the experiment id below.
+	 */
 	function burst_generate_test_data(){
 		global $wpdb;
 
@@ -260,7 +267,10 @@ if ( !function_exists('burst_generate_test_data')){
 }
 //burst_generate_test_data();
 
-add_action( 'wp_ajax_burst_get_posts', 'burst_get_posts_ajax_callback' ); // wp_ajax_{action}
+/**
+ * Callback to ajax load the posts dropdown in the metabox
+ *
+ */
 function burst_get_posts_ajax_callback(){
  	if (!burst_user_can_manage()) return;
 
@@ -291,6 +301,7 @@ function burst_get_posts_ajax_callback(){
 	echo json_encode( $return );
 	die;
 }
+add_action( 'wp_ajax_burst_get_posts', 'burst_get_posts_ajax_callback' ); // wp_ajax_{action}
 
 if ( ! function_exists( 'burst_localize_date' ) ) {
 
@@ -363,9 +374,7 @@ if ( ! function_exists( 'burst_post_has_experiment' ) ) {
 		if (!$post_id) return false;
 
 		$experiment_id = get_post_meta($post_id, 'burst_experiment_id');
-		$has_experiment = intval($experiment_id) ? true : false;
-
-		return $has_experiment;
+		return intval($experiment_id) ? true : false;
 	}
 
 }

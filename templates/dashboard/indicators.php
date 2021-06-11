@@ -22,6 +22,8 @@ $total = $count_control_all + $count_variant_all;
 $is_significant = $experiment->is_statistical_significant();
 $significance = $experiment->get_significance();
 $significance = $significance ? 100 * (1-$significance) : 0;
+
+$margin_of_error = $experiment->get_margin_of_error();
 ?>
 <div class="burst-objective-total-container">
     <div class="burst-objective-text"><?php _e("Significance","burst")?></div>
@@ -30,7 +32,7 @@ $significance = $significance ? 100 * (1-$significance) : 0;
 
 <div class="burst-objective-total-container">
     <div class="burst-objective-text"><?php _e("Margin of error","burst")?></div>
-    <div class="burst-objective-number"><?php echo $experiment->get_margin_of_error()?>%</div>
+    <div class="burst-objective-number"><?php echo $margin_of_error?>%</div>
 </div>
 
 <div class="burst-objective-total-container">
