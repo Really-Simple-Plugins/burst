@@ -7,7 +7,6 @@
 .burst-block{
 	background: #fff;
 	box-shadow: @box-shadow;
-	border-radius: @border-radius;
 	margin: 0;
 }
 
@@ -17,80 +16,19 @@
 	cursor: pointer;
 	padding: 4px 10px;
 	border: 1px solid #ccc;
-	border-radius:3px;
+	border-radius: 3px;
 	white-space: nowrap;
 	@media screen and (max-width: 480px) {
 		width: 18px;
 		overflow: hidden;
-	}
+	} 
 	color:#333;
 }
 
 #burst {
-	.burst-notice-container {
-		min-height:46px;
-	}
-	.burst-notice {
-		.burst-message {
-			font-size:12px;
-			padding:14px 0;
-		}
-		.burst-status {
-			display: block;
-			min-width: 60px;
-			text-align: center;
-			border-radius: 15px;
-			padding: 4px 8px 4px 8px;
-			font-size: 12px;
-			font-weight: 600;
-			height: 17px;
-			line-height:17px;
-			color: white;
-
-
-			&.burst-completed {
-				background-color: @color-success;
-			}
-
-			&.burst-open {
-				background-color: @color-open;
-			}
-
-			&.burst-urgent {
-				background-color: @color-warning;
-			}
-		}
-		.burst-plusone {
-			border-radius: 50%;
-			background-color: @color-error;
-			color: #fff;
-			padding: 2px 6px;
-			font-size: 10px;
-		}
-		display:grid;
-		grid-template-columns: 70px auto 50px;
-		grid-gap:20px;
-		>div {
-			padding: 10px 0;
-		}
-		>div:nth-child(3) {
-			padding:0;
-		}
-
-		button {
-			color: @grey-light;
-			margin-top:10px;
-			border: 0;
-			background-color: transparent;
-			cursor:pointer;
-			.cmplz-close-notice-x {
-				color: #ccc;
-				font-size: 0.9em;
-			}
-		}
-	}
-
-	padding-bottom: 60px;
+	padding-bottom: 20px;
+	margin: 0 0 0 -20px;
+	font-size: @default-font-size;
 	h1, h2, h3, h4, h5 ,h6, p{
 		color: @text-color;
 	}
@@ -101,8 +39,6 @@
 	.burst-grid-title{
 		font-size: 18px;
 	}
-	margin: 0 0 0 -20px;
-	font-size: @default-font-size;
 	#burst-header {
 		display: flex;
 		justify-content: space-between;
@@ -178,6 +114,69 @@
 
 			.plugin-status {
 				margin-left: auto;
+			}
+		}
+	}
+
+	.burst-notice-container {
+		min-height: 46px;
+	}
+	.burst-notice {
+		.burst-message {
+			font-size:12px;
+			padding:14px 0;
+		}
+		.burst-status {
+			display: block;
+			min-width: 60px;
+			text-align: center;
+			border-radius: 15px;
+			padding: 4px 8px 4px 8px;
+			font-size: 12px;
+			font-weight: 600;
+			height: 17px;
+			line-height:17px;
+			color: white;
+
+
+			&.burst-completed {
+				background-color: @color-success;
+			}
+
+			&.burst-open {
+				background-color: @color-open;
+			}
+
+			&.burst-urgent {
+				background-color: @color-warning;
+			}
+		}
+		.burst-plusone {
+			border-radius: 50%;
+			background-color: @color-error;
+			color: #fff;
+			padding: 2px 6px;
+			font-size: 10px;
+		}
+		display:grid;
+		grid-template-columns: 70px auto 50px;
+		grid-gap:20px;
+		>div {
+			padding: 10px 0;
+		}
+		>div:nth-child(3) {
+			padding:0;
+		}
+
+		button {
+			color: @grey-light;
+			margin-top:10px;
+			border: 0;
+			background-color: transparent;
+			cursor:pointer;
+			.cmplz-close-notice-x {
+				color: #ccc;
+				font-size: 0.9em;
 			}
 		}
 	}
@@ -309,49 +308,48 @@
     Tips and Tricks
    */
 
-	.burst-tips-tricks, .upsell-grid-container {
-		.burst-grid-content {
-			display: flex !important;
+	.burst-tips-tricks-container, .burst-upsell-container {
+		display: flex !important;
+		flex-direction: row;
+		flex-wrap: wrap;
+		margin-bottom: 10px;
+
+		@media screen and (max-width: 480px) {
 			flex-direction: row;
-			flex-wrap: wrap;
-			margin-bottom: 10px;
+			overflow: hidden;
+		}
 
-			@media screen and (max-width: 480px) {
-				flex-direction: row;
-				overflow: hidden;
-			}
-
-			.burst-tips-tricks-element, .plugin-text {
+		.burst-tips-tricks-element, .plugin-text {
+			color: @light-text-color;
+			a {
+				text-decoration: none;
 				color: @light-text-color;
-				a {
-					text-decoration: none;
-					color: @light-text-color;
 
-					&:hover {
-						color: @brand-primary;
-					}
-				}
-
-				.burst-bullet {
-					margin: 7px;
-					background-color: @grey-light;
-					float: left;
-
-					&:hover {
-					background-color: @brand-primary;
-					}
-				}
-
-				.burst-tips-tricks-content {
-					margin: 7px 0;
-					float: left;
+				&:hover {
+					color: @brand-primary;
 				}
 			}
-			.burst-tips-tricks-element{
-				width: 50%;
+
+			.burst-bullet {
+				margin: 7px;
+				background-color: @grey-light;
+				float: left;
+
+				&:hover {
+				background-color: @brand-primary;
+				}
+			}
+
+			.burst-tips-tricks-content {
+				margin: 7px 0;
+				float: left;
 			}
 		}
+		.burst-tips-tricks-element{
+			width: 50%;
+		}
 	}
+	
 
 	.burst-tips-tricks-container-title {
 		border-bottom: 1px solid @border-color;
@@ -448,7 +446,7 @@
 			color: @text-color;
 		}
 		p, label{
-			font-size: 15px;
+			font-size: @default-font-size;
     		font-weight: 500;
 		}
 		.burst-grid-container{
@@ -470,7 +468,7 @@
 			&.tipstricks{
 				grid-column: span 2;
 			}
-			&.ourplugins{
+			&.other-plugins{
 				grid-column: span 2;
 			}
 			@media screen and (max-width: 780px) {
@@ -484,7 +482,7 @@
 				&.tipstricks{
 					grid-column: span 4;
 				}
-				&.ourplugins{
+				&.other-plugins{
 					grid-column: span 4;
 				}
 			}
@@ -501,13 +499,13 @@
 				padding: 9px 0 4px 0;
 			}
 			border-bottom: @border;
-			padding: 10px 15px;
+			padding: 15px 20px;
 		}
 
 		.burst-grid-content{
 			width: 100%;
 			box-sizing: border-box;
-			padding: 10px 15px;
+			padding: 15px 20px;
 			flex-grow: 100;
 		}
 		.burst-grid-footer{
@@ -516,9 +514,9 @@
 			align-items: center;
 			justify-content: space-between;
 			width: 100%;
-			min-height: 51px;
+			min-height: 60px;
 			box-sizing: border-box;
-			padding: 10px 15px;
+			padding: 15px 20px;
 			border-top: @border;
 			align-self: flex-end;
 
@@ -711,7 +709,7 @@
 	padding: 10px 14px;
 	display: inline-flex;
 	align-items: center;
-	font-size: 15px;
+	font-size: @default-font-size;
 	font-weight: 500;
 	margin: 4px 0;
 	padding: 5px 10px;
@@ -730,7 +728,6 @@
 .burst-experiment-status{
 	display: flex;
 	padding: 5px 7px;
-	margin: 6px 0;
 	border-radius: @border-radius;
 	justify-content: flex-start;
 	align-items: center;
@@ -745,6 +742,11 @@
 			}
 		}
 		
+	}
+}
+.burst-grid .burst-experiment-completed{
+	p{
+		margin: 0;
 	}
 }
 @keyframes grow-and-shrink {

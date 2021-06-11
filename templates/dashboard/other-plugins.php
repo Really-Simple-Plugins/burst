@@ -33,8 +33,8 @@ $items = array(
 		),
 );
 
-$element = burst_get_template('dashboard/our-plugins-row.php');
-$output = '';
+$element = burst_get_template('dashboard/other-plugins-row.php');
+$output = '<div class="burst-upsell-container">';
 foreach ($items as $item) {
 	$output .= str_replace(array(
 		'{title}',
@@ -51,5 +51,5 @@ foreach ($items as $item) {
 		'',
 	), $element);
 }
-
+$output .= '</div>';
 echo $output;

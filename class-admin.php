@@ -122,7 +122,7 @@ if ( ! class_exists( "burst_admin" ) ) {
         }
 
 		/**
-         * Add experiment info below the post title
+         * Add experiment info below the post title on the page editor
 		 * @param int $post
 		 */
 
@@ -508,7 +508,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 
             $grid_items = apply_filters( 'burst_grid_items', array(
                 1 => array(
-                    'title' => __("Your last experiment", "burst"),
+                    'title' => __("Your experiment", "burst"),
                     'class' => 'table-overview',
                     'type' => 'statistics',
                     'controls' => $date_control,
@@ -542,14 +542,13 @@ if ( ! class_exists( "burst_admin" ) ) {
 
                 ),
                 5 => array(
-                    'title' => __("Our Plugins", "burst"),
+                    'title' => __("Other Plugins", "burst"),
                     'class' => 'half-height no-border no-background upsell-grid-container upsell',
-                    'type' => 'ourplugins',
+                    'type' => 'other-plugins',
                     'can_hide' => false,
-                    'controls' => '<div class="rsp-logo"><a href="https://really-simple-plugins.com/"><img src="'. trailingslashit(burst_url) .'assets/images/really-simple-plugins.png" /></a></div>',
+                    'controls' => '<div class="rsp-logo"><a href="https://really-simple-plugins.com/"><img src="'. trailingslashit(burst_url) .'assets/images/really-simple-plugins.svg" alt="Really Simple Plugins" /></a></div>',
                     'page' => 'dashboard',
                 ),
-
 
             ));
             foreach ( $grid_items as $key => $grid_item ) {

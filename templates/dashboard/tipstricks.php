@@ -27,7 +27,7 @@ $items = array(
     ),
 );
 $container = '<div class="burst-tips-tricks-element"><a href="{link}" target="_blank"><div class="burst-bullet"></div><div class="burst-tips-tricks-content">{content}</div></a></div>';
-$output = "";
+$output = '<div class="burst-tips-tricks-container">';
 
 foreach ($items as $item) {
     $output .= str_replace(array(
@@ -38,6 +38,7 @@ foreach ($items as $item) {
         $item['content'],
     ), $container);
 }
+ $output .= '</div>';
 echo $output;
 
 

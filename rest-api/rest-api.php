@@ -60,16 +60,23 @@ function burst_track_hit(WP_REST_Request $request){
 		'uid'               		=> sanitize_title($burst_uid),
 		'test_version'				=> burst_sanitize_test_version($data['test_version']),
 		'experiment_id'				=> $experiment_id,
-		'conversion'				=> intval($data['conversion']),
 	);
 
+	// Only update conversion when it is true. Otherwise conversions will be deleted when the page has been revisited.
+	if ($data['conversion'] == true){
+		error_log('conversion');
+		$update_array['conversion'] = intval($data['conversion']);
+	} else {
+		error_log('no conversion');
+	}
+	error_log(print_r($update_array, true));
 	error_log('burst_track_hit');
 	//check if the current users' uid/experiment id combination is already in the database.
 	$prepare = $wpdb->prepare( "select `time` from {$wpdb->prefix}burst_statistics where experiment_id = %s and uid = %s order by time desc limit 1", $experiment_id, sanitize_title($burst_uid));
 	$last_visit_time = $wpdb->get_var($prepare);
 	// check if the last entry is smaller than the time_minus_threshold so that multiple visits will result in multiple entries and not just one. 
 	if ($last_visit_time > 0 && $last_visit_time > $time_minus_threshold) {
-		error_log('already in db, so we update');
+		error_log('already in db in the last 30 minutes, so we update');
 		$wpdb->update(
 			$wpdb->prefix . 'burst_statistics',
 			$update_array,
@@ -84,10 +91,10 @@ function burst_track_hit(WP_REST_Request $request){
 	}
 
 	//check if we can stop this experiment.
-	$experiment = new BURST_EXPERIMENT($experiment_id);
-	if ( $time > $experiment->date_end ) {
-		$experiment->stop();
-	}
+	// $experiment = new BURST_EXPERIMENT($experiment_id);
+	// if ( $time > $experiment->date_end ) {
+	// 	$experiment->stop();
+	// }
 
 
 }
