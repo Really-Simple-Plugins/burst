@@ -7,6 +7,7 @@
 .burst-block{
 	background: #fff;
 	box-shadow: @box-shadow;
+	border-radius: @border-radius;
 	margin: 0;
 }
 
@@ -119,7 +120,10 @@
 	}
 
 	.burst-notice-container {
-		min-height: 46px;
+		
+		&:not(empty) {
+			min-height: 46px;
+		}
 	}
 	.burst-notice {
 		.burst-message {
@@ -437,9 +441,9 @@
 		display: grid;
 		grid-template-columns: repeat(4, calc(25% - 15px) [col-start]); // We use calc because of the grid gap
 		grid-template-rows: repeat(auto, min-content );
-		margin: @grid_margin;
-		margin-top: @grid_margin * 2;
-		grid-gap: @grid_margin * 2;
+		margin: @grid-margin;
+		margin-top: @grid-margin * 2;
+		grid-gap: @grid-margin * 2;
 		min-height: calc(100vh - 32px - 80px - 20px - 20px); //32px = wordpress bar, 80px = burst bar, 20px = margin-top, 20px is grid gap
 
 		h1, h2, h3, h4, h5 ,h6, p{

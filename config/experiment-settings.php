@@ -7,7 +7,7 @@ function burst_add_experiment_settings($fields){
 	$fields = $fields + array(
 
 			'title' => array(
-				'source'      => 'BURST_EXPERIMENT',
+				'source'      => 'experiment',
 				'step'        => 'general',
 				'type'        => 'text',
 				'label'       => __( "Experiment name", 'burst' ),
@@ -17,7 +17,7 @@ function burst_add_experiment_settings($fields){
 			),
 
 			'duplicate_or_choose_existing' => array(
-				'source'             => 'BURST_EXPERIMENT',
+				'source'             => 'experiment',
 				'step'               => 'create',
 				'type'               => 'radio',
 				'label'              => '<span class="burst-experiment-dot variant">'. __( "Variant" , 'burst' ).'</span>',
@@ -30,7 +30,7 @@ function burst_add_experiment_settings($fields){
 			),
 
 			'variant_id' => array(
-				'source'             => 'BURST_EXPERIMENT',
+				'source'             => 'experiment',
 				'step'               => 'create',
 				'type'               => 'select2',
 				'query_settings'	 => array(
@@ -47,7 +47,7 @@ function burst_add_experiment_settings($fields){
 			),
 
 			'goal' => array(
-				'source'      => 'BURST_EXPERIMENT',
+				'source'      => 'experiment',
 				'step'        => 'goal',
 				'type'        => 'radio',
 				'options' => array(
@@ -61,7 +61,7 @@ function burst_add_experiment_settings($fields){
 			),
 
 			'goal_identifier' => array(
-				'source'             => 'BURST_EXPERIMENT',
+				'source'             => 'experiment',
 				'step'               => 'goal',
 				'type'               => 'text',
 				'placeholder' => __( '.class or #id' ),
@@ -72,7 +72,7 @@ function burst_add_experiment_settings($fields){
 			),
 
 			'goal_id' => array(
-				'source'             => 'BURST_EXPERIMENT',
+				'source'             => 'experiment',
 				'step'               => 'goal',
 				'type'               => 'select2',
 				'query_settings'	 => array(
@@ -86,7 +86,7 @@ function burst_add_experiment_settings($fields){
 			),
 
 			'minimum_samplesize' => array(
-				'source'             => 'BURST_EXPERIMENT',
+				'source'             => 'experiment',
 				'step'               => 'timeline',
 				'type'               => 'radio',
 				'default'            => 384,
@@ -101,7 +101,7 @@ function burst_add_experiment_settings($fields){
 			),
 
 			'minimum_samplesize_custom' => array(
-				'source'             => 'BURST_EXPERIMENT',
+				'source'             => 'experiment',
 				'step'               => 'timeline',
 				'type'               => 'number',
 				'minimum'            => 384,
@@ -114,7 +114,7 @@ function burst_add_experiment_settings($fields){
 
 
 			// 'percentage_included' => array(
-			// 	'source'      => 'BURST_EXPERIMENT',
+			// 	'source'      => 'experiment',
 			// 	'step'        => 'setup',
 			// 	'type'        => 'weightslider',
 			// 	'default'	  => '100',

@@ -609,6 +609,7 @@ if ( ! class_exists( "burst_field" ) ) {
 		function show_field(
 			$args
 		) {
+		    error_log('show_field');
 			$show = ( $this->condition_applies( $args, 'callback_condition' ) );
 
 			return $show;

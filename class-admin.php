@@ -111,12 +111,12 @@ if ( ! class_exists( "burst_admin" ) ) {
                 }
             }
 
-            // $admin_bar->add_menu(array(
-            // 	'id'     	=> 'burst-add-experiment',
-            // 	'parent' 	=> 'burst',
-            // 	'title'  	=> __( 'Add experiment', 'burst' ),
-            // 	'href'   	=> admin_url( 'admin.php?page=burst-experiments&action=new' ),
-            // ) );
+             $admin_bar->add_menu(array(
+             	'id'     	=> 'burst-add-experiment',
+             	'parent' 	=> 'burst',
+             	'title'  	=> __( 'New experiment', 'burst' ),
+             	'href'   	=> admin_url( 'admin.php?page=burst-experiments&action=new' ),
+             ) );
 
 
         }
@@ -608,9 +608,9 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 				<div class="wrap experiment">
 					<h1><?php _e( "Your experiments", 'burst' ) ?>
-						<?php //do_action( 'burst_after_experiment_title' ); ?>
-						<!-- <a href="<?php //echo admin_url('admin.php?page=burst-experiments&action=new'); ?>"
-		                   class="page-title-action"><?php //_e('Add experiment', 'burst') ?></a> -->
+						<?php do_action( 'burst_after_experiment_title' ); ?>
+						 <a href="<?php echo admin_url('admin.php?page=burst-experiments&action=new'); ?>"
+		                   class="page-title-action"><?php _e('New experiment', 'burst') ?></a>
 					</h1>
 
 					<form id="burst-experiment-filter" method="get"

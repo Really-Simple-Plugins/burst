@@ -61,6 +61,7 @@ if ( ! class_exists( 'BURST' ) ) {
 		public static $experimenting;
 		public static $statistics;
 		public static $admin;
+        public static $wizard;
 		public static $review;
 		public static $field;
 		public static $config;
@@ -79,6 +80,7 @@ if ( ! class_exists( 'BURST' ) ) {
 			if ( is_admin() ) {
 				self::$review          = new burst_review();
 				self::$admin           = new burst_admin();
+                self::$wizard           = new burst_wizard();
 				self::$field 		   = new burst_field();
 				self::$tour            = new burst_tour();
 				self::$notices         = new burst_notices();
@@ -93,6 +95,10 @@ if ( ! class_exists( 'BURST' ) ) {
 
 			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 			$plugin_data = get_plugin_data( __FILE__ );
+
+            define('STEP_SELECT', 1);
+            define('STEP_METRICS', 2);
+            define('STEP_START',    3);
 
 			define( 'burst_url', plugin_dir_url( __FILE__ ) );
 			define( 'burst_path', plugin_dir_path( __FILE__ ) );
@@ -127,6 +133,7 @@ if ( ! class_exists( 'BURST' ) ) {
 			if ( is_admin() ) {
 				require_once( burst_path . 'class-admin.php' );
 				require_once( burst_path . 'class-field.php');
+                require_once( burst_path . 'class-wizard.php');
 				require_once( burst_path . 'grid/grid.php' );
 				require_once( burst_path . 'class-review.php' );
 				require_once( burst_path . 'shepherd/tour.php' );

@@ -37,9 +37,10 @@ if ( ! class_exists( "burst_config" ) ) {
 
 
 			/* config files */
-			require_once( burst_path . '/experiments/settings.php' );
-			require_once( burst_path . '/config/general-settings.php' );
-			
+            require_once( burst_path . '/config/general-settings.php' );
+			require_once( burst_path . '/config/experiment-settings.php' );
+            require_once( burst_path . '/config/experiment-steps.php' );
+
 
 			if ( file_exists( burst_path . '/pro/config/' ) ) {
 				// require_once( burst_path . '/pro/config/steps.php' );
@@ -48,7 +49,6 @@ if ( ! class_exists( "burst_config" ) ) {
 			 * The integrations are loaded with priority 10
 			 * Because we want to initialize after that, we use 15 here
 			 */
-			add_action( 'plugins_loaded', array( $this, 'load_warning_types' ),  );
 			add_action( 'plugins_loaded', array( $this, 'init' ), 15 );
 		}
 
@@ -110,21 +110,14 @@ if ( ! class_exists( "burst_config" ) ) {
 			$this->fields = apply_filters('burst_fields', array() );
 		}
 
+        public function has_sections( $page, $step ) {
+            if ( isset( $this->steps[ $page ][ $step ]["sections"] ) ) {
+                return true;
+            }
 
-		public function load_warning_types() {
-			$this->warning_types = apply_filters('burst_warning_types' ,array(
-				'burst-feature-update' => array(
-					'type'        => 'general',
-					'label_error' => __( 'The Burst plugin has new features. Please check the wizard to see if all your settings are still up to date.',
-						'burst' ),
-				),
-			)
-		);
-		}
-
+            return false;
+        }
 
 	}
-
-
 
 } //class closure
