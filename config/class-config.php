@@ -6,7 +6,7 @@ if ( ! class_exists( "burst_config" ) ) {
 	class burst_config {
 		private static $_this;
 		public $fields = array();
-
+        public $steps = array();
 		public $sections;
 		public $pages;
 		public $warning_types;
@@ -105,9 +105,13 @@ if ( ! class_exists( "burst_config" ) ) {
 
 			return $output;
 		}
+        public function preload_init(){
+            $this->fields = apply_filters( 'burst_fields_load_types', $this->fields );
+        }
 
 		public function init() {
-			$this->fields = apply_filters('burst_fields', array() );
+            $this->steps = apply_filters('burst_steps', $this->steps );
+			$this->fields = apply_filters('burst_fields', $this->fields );
 		}
 
         public function has_sections( $page, $step ) {

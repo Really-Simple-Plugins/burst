@@ -20,7 +20,7 @@ if ( ! class_exists( "burst_notices" ) ) {
 
 		/**
 		 * Hooked into ajax call to dismiss a warning
-		 * @hooked wp_ajax_cmplz_dismiss_warning
+		 * @hooked wp_ajax_burst_dismiss_warning
 		 */
 
 		public function dismiss_notice() {
@@ -137,7 +137,7 @@ if ( ! class_exists( "burst_notices" ) ) {
 						}
 					}
 				}
-				set_transient( 'complianz_warnings', $active_notices, HOUR_IN_SECONDS );
+				set_transient( 'burst_warnings', $active_notices, HOUR_IN_SECONDS );
 			}
 
 			if (!is_array($active_notices)) $active_notices = array();

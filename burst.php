@@ -98,7 +98,7 @@ if ( ! class_exists( 'BURST' ) ) {
 
             define('STEP_SELECT', 1);
             define('STEP_METRICS', 2);
-            define('STEP_START',    3);
+            define('STEP_START', 3);
 
 			define( 'burst_url', plugin_dir_url( __FILE__ ) );
 			define( 'burst_path', plugin_dir_path( __FILE__ ) );
@@ -131,6 +131,7 @@ if ( ! class_exists( 'BURST' ) ) {
 			require_once( burst_path . 'integrations/integrations.php');
 			
 			if ( is_admin() ) {
+                require_once( burst_path . '/assets/icons.php');
 				require_once( burst_path . 'class-admin.php' );
 				require_once( burst_path . 'class-field.php');
                 require_once( burst_path . 'class-wizard.php');
