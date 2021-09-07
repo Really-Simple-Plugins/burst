@@ -36,8 +36,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 			add_action( 'admin_init', array($this, 'init_grid') );
 			add_action( 'edit_form_top', array( $this, 'add_experiment_info_below_title' ));
 			add_action( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
-            add_action( 'add_meta_boxes', array( $this, 'add_burst_metabox_to_classic_editor' ) );
-			add_action( 'admin_head', array( $this, 'hide_publish_button_on_experiments' ) );
 
 			add_action( 'wp_ajax_burst_load_status_info', array( $this, 'ajax_load_status_info') );
 
@@ -121,116 +119,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 
 
         }
-
-		/**
-         * Add experiment info below the post title on the page editor
-		 * @param int $post
-		 */
-
-		public function add_experiment_info_below_title( $post ) {
-		    if (!burst_user_can_manage()) return;
-
-			$post = isset($_GET['post']) ? intval($_GET['post']) : false;
-			$post_status = get_post_status($post);
-			if (burst_post_has_experiment($post)) {
-				if ($post_status == 'experiment') {
-					echo '<p class="burst-experiment-info-below-title variant"><span class="burst-experiment-dot variant dot-large"></span>'. __('Variant', 'burst') . '</p>';
-			    } elseif ($post_status == 'publish'){
-			    	echo '<p class="burst-experiment-info-below-title control"><span class="burst-experiment-dot control dot-large"></span>'. __('Control', 'burst') . '</p>';
-			    }
-			}
-		}
-
-		/**
-		 * Well the function name says it all, this function 
-		 * adds the Burst metabox to the classic editor
-		 */
-		function add_burst_metabox_to_classic_editor()
-		{	
-			if (!burst_user_can_manage()) return;
-
-			$post_id = isset($_GET['post']) ? intval($_GET['post']) : false;
-			$post_status = get_post_status($post_id);
-			$experiment_id = intval(get_post_meta($post_id, 'burst_experiment_id', true));
-
-			if ($post_status == 'experiment' && $experiment_id) {
-				add_meta_box('burst_edit_meta_box', __('Setup experiment', 'burst'), array($this, 'show_burst_variant_metabox'), null, 'side', 'default', array(
-					//'__block_editor_compatible_meta_box' => true,
-				));			
-
-			} else {
-				add_meta_box('burst_edit_meta_box', __('Create experiment', 'burst'), array($this, 'show_burst_control_metabox'), null, 'side', 'default', array(
-					//'__block_editor_compatible_meta_box' => true,
-				));
-			}
-
-            $this->maybe_sort_metabox('burst_edit_meta_box');
-			$this->enqueue_assets('burst');
-
-			wp_register_style( 'burst-metabox',
-				trailingslashit( burst_url ) . 'assets/css/metabox.css', "",
-				burst_version );
-			wp_enqueue_style( 'burst-metabox' );
-		}
-
-
-		/**
-         * Put our metabox right below the publish post box
-		 * @param string $key
-		 */
-		public function maybe_sort_metabox($key) {
-			$user_id = get_current_user_id();
-			//only do this once
-		    if ( get_user_meta( $user_id, 'burst_sorted_metaboxes', true) ){
-		        return;
-		    }
-
-		    global $post;
-		    $post_type = get_post_type($post);
-
-			$order = get_user_option("meta-box-order_$post_type", get_current_user_id() );
-			if ( !$order['side'] ) {
-				$new_order = array(
-                    'submitdiv',
-                    $key,
-                );
-			} else  {
-				$new_order = explode(",", $order['side'] );
-				for( $i=0 ; $i < count ($new_order) ; $i++ ){
-					$temp = $new_order[$i];
-					if ( $new_order[$i] == $key && $i != 1) {
-						$new_order[$i] = $new_order[1];
-						$new_order[1] = $temp;
-					}
-				}
-			}
-
-			$order['side'] = implode(",",$new_order);
-			update_user_option( $user_id, "meta-box-order_".$post_type, $order, true);
-			update_user_meta( $user_id, 'burst_sorted_metaboxes', true);
-		}
-
-		
-		/**
-		 * Displays metabox on pages that do NOT have the post status of 'experiment'
-		 * 
-		 */
-		public function show_burst_control_metabox(){
-		    if (!burst_user_can_manage()) return;
-		    include( dirname( __FILE__ ) . "/experiments/metabox-control.php" );
-			
-		}
-
-		/**
-		 * Displays metabox on pages that DO have the post status of 'experiment'
-		 * 
-		 */
-		public function show_burst_variant_metabox(){
-		    if (!burst_user_can_manage()) return;
-			include( dirname( __FILE__ ) . "/experiments/metabox-variant.php" );
-		}
-
-
 
 
 		/**
