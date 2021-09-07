@@ -28,7 +28,7 @@ function burst_grid_element($grid_item){
 
 	// Controls
 	if ( ! $grid_item['controls'] ) {
-		$controls = apply_filters('cmplz_controls_'.$grid_item['body'], $grid_item['controls']);
+		$controls = apply_filters('burst_controls_'.$grid_item['body'], $grid_item['controls']);
 	} else {
 		$controls = $grid_item['controls'];
 	}

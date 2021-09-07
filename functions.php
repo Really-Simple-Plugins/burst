@@ -552,3 +552,369 @@ if ( ! function_exists( 'burst_get_report_url' ) ) {
 		return admin_url('admin.php?page=burst&experiment_id='. $experiment_id .'');
 	}
 }
+
+if ( ! function_exists( 'burst_get_value' ) ) {
+
+    /**
+     * Get value for an a burst option
+     * For usage very early in the execution order, use the $page option. This bypasses the class usage.
+     *
+     * @param string $fieldname
+     * @param bool|int $post_id
+     * @param bool|string $page
+     * @param bool $use_default
+     * @param bool $use_translate
+     *
+     * @return array|bool|mixed|string
+     */
+
+    function burst_get_value(
+        $fieldname, $post_id = false, $page = false, $use_default = true, $use_translate = true
+    ) {
+        if ( ! is_numeric( $post_id ) ) {
+            $post_id = false;
+        }
+
+        if ( ! $page && ! isset( BURST::$config->fields[ $fieldname ] ) ) {
+            return false;
+        }
+
+        //if  a post id is passed we retrieve the data from the post
+        if ( ! $page ) {
+            $page = BURST::$config->fields[ $fieldname ]['source'];
+        }
+        if ( $post_id && ( $page !== 'wizard' ) ) {
+            $value = get_post_meta( $post_id, $fieldname, true );
+        } else {
+            $fields = get_option( 'burst_options_' . $page );
+
+            $default = ( $use_default && $page && isset( BURST::$config->fields[ $fieldname ]['default'] ) )
+                ? BURST::$config->fields[ $fieldname ]['default'] : '';
+            //@todo $default = apply_filters( 'burst_default_value', $default, $fieldname );
+
+            $value   = isset( $fields[ $fieldname ] ) ? $fields[ $fieldname ] : $default;
+        }
+
+        /*
+         * Translate output
+         *
+         * */
+        if ($use_translate) {
+
+            $type = isset(BURST::$config->fields[$fieldname]['type'])
+                ? BURST::$config->fields[$fieldname]['type'] : false;
+            if ($type === 'cookies' || $type === 'thirdparties'
+                || $type === 'processors'
+            ) {
+                if (is_array($value)) {
+
+                    //this is for example a cookie array, like ($item = cookie("name"=>"_ga")
+
+                    foreach ($value as $item_key => $item) {
+                        //contains the values of an item
+                        foreach ($item as $key => $key_value) {
+                            if (function_exists('pll__')) {
+                                $value[$item_key][$key] = pll__($item_key . '_'
+                                    . $fieldname
+                                    . "_" . $key);
+                            }
+                            if (function_exists('icl_translate')) {
+                                $value[$item_key][$key]
+                                    = icl_translate('burst',
+                                    $item_key . '_' . $fieldname . "_" . $key,
+                                    $key_value);
+                            }
+
+                            $value[$item_key][$key]
+                                = apply_filters('wpml_translate_single_string',
+                                $key_value, 'burst',
+                                $item_key . '_' . $fieldname . "_" . $key);
+                        }
+                    }
+                }
+            } else {
+                if (isset(BURST::$config->fields[$fieldname]['translatable'])
+                    && BURST::$config->fields[$fieldname]['translatable']
+                ) {
+                    if (function_exists('pll__')) {
+                        $value = pll__($value);
+                    }
+                    if (function_exists('icl_translate')) {
+                        $value = icl_translate('burst', $fieldname, $value);
+                    }
+
+                    $value = apply_filters('wpml_translate_single_string', $value,
+                        'burst', $fieldname);
+                }
+            }
+
+        }
+
+        return $value;
+    }
+}
+
+if ( ! function_exists( 'burst_intro' ) ) {
+
+    /**
+     * @param string $msg
+     *
+     * @return string|void
+     */
+
+    function burst_intro( $msg ) {
+        if ( $msg == '' ) {
+            return;
+        }
+        $html = "<div class='burst-panel burst-notification burst-intro'>{$msg}</div>";
+
+        echo $html;
+
+    }
+}
+
+if ( ! function_exists( 'burst_notice' ) ) {
+    /**
+     * Notification without arrow on the left. Should be used outside notifications center
+     * @param string $msg
+     * @param string $type notice | warning | success
+     * @param bool   $echo
+     *
+     * @return string|void
+     */
+    function burst_notice( $msg, $type = 'notice', $echo = true ) {
+        if ( $msg == '' ) {
+            return;
+        }
+
+        $html = "<div class='burst-panel-wrap'><div class='burst-panel burst-notification burst-{$type}'><div>{$msg}</div></div></div>";
+
+        if ( $echo ) {
+            echo $html;
+        } else {
+            return $html;
+        }
+    }
+}
+
+if ( ! function_exists( 'burst_conclusion' ) ) {
+    /**
+     * Conclusion list drop down
+     * @param string $msg
+     * @param string $type notice | warning | success
+     * @param bool   $echo
+     *
+     * @return string|void
+     */
+    function burst_conclusion( $title, $conclusions, $animate = true, $echo = true ) {
+        if ( is_array( $conclusions ) == false ) {
+            return;
+        }
+
+        ob_start();
+
+        echo '<div id="burst-conclusion"><h3>' . $title . '</h3><ul class="burst-conclusion__list">';
+        foreach($conclusions as $conclusion) {
+            $icon = $animate ? 'icon-loading' : 'icon-' . $conclusion['report_status'];
+            $displayOpac = $animate ? 'style="opacity: 0"' : '';
+            $display = $animate ? 'style="display: none"' : '';
+            echo '<li ' . $displayOpac . 'class="burst-conclusion__check '  .$icon . '" data-status="' . $conclusion['report_status'] . '">';
+            if ($animate) echo '<p class="burst-conclusion__check--check-text">' . $conclusion['check_text'] . '</p>';
+            echo '<p ' . $display . ' class="burst-conclusion__check--report-text">' . $conclusion['report_text'] . '</p>';
+            echo '</li>';
+        }
+        echo '</ul></div>';
+        if ($animate) {
+            ?>
+            <script>
+                jQuery('.burst-conclusion__check--report-text').hide();
+                // We initialise this to the first text element
+                var firstText = jQuery(".burst-conclusion__check:first-child");
+                var time = 0;
+                var timeSmall = 0;
+
+                jQuery(".burst-conclusion__check").each(function(){
+                    console.log(this);
+                    jQuery(firstText).css('opacity', 1);
+                    var that = this;
+                    time += getRandomInt(5, 10) * 100;;
+                    setTimeout( function(){
+                        setTimeout( function() {
+
+                            //jQuery(that).text(jQuery(that).data('text'));
+
+                            jQuery(that).removeClass('icon-loading').addClass('icon-' + jQuery(that).data('status'));
+                            jQuery(that).find('.burst-conclusion__check--check-text').hide();
+                            jQuery(that).find('.burst-conclusion__check--report-text').show();
+                            jQuery(that).next().css('opacity', 1);
+                        }, timeSmall );
+                        timeSmall = getRandomInt(5, 10) * 100;
+                    }, time);
+
+                    console.log(Math.floor(time));
+                });
+
+                function getRandomInt(min, max) {
+                    min = Math.ceil(min);
+                    max = Math.floor(max);
+                    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+                }
+
+            </script>
+            <?php
+        }
+        $html = ob_get_clean();
+
+        if ( $echo ) {
+            echo $html;
+        } else {
+            return $html;
+        }
+    }
+}
+
+if ( ! function_exists( 'burst_sidebar_notice' ) ) {
+    /**
+     * @param string $msg
+     * @param string $type notice | warning | success
+     * @param bool|array  $condition
+     *
+     * @return string|void
+     */
+
+    function burst_sidebar_notice( $msg, $type = 'notice', $condition = false ) {
+        if ( $msg == '' ) {
+            return;
+        }
+
+        // Condition
+        $condition_check = "";
+        $condition_question = "";
+        $condition_answer = "";
+        $burst_hidden = "";
+        if ($condition) {
+            //get first
+            $questions = array_keys($condition);
+            $question = reset($questions);
+            $answer = reset($condition);
+            $condition_check = "condition-check-1";
+            $condition_question = "data-condition-question-1='{$question}'";
+            $condition_answer = "data-condition-answer-1='{$answer}'";
+            $args = array('condition'=> $condition);
+            $burst_hidden = burst_field::this()->condition_applies( $args ) ? "" : "burst-hidden";;
+        }
+
+        echo "<div class='burst-help-modal burst-notice burst-{$type} {$burst_hidden} {$condition_check}' {$condition_question} {$condition_answer}>{$msg}</div>";
+    }
+}
+
+if ( !function_exists('burst_admin_notice')) {
+    /**
+     * @param $msg
+     */
+    function burst_admin_notice( $msg ) {
+        /**
+         * Prevent notice from being shown on Gutenberg page, as it strips off the class we need for the ajax callback.
+         *
+         * */
+        $screen = get_current_screen();
+        if ( $screen && $screen->parent_base === 'edit' ) {
+            return;
+        }
+        ?>
+        <div id="message"
+             class="updated fade notice is-dismissible burst-admin-notice really-simple-plugins"
+             style="border-left:4px solid #333">
+            <div class="burst-admin-notice-container">
+                <div class="burst-logo"><img width=80px"
+                                             src="<?php echo burst_url ?>assets/images/icon-logo.svg"
+                                             alt="logo">
+                </div>
+                <div style="margin-left:30px">
+                    <?php echo $msg ?>
+                </div>
+            </div>
+        </div>
+        <?php
+
+    }
+}
+
+if ( ! function_exists( 'burst_panel' ) ) {
+
+    function burst_panel($title, $html, $custom_btn = '', $validate = '', $echo = true, $open = false) {
+        if ( $title == '' ) {
+            return '';
+        }
+
+        $open_class = $open ? 'style="display: block;"' : '';
+
+        $output = '
+        <div class="burst-panel burst-slide-panel burst-toggle-active">
+            <div class="burst-panel-title">
+
+                <span class="burst-panel-toggle">
+                    '. burst_icon('arrow-right', 'success') .'
+                    <span class="burst-title">' . $title . '</span>
+                 </span>
+
+                <span>' . $validate . '</span>
+
+                <span>' . $custom_btn . '</span>
+
+            </div>
+            <div class="burst-panel-content" ' . $open_class . '>
+                ' . $html . '
+            </div>
+        </div>';
+
+        if ( $echo ) {
+            echo $output;
+        } else {
+            return $output;
+        }
+
+    }
+}
+
+if ( ! function_exists( 'burst_list_item' ) ) {
+
+    function burst_list_item( $title, $link, $btn, $selected ) {
+        if ( $title == '' ) {
+            return;
+        }
+        $selected = $selected ? "selected" : '';
+        ?>
+
+        <div class="burst-panel burst-link-panel <?php echo $selected ?>">
+            <div class="burst-panel-title">
+                <a class="burst-panel-link" href="<?php echo $link ?>">
+                <span class="burst-panel-toggle">
+                    <i class="fa fa-edit"></i>
+                    <span class="burst-title"><?php echo $title ?></span>
+                 </span>
+                </a>
+
+                <?php echo $btn ?>
+            </div>
+        </div>
+        <?php
+
+    }
+}
+
+if ( ! function_exists( 'burst_update_option' ) ) {
+    /**
+     * Save a burst option
+     * @param string $page
+     * @param string $fieldname
+     * @param mixed $value
+     */
+    function burst_update_option( $page, $fieldname, $value ) {
+        $options               = get_option( 'burst_options_' . $page );
+        $options[ $fieldname ] = $value;
+        if ( ! empty( $options ) ) {
+            update_option( 'burst_options_' . $page, $options );
+        }
+    }
+}

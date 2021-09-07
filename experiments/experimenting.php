@@ -308,6 +308,24 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			);
 		}
 
+        /**
+        * Generate the experiment page
+        */
+        public function experiment_page()
+        {
+            ?>
+            <div class="wrap">
+                <?php if (BURST::$license->license_is_valid()) { ?>
+                    <?php
+                    BURST::$wizard->wizard("experiments", "This is the title"); ?>
+                <?php } else {
+                    $link = '<a href="'.add_query_arg(array('page'=>'burst-settings#license'), admin_url('admin.php')).'">';
+                    cmplz_admin_notice( sprintf(__( 'Your license needs to be %sactivated%s to unlock the wizard', 'burst' ), $link, '</a>' ));
+                } ?>
+            </div>
+            <?php
+        }
+
 		/**
 		 * Load variant content by filtering the_content
 		 * @param string $content
