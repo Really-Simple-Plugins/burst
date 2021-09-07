@@ -55,11 +55,11 @@ if ( ! class_exists( "burst_wizard" ) ) {
 			}
 		}
 
-
+        // CONFLICT WITH COM{LIANZ WIZARD
 		public function process_custom_hooks() {
-			$wizard_type = ( isset( $_POST['wizard_type'] ) )
-				? sanitize_title( $_POST['wizard_type'] ) : '';
-			do_action( "burst_wizard_$wizard_type" );
+//			$wizard_type = ( isset( $_POST['wizard_type'] ) )
+//				? sanitize_title( $_POST['wizard_type'] ) : '';
+//			do_action( "burst_wizard_$wizard_type" );
 		}
 
 		/**
@@ -67,6 +67,7 @@ if ( ! class_exists( "burst_wizard" ) ) {
 		 * @param $page
 		 */
 		public function initialize( $page ) {
+		    error_log('initialize');
 			$this->last_section = $this->last_section( $page, $this->step() );
 			$this->page_url     = admin_url( 'admin.php?page=burst-' . $page );
 			//if a post id was passed, we copy the contents of that page to the wizard settings.
@@ -125,27 +126,22 @@ if ( ! class_exists( "burst_wizard" ) ) {
 			}
 
 			//clear document cache
-			BURST::$document->clear_shortcode_transients();
 
 			//if the plugins page is reviewed, we can reset the privacy statement suggestions from WordPress.
-			if ( burst_wp_privacy_version()
-			     && ( $this->step( 'wizard' ) == STEP_MENU )
-			     && burst_get_value( 'privacy-statement' ) === 'generated'
-			) {
-				$policy_page_id = (int) get_option( 'wp_page_for_privacy_policy' );
-				WP_Privacy_Policy_Content::_policy_page_updated( $policy_page_id );
-				//check again, to update the cache.
-				WP_Privacy_Policy_Content::text_change_check();
-			}
+//			if ( burst_wp_privacy_version()
+//			     && ( $this->step( 'wizard' ) == STEP_MENU )
+//			     && burst_get_value( 'privacy-statement' ) === 'generated'
+//			) {
+//				$policy_page_id = (int) get_option( 'wp_page_for_privacy_policy' );
+//				WP_Privacy_Policy_Content::_policy_page_updated( $policy_page_id );
+//				//check again, to update the cache.
+//				WP_Privacy_Policy_Content::text_change_check();
+//			}
 
-			BURST::$admin->reset_burst_plugin_has_new_features();
-			BURST::$cookie_admin->reset_plugins_changed();
-			BURST::$cookie_admin->reset_cookies_changed();
-			BURST::$cookie_admin->reset_plugins_updated();
+			//BURST::$admin->reset_burst_plugin_has_new_features();
 
 			//when clicking to the last page, or clicking finish, run the finish sequence.
-			if ( isset( $_POST['burst-cookiebanner-settings'] )
-			     || isset( $_POST['burst-finish'] )
+			if ( isset( $_POST['burst-finish'] )
 			     || ( isset( $_POST["step"] ) && $_POST['step'] == STEP_MENU
 			          && isset( $_POST['burst-next'] ) )
 			) {
@@ -576,7 +572,6 @@ if ( ! class_exists( "burst_wizard" ) ) {
                 $args_menu['steps'] .= burst_get_template( 'wizard/step.php' , $args);
             }
 
-            $args_menu['percentage-complete'] = $this->wizard_percentage_complete( false );
             $args_menu['title'] = !empty( $wizard_title ) ? $wizard_title : __( "The Wizard", 'burst' );
 
             return burst_get_template( 'wizard/menu.php', $args_menu );
@@ -614,10 +609,6 @@ if ( ! class_exists( "burst_wizard" ) ) {
                     }
 
                     $title = BURST::$config->steps[ $page ][ $step ]['sections'][ $i ]['title'];
-                    $regions = $this->get_section_regions( $page, $step, $i );
-                      if (count(burst_get_regions()) > count($regions)) {
-	                    $title .= $regions ? ' - ' . implode( ' | ', $regions ) : '';
-                    }
                     $args = array(
 	                    'active' => $active,
 	                    'completed' => $completed,
@@ -633,13 +624,11 @@ if ( ! class_exists( "burst_wizard" ) ) {
         }
 
 		public function wizard_content( $page, $step, $section ) {
-			$regions = $this->get_section_regions( $page, $step, $section );
 			$args = array(
 				'title' => '',
 				'page' => $page,
 				'step' => $step,
 				'section' => $section,
-				'flags' => burst_flag( $regions, false ),
 				'save_as_notice' => '',
 				'learn_notice' => '',
 				'cookie_or_finish_button' => '',
@@ -739,23 +728,15 @@ if ( ! class_exists( "burst_wizard" ) ) {
 				wp_enqueue_script( 'burst-simple-scroll', burst_url . "assets/simple-scrollbar/simple-scrollbar.min.js", array( 'jquery' ), burst_version, true );
 			}
 
-			if ( strpos( $hook, 'burst-wizard' ) === false &&
-			     strpos( $hook, 'burst-cookiebanner' ) === false &&
-			     strpos( $hook, 'burst-proof-of-consent' ) === false &&
-			     strpos( $hook, 'burst-script-center' ) === false &&
-			     strpos( $hook, 'burst-processing' ) === false &&
-			     strpos( $hook, 'burst-dataleak' ) === false &&
-                 strpos( $hook, 'burst-settings' ) === false &&
-			     ( !is_network_admin() || strpos( $hook, 'BURST' ) === false)
-			) {
-				return;
-			}
+
+			if ( $_GET['page'] !== 'burst-experiment' ) {
+			    return;
+            }
 
 			//also skip the wizard for root pages of dataleaks and processing
 			if ( strpos( $hook, 'post_type' ) !== false ) {
 				return;
 			}
-
 			wp_register_style( 'burst-wizard', burst_url . "assets/css/wizard$minified.css", false, burst_version );
 			wp_enqueue_style( 'burst-wizard' );
 		}
@@ -1026,6 +1007,8 @@ if ( ! class_exists( "burst_wizard" ) ) {
 		 */
 
 		public function total_steps( $page ) {
+		    error_log('page');
+		    error_log($page);
 			return count( BURST::$config->steps[ $page ] );
 		}
 
@@ -1060,71 +1043,6 @@ if ( ! class_exists( "burst_wizard" ) ) {
 			return $first_key;
 		}
 
-		/**
-		 *
-		 * Check which percentage of the wizard is completed
-		 * @param bool $count_warnings
-		 *
-		 * @return int
-		 * */
-
-		public function wizard_percentage_complete( $count_warnings = true )
-		{
-			//store to make sure it only runs once.
-			if ( $this->percentage_complete !== false ) {
-				return $this->percentage_complete;
-			}
-
-			$total_fields     = 0;
-			$completed_fields = 0;
-			$total_steps      = $this->total_steps( 'wizard' );
-			for ( $i = 1; $i <= $total_steps; $i ++ ) {
-				$fields = BURST::$config->fields( 'wizard', $i, false );
-
-				foreach ( $fields as $fieldname => $field ) {
-					//is field required
-					$required = isset( $field['required'] ) ? $field['required']
-						: false;
-					if ( ( isset( $field['condition'] )
-					       || isset( $field['callback_condition'] ) )
-					     && ! BURST::$field->condition_applies( $field )
-					) {
-						$required = false;
-					}
-					if ( $required ) {
-						$value = burst_get_value( $fieldname );
-						$total_fields ++;
-						if ( ! empty( $value ) ) {
-							$completed_fields ++;
-						}
-					}
-				}
-			}
-
-			if ( $count_warnings ) {
-				$args = array(
-					'cache' => false,
-					'status' => 'all',
-					'progress_items_only' => true,
-				);
-				$total_warnings     = count( BURST::$admin->get_warnings( $args ) );
-				$args = array(
-					'cache' => false,
-					'status' => 'completed',
-					'progress_items_only' => true,
-				);
-				$completed_warnings = count( BURST::$admin->get_warnings( $args ) );
-
-				$completed_fields += $completed_warnings;
-				$total_fields     += $total_warnings;
-			}
-
-			$percentage = round( 100 * ( $completed_fields / $total_fields ) + 0.45 );
-			$this->percentage_complete = $percentage;
-			return $percentage;
-		}
-
 	}
-
 
 } //class closure

@@ -1,14 +1,14 @@
-<div class="cmplz-section-content">
+<div class="burst-section-content">
 
-    <form class="cmplz-form" action="{page_url}" method="POST">
+    <form class="burst-form" action="{page_url}" method="POST">
 		<input type="hidden" value="{page}" name="wizard_type">
 		<input type="hidden" value="{step}" name="step">
 		<input type="hidden" value="{section}" name="section">
-		<?php wp_nonce_field( 'complianz_save', 'cmplz_nonce' ); ?>
+		<?php wp_nonce_field( 'burst_save', 'burst_nonce' ); ?>
 
-        <div class="cmplz-wizard-title cmplz-section-content-title-header">{title}{flags}</div>
-        <div class="cmplz-wizard-title cmplz-section-content-notifications-header">
-			<?php _e("Notifications", "complianz-gdpr")?>
+        <div class="burst-wizard-title burst-section-content-title-header">{title}</div>
+        <div class="burst-wizard-title burst-section-content-notifications-header">
+			<?php _e("Notifications", "burst")?>
 		</div>
 	    {learn_notice}
 	    {intro}
@@ -16,9 +16,9 @@
 
 		{fields}
 
-        <div class="cmplz-section-footer">
+        <div class="burst-section-footer">
             {save_as_notice}
-            <div class="cmplz-buttons-container">
+            <div class="burst-buttons-container">
                 {previous_button}
                 {save_button}
                 {next_button}
