@@ -25,6 +25,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			);
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 			add_action( 'admin_menu', array( $this, 'register_admin_page' ), 20 );
+            add_filter( 'submenu_file', array( $this, 'burst_wp_admin_submenu_filter' ), 20 );
 
 			$plugin = burst_plugin;
 			add_filter( "plugin_action_links_$plugin", array( $this, 'plugin_settings_link' ) );
@@ -115,7 +116,7 @@ if ( ! class_exists( "burst_admin" ) ) {
              	'id'     	=> 'burst-add-experiment',
              	'parent' 	=> 'burst',
              	'title'  	=> __( 'New experiment', 'burst' ),
-             	'href'   	=> admin_url( 'admin.php?page=burst-experiments&action=new' ),
+             	'href'   	=> admin_url( 'admin.php?page=burst-experiment&action=new' ),
              ) );
 
 
@@ -139,27 +140,6 @@ if ( ! class_exists( "burst_admin" ) ) {
 			    }
 			}
 		}
-
-		/**
-		 * Hide publish button on the experiment itself.
-		 */
-        public function hide_publish_button_on_experiments(){
-	        if (!burst_user_can_manage()) return;
-
-	        $post = isset($_GET['post']) ? intval($_GET['post']) : false;
-			$post_status = get_post_status($post);
-			
-			if ($post_status == 'experiment') {
-		    	?>
-		            <style>
-		                /** Classic Editor **/
-		                #publishing-action { display: none; }
-		                /** Gutenberg Editor **/
-		                .edit-post-header__settings .components-button.editor-post-publish-panel__toggle { display: none; }
-		            </style>
-		        <?php
-		    }
-        }
 
 		/**
 		 * Well the function name says it all, this function 
@@ -420,7 +400,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			$warning_title = esc_attr( sprintf( '%d plugin warnings', $warning_count ) );
 			$warning_count = count( $warnings );
 			$warning_title = esc_attr( sprintf( '%d plugin warnings', $warning_count ) );
-			$menu_label    = sprintf( __( 'Burst %s', 'complianz-gdpr' ),
+			$menu_label    = sprintf( __( 'Burst %s', 'burst' ),
 				"<span class='update-plugins count-$warning_count' title='$warning_title'><span class='update-count'>"
 				. number_format_i18n( $warning_count ) . "</span></span>" );
 
@@ -452,6 +432,14 @@ if ( ! class_exists( "burst_admin" ) ) {
 				'burst-experiments',
 				array( $this, 'experiments_overview' )
 			);
+            add_submenu_page(
+                'burst',
+                __( 'New experiment', 'burst' ),
+                __( 'New experiment', 'burst' ),
+                'manage_options',
+                'burst-experiment',
+                array( $this, 'experiment_edit' )
+            );
 
 			add_submenu_page(
 				'burst',
@@ -480,6 +468,33 @@ if ( ! class_exists( "burst_admin" ) ) {
 			// }
 
 		}
+
+        /**
+         * This filter removes the 'New experiment' submenu page from the submenu and highlights the experiment page
+         * @param $submenu_file
+         * @return mixed|string
+         */
+        function burst_wp_admin_submenu_filter( $submenu_file ) {
+
+            global $plugin_page;
+
+            $hidden_submenus = array(
+                'burst-experiment' => true,
+            );
+
+            // Select another submenu item to highlight
+            if ( $plugin_page && isset( $hidden_submenus[ $plugin_page ] ) ) {
+                $submenu_file = 'burst-experiments';
+            }
+
+            // Hide the submenu.
+            foreach ( $hidden_submenus as $submenu => $unused ) {
+                remove_submenu_page( 'burst', $submenu );
+            }
+
+            return $submenu_file;
+        }
+
 
 		/**
 		 * Initialize the grid
@@ -595,7 +610,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			ob_start();
 
 			if ( $id || ( isset( $_GET['action'] ) && $_GET['action'] == 'new' ) ) {
-				include( dirname( __FILE__ ) . "/experiments/edit.php" );
+                BURST::$wizard->wizard( 'experiments' , 'title weweew' );
 			} else {
 
 				include( dirname( __FILE__ ) . '/experiments/class-experiment-table.php' );
@@ -609,7 +624,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 				<div class="wrap experiment">
 					<h1><?php _e( "Your experiments", 'burst' ) ?>
 						<?php do_action( 'burst_after_experiment_title' ); ?>
-						 <a href="<?php echo admin_url('admin.php?page=burst-experiments&action=new'); ?>"
+						 <a href="<?php echo admin_url('admin.php?page=burst-experiment&action=new'); ?>"
 		                   class="page-title-action"><?php _e('New experiment', 'burst') ?></a>
 					</h1>
 
@@ -630,11 +645,34 @@ if ( ! class_exists( "burst_admin" ) ) {
 			$html = ob_get_clean();
 			
 			$args = array(
-				'page' => 'experiments_overview',
+				'page' => 'experiments_settings',
 				'content' => $html,
 			);
 			echo burst_get_template('admin_wrap.php', $args );
 		}
+
+        /**
+         * Experiment edit page/wizard
+         */
+        function experiment_edit() {
+            if ( ! burst_user_can_manage() ) {
+                return;
+            }
+
+            $id = false;
+            if ( isset( $_GET['id'] ) ) {
+                $id = intval( $_GET['id'] );
+            }
+            $title = isset( $id ) ? __( 'Edit experiment', 'burst' ) : __( 'Create experiment', 'burst' );
+
+            ob_start();
+            if ( $id || ( isset( $_GET['action'] ) && $_GET['action'] == 'new' ) ) {
+                BURST::$wizard->wizard( 'experiment' , 'title weweew' );
+            }
+            $html = ob_get_clean();
+
+            echo $html;
+        }
 
 
         /**
@@ -1059,7 +1097,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 		    if (!current_user_can('activate_plugins')) return;
 
 		    $options = array(
-			    'cmplz_activation_time', 
+			    'burst_activation_time',
 			    'burst_abdb_version',
                 'burst-current-version',
                 'burst_options_settings',
