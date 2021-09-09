@@ -21,7 +21,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		    add_action( 'admin_footer-edit.php', array($this,'add_variant_status_add_in_quick_edit') );
 		    add_filter( 'display_post_states', array( $this, 'add_display_post_states' ), 10, 2 );
 		    add_action( 'wp_ajax_burst_experiment_action', array($this, 'experiment_action'));
-			add_action( 'admin_init',array( $this, 'process_burst_metaboxes' ) );
+			add_action( 'admin_init',array( $this, 'process_burst_experiment' ) );
 
 			self::$_this = $this;
 		}
@@ -30,59 +30,32 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			return self::$_this;
 		}
 
-		/**
-		 * Function for post duplication. Dups appear as drafts. User is redirected to the edit screen
-		 */
+        /**
+         * Function to process the wizard data
+         */
 
-		public function process_burst_metaboxes()
+		public function process_burst_experiment()
 		{
 			if (!burst_user_can_manage()) return;
-			if (!isset($_POST['post_ID'])) {
-				return;
-			}
+            //when clicking to the last page, or clicking finish, run the finish sequence.
+            if ( ( isset( $_POST['burst-finish'] ) || isset( $_POST['burst-next'] ) || isset( $_POST['burst-save'] ) ) ){
+                if ( ! isset( $_POST['burst_nonce'] ) || ! wp_verify_nonce( $_POST['burst_nonce'], 'burst_save' ) ) {
+                    return;
+                }
+            } else {
+                return;
+            }
 
-			if ( ! isset( $_POST['burst_nonce'] ) ) {
-				return;
-			}
+			$experiment_id = isset( $_POST['experiment_id']) ? $_POST['experiment_id'] : $_GET['id'];
+            $experiment_id = intval($experiment_id);
+            $control_id = isset( $_POST['burst_control_id'] ) ? $_POST['burst_control_id'] : false;
 
-			//check nonce
-			if ( ! isset( $_POST['burst_nonce'] )
-			     || ! wp_verify_nonce( $_POST['burst_nonce'],
-					'burst_save' )
-			) {
-				return;
-			}
-
-			$post_id = intval($_POST['post_ID']);
-			if ( isset( $_POST["burst_create_experiment_button"] ) ){
-				$redirect_id = $this->create_experiment($post_id);
-			} elseif ( isset( $_POST["burst_go_to_setup_experiment_button"] ) ){
-				$redirect_id = intval($_POST["burst_redirect_to_variant"]);
-			} elseif ( isset( $_POST["burst_save_experiment_button"] ) ){
-				$redirect_id = $post_id;
-				$experiment = new BURST_EXPERIMENT(false, $post_id );
+            if ( isset($control_id) ) {
+                $experiment = new BURST_EXPERIMENT( $experiment_id );
 				$experiment->process_form( $_POST );
-			} elseif ( isset( $_POST["burst_start_experiment_button"] ) ){
-				$redirect_id = $post_id;
-				$experiment = new BURST_EXPERIMENT(false, $post_id );
-				$experiment->process_form( $_POST );
-				$experiment->start();
-			} elseif ( isset( $_POST["burst_stop_experiment_button"] ) ){
-				$redirect_id = $post_id;
-				$experiment = new BURST_EXPERIMENT(false, $post_id );
-				$experiment->stop();
-			}
-
-			/*
-			* redirect to duplicated post also known as the variant
-			*/
-
-			if (isset($redirect_id)) {
-				$url = add_query_arg(array( 'post' => $redirect_id, 'action' => 'edit'), admin_url('post.php') );
-				if ( wp_redirect( $url ) ) {
-					exit;
-				}
-			}
+            } else {
+                $this->create_experiment( $control_id );
+            }
 		}
 
 		/**

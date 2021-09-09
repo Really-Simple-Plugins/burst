@@ -55,11 +55,11 @@ if ( ! class_exists( "burst_wizard" ) ) {
 			}
 		}
 
-        // CONFLICT WITH COM{LIANZ WIZARD
+        // CONFLICT WITH COMPLIANZ WIZARD
 		public function process_custom_hooks() {
-//			$wizard_type = ( isset( $_POST['wizard_type'] ) )
-//				? sanitize_title( $_POST['wizard_type'] ) : '';
-//			do_action( "burst_wizard_$wizard_type" );
+			$wizard_type = ( isset( $_POST['wizard_type'] ) )
+				? sanitize_title( $_POST['wizard_type'] ) : '';
+			do_action( "burst_wizard_$wizard_type" );
 		}
 
 		/**
@@ -71,8 +71,8 @@ if ( ! class_exists( "burst_wizard" ) ) {
 			$this->last_section = $this->last_section( $page, $this->step() );
 			$this->page_url     = admin_url( 'admin.php?page=burst-' . $page );
 			//if a post id was passed, we copy the contents of that page to the wizard settings.
-			if ( isset( $_GET['post_id'] ) ) {
-				$post_id = intval( $_GET['post_id'] );
+			if ( isset( $_GET['experiment_id'] ) ) {
+				$post_id = intval( $_GET['experiment_id'] );
 				//get all fields for this page
 				$fields = BURST::$config->fields( $page );
 				foreach ( $fields as $fieldname => $field ) {
@@ -93,24 +93,17 @@ if ( ! class_exists( "burst_wizard" ) ) {
 		/**
 		 * Some actions after the last step has been completed
 		 */
-		public function wizard_last_step_callback() {
-			$page = $this->wizard_type();
+		public function wizard_last_step_callback() {;
 
-			if ( ! $this->all_required_fields_completed( $page ) ) {
+			if ( ! $this->all_required_fields_completed( 'experiment' ) ) {
                 echo '<div class="burst-wizard-intro">';
 				_e( "Not all required fields are completed yet. Please check the steps to complete all required questions", 'burst' );
                 echo '</div>';
 			} else {
 			    echo '<div class="burst-wizard-intro">';
 				printf( '<p>' . __( "Click '%s' to complete the configuration. You can come back to change your configuration at any time.", 'burst' ). '</p>',
-					__( "Finish", 'burst' ) );
+					__( "Start experiment", 'burst' ) );
                 echo '</div>';
-
-				if ( BURST::$cookie_admin->site_needs_cookie_warning() ) {
-					burst_sidebar_notice( sprintf( __( "The cookie banner and cookie blocker are enabled. Please check your website if your configuration is working properly. Please read %sthese instructions%s to debug any issues while in safe mode. Safe mode is available under settings.","burst").'&nbsp;'.__("You will find tips and tricks on your dashboard after you have configured your cookie banner.", 'burst' ),
-                        '<a  target="_blank" href="https://BURST.io/debugging-manual">', '</a>'),
-                        'warning');
-				}
 			}
 		}
 
@@ -142,7 +135,7 @@ if ( ! class_exists( "burst_wizard" ) ) {
 
 			//when clicking to the last page, or clicking finish, run the finish sequence.
 			if ( isset( $_POST['burst-finish'] )
-			     || ( isset( $_POST["step"] ) && $_POST['step'] == STEP_MENU
+			     || ( isset( $_POST["step"] ) && $_POST['step'] == STEP_START
 			          && isset( $_POST['burst-next'] ) )
 			) {
 				$this->set_wizard_completed_once();
@@ -155,23 +148,18 @@ if ( ! class_exists( "burst_wizard" ) ) {
 				exit();
 			}
 
-			if ( isset( $_POST['burst-cookiebanner-settings'] ) ) {
-				wp_redirect( admin_url( 'admin.php?page=burst-cookiebanner' ) );
+			if (isset($_POST['wizard_type']) && $_POST['wizard_type'] === 'wizard' ) {
+				$url = add_query_arg(array( 'page' => 'burst-'.sanitize_title($_POST['wizard_type']) ),  admin_url('admin.php') );
+				if (isset($_POST['step'])) {
+					$url = add_query_arg(array( 'step' => intval($_POST['step'])),  $url );
+				}
+
+				if (isset($_POST['section'])) {
+					$url = add_query_arg(array( 'section' => intval($_POST['section'])),  $url );
+				}
+				wp_redirect( $url );
 				exit();
 			}
-
-//						if (isset($_POST['wizard_type']) && $_POST['wizard_type'] === 'wizard' ) {
-//				$url = add_query_arg(array( 'page' => 'burst-'.sanitize_title($_POST['wizard_type']) ),  admin_url('admin.php') );
-//				if (isset($_POST['step'])) {
-//					$url = add_query_arg(array( 'step' => intval($_POST['step'])),  $url );
-//				}
-//
-//				if (isset($_POST['section'])) {
-//					$url = add_query_arg(array( 'section' => intval($_POST['section'])),  $url );
-//				}
-//				wp_redirect( $url );
-//				exit();
-//			}
 
 		}
 
@@ -563,9 +551,9 @@ if ( ! class_exists( "burst_wizard" ) ) {
                 $args['active'] = ($i == $active_step) ? 'active' : '';
                 $args['completed'] = $this->required_fields_completed($page, $i, false) ? 'complete' : 'incomplete';
                 $args['url'] = add_query_arg(array('step' => $i), $this->page_url);
-                if ($this->post_id())
+                if ($this->experiment_id())
                 {
-                    $args['url'] = add_query_arg(array('post_id' => $this->post_id()), $args['url']);
+                    $args['url'] = add_query_arg(array('experiment_id' => $this->experiment_id()), $args['url']);
                 }
                 $args['sections'] = ($args['active'] == 'active') ? $this->wizard_sections($page, $active_step, $active_section) : '';
 
@@ -604,8 +592,8 @@ if ( ! class_exists( "burst_wizard" ) ) {
 
                     $completed = ( $this->required_fields_completed( $page, $step, $i ) ) ? "burst-done" : "burst-to-do";
                     $url = add_query_arg( array('step' => $step, 'section' => $i), $this->page_url );
-                    if ( $this->post_id() ) {
-                        $url = add_query_arg( array( 'post_id' => $this->post_id() ), $url );
+                    if ( $this->experiment_id() ) {
+                        $url = add_query_arg( array( 'experiment_id' => $this->experiment_id() ), $url );
                     }
 
                     $title = BURST::$config->steps[ $page ][ $step ]['sections'][ $i ]['title'];
@@ -637,7 +625,7 @@ if ( ! class_exists( "burst_wizard" ) ) {
 				'save_button' => '',
 				'intro' => $this->get_intro( $page, $step, $section ),
 				'page_url' => $this->page_url,
-				'post_id' => $this->post_id() ? '<input type="hidden" value="' . $this->post_id() . '" name="post_id">' : '',
+				'post_id' => $this->experiment_id() ? '<input type="hidden" value="' . $this->experiment_id() . '" name="experiment_id">' : '',
 			);
             if ( isset(BURST::$config->steps[$page][$step]['sections'][$section]['title'])) {
                 $args['title'] = BURST::$config->steps[$page][$step]['sections'][$section]['title'];
@@ -662,34 +650,15 @@ if ( ! class_exists( "burst_wizard" ) ) {
             }
 
             if ( $step < $this->total_steps( $page ) ) {
-                $args['next_button'] = '<input class="button button-primary burst-next" type="submit" name="burst-next" value="'. __( "Next", 'burst' ) . '">';
+                $args['next_button'] = '<input class="button button-primary burst-next" type="submit" name="burst-next" value="'. __( "Save and continue", 'burst' ) . '">';
             }
 
-            $hide_finish_button = false;
-            if ( strpos( $page, 'dataleak' ) !== false ) {
-                if ( !BURST::$dataleak->dataleak_has_to_be_reported_to_involved() ) {
-	                $hide_finish_button = true;
-                }
-            }
-
-            $label = ( strpos( $page, 'dataleak' ) !== false || strpos( $page, 'processing' ) !== false )
-                ? __( "View document", 'burst' )
-                : __( "Finish", 'burst' );
-
-            if ( ! $hide_finish_button && ( $step == $this->total_steps( $page ) ) && $this->all_required_fields_completed( $page )) {
-                /**
-                 * Only for the wizard type, should there optional be a button redirecting to the cookie settings page
-                 * */
-                if ( $page == 'wizard' && BURST::$cookie_admin->site_needs_cookie_warning() ) {
-                    $args['cookie_or_finish_button'] =
-                        '<input class="button button-primary burst-cookiebanner-settings" type="submit" name="burst-cookiebanner-settings" value="'. __( "Finish and check cookie banner settings", 'burst' ) . '">';
-                } else {
-                    $args['cookie_or_finish_button'] = '<input class="button button-primary burst-finish" type="submit" name="burst-finish" value="'. $label . '">';
-                }
+            if ( $step == $this->total_steps( $page ) && $this->all_required_fields_completed( $page )) {
+                    $args['cookie_or_finish_button'] = '<input class="button button-primary burst-finish" type="submit" name="burst-finish" value="'. __('Start experiment', 'burst') . '">';
             }
 
             if ( ( $step > 1 || $page == 'wizard' ) && $step < $this->total_steps( $page )) {
-                if ( ! ($step == STEP_COOKIES && $section == 6) ) {
+                if ( ! ($step == STEP_START && $section == 6) ) {
                     $args['save_button'] = '<input class="button button-secondary burst-save" type="submit" name="burst-save" value="'. __( "Save", 'burst' ) . '">';
                 }
             }
@@ -729,7 +698,7 @@ if ( ! class_exists( "burst_wizard" ) ) {
 			}
 
 
-			if ( $_GET['page'] !== 'burst-experiment' ) {
+			if ( isset($_GET['page']) && $_GET['page'] !== 'burst-experiment' ) {
 			    return;
             }
 
@@ -813,7 +782,7 @@ if ( ! class_exists( "burst_wizard" ) ) {
 
 		/**
 		 *
-		 * Get the current selected post id for documents
+		 * Get the current selected post id for experiments
 		 * @return int
 		 *
 		 * */
@@ -827,6 +796,23 @@ if ( ! class_exists( "burst_wizard" ) ) {
 
 			return $post_id;
 		}
+
+        /**
+         *
+         * Get the current selected post id for experiments
+         * @return int
+         *
+         * */
+
+        public function experiment_id() {
+            $post_id = false;
+            if ( isset( $_GET['experiment_id'] ) || isset( $_POST['experiment_id'] ) ) {
+                $post_id = ( isset( $_GET['experiment_id'] ) )
+                    ? intval( $_GET['experiment_id'] ) : intval( $_POST['experiment_id'] );
+            }
+
+            return $post_id;
+        }
 
 		/**
 		 * Get selected wizard type

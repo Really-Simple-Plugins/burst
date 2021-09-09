@@ -80,31 +80,50 @@ if ( ! class_exists( "burst_config" ) ) {
 		}
 
 
-		public function fields( $source = false, $step = false ) {
+        public function fields(
+            $page = false, $step = false, $section = false,
+            $get_by_fieldname = false
+        ) {
 
-			$output = array();
-			$fields = $this->fields;
-			if ( $source ) {
-				$fields = burst_array_filter_multidimensional( $this->fields, 'source', $source );
-			}
+            $output = array();
+            $fields = $this->fields;
+            if ( $page ) {
+                $fields = burst_array_filter_multidimensional( $this->fields,
+                    'source', $page );
+            }
 
-			foreach ( $fields as $fieldname => $field ) {
-				if ( $step ) {
-					if ( ( $field['step'] == $step )
-					     || ( is_array( $field['step'] )
-					          && in_array( $step, $field['step'] ) )
-					) {
-						$output[ $fieldname ] = $field;
-					}
-				}
-				if ( ! $step ) {
-					$output[ $fieldname ] = $field;
-				}
+            foreach ( $fields as $fieldname => $field ) {
+                if ( $get_by_fieldname && $fieldname !== $get_by_fieldname ) {
+                    continue;
+                }
 
-			}
+                if ( $step ) {
+                    if ( $section && isset( $field['section'] ) ) {
+                        if ( ( $field['step'] == $step
+                                || ( is_array( $field['step'] )
+                                    && in_array( $step, $field['step'] ) ) )
+                            && ( $field['section'] == $section )
+                        ) {
+                            $output[ $fieldname ] = $field;
+                        }
+                    } else {
+                        if ( ( $field['step'] == $step )
+                            || ( is_array( $field['step'] )
+                                && in_array( $step, $field['step'] ) )
+                        ) {
+                            $output[ $fieldname ] = $field;
+                        }
+                    }
+                }
+                if ( ! $step ) {
+                    $output[ $fieldname ] = $field;
+                }
 
-			return $output;
-		}
+            }
+
+            return $output;
+        }
+
         public function preload_init(){
             $this->fields = apply_filters( 'burst_fields_load_types', $this->fields );
         }

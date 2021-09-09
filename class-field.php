@@ -61,23 +61,24 @@ if ( ! class_exists( "burst_field" ) ) {
 				return;
 			}
 
-			if ( isset( $_POST['burst_nonce'] ) ) {
+            if ( isset( $_POST['burst_nonce'] ) ) {
+                //check nonce
+                if ( ! isset( $_POST['burst_nonce'] )
+                    || ! wp_verify_nonce( $_POST['burst_nonce'],
+                        'burst_save' )
+                ) {
+                    return;
+                }
 
-				//check nonce
-				if ( ! isset( $_POST['burst_nonce'] )
-				     || ! wp_verify_nonce( $_POST['burst_nonce'],
-						'burst_save' )
-				) {
-					return;
-				}
+                //save data
+                $posted_fields = array_filter( $_POST, array( $this, 'filter_burst_fields' ), ARRAY_FILTER_USE_KEY );
+                foreach ( $posted_fields as $fieldname => $fieldvalue ) {
+                    $this->save_field( $fieldname, $fieldvalue );
+                }
+                do_action('burst_after_saved_all_fields', $posted_fields );
+            }
+        }
 
-				//save data
-				$posted_fields = array_filter( $_POST, array( $this, 'filter_burst_fields' ), ARRAY_FILTER_USE_KEY );
-				foreach ( $posted_fields as $fieldname => $fieldvalue ) {
-					$this->save_field( $fieldname, $fieldvalue );
-				}
-			}
-		}
 
 		/**
 		 * Check if this is a conditional field
@@ -957,25 +958,25 @@ if ( ! class_exists( "burst_field" ) ) {
 		/**
 		* 
 		*/
-		public
-		function get_fields( $source, $step ) {
+        public
+        function get_fields(
+            $source, $step = false, $section = false, $get_by_fieldname = false
+        ) {
 
-			$fields = BURST::$config->fields( $source, $step );
+            $fields = BURST::$config->fields( $source, $step, $section, $get_by_fieldname );
+            $i = 0;
+            foreach ( $fields as $fieldname => $args ) {
+                if ( $i === 0 ) {
+                    $args['first'] = true;
+                }
+                $i ++;
+                $default_args = $this->default_args;
+                $args         = wp_parse_args( $args, $default_args );
 
-			$i = 0;
-			foreach ( $fields as $fieldname => $args ) {
-				if ( $i === 0 ) {
-					$args['first'] = true;
-				}
-				$i ++;
-				$default_args = $this->default_args;
-				$args         = wp_parse_args( $args, $default_args );
 
-
-				$type              = ( $args['callback'] ) ? 'callback'
-					: $args['type'];
-				$args['fieldname'] = $fieldname;
-				switch ( $type ) {
+                $type              = ( $args['callback'] ) ? 'callback' : $args['type'];
+                $args['fieldname'] = $fieldname;
+                switch ( $type ) {
 					case 'callback':
 						$this->callback( $args );
 						break;
@@ -984,9 +985,6 @@ if ( ! class_exists( "burst_field" ) ) {
 						break;
 					case 'button':
 						$this->button( $args );
-						break;
-					case 'upload':
-						$this->upload( $args );
 						break;
 					case 'url':
 						$this->url( $args );
@@ -1035,9 +1033,6 @@ if ( ! class_exists( "burst_field" ) ) {
 						break;
 					case 'label':
 						$this->label( $args );
-						break;
-					case 'weightslider';
-						$this->weightslider( $args );
 						break;
 					case 'weightslider';
 						$this->weightslider( $args );
@@ -1318,28 +1313,28 @@ if ( ! class_exists( "burst_field" ) ) {
 			$fieldname, $default = ''
 		) {
 			$fields = BURST::$config->fields();
+            error_log('get value');
 			if ( ! isset( $fields[ $fieldname ] ) ) {
 				return false;
 			}
 
+            error_log('fields isset');
 			$source = $fields[ $fieldname ]['source'];
-			if ( strpos( $source, 'BURST' ) !== false
-			     && class_exists( $source )
-			) {
+			error_log($source);
+			if ( strpos( $source, 'experiment' ) !== false ) {
 				$id = false;
 
 				if ( isset( $_GET['post'] ) ) {
 					$post_id = intval( $_GET['post'] );
 					$id = burst_get_experiment_id_for_post($post_id);
-				}  else if ( isset( $_GET['id'] ) ) {
-					$id = intval( $_GET['id'] );
-				} else if ( isset( $_POST['id'] ) ) {
-					$id = intval( $_POST['id'] );
-				}  
-
-
+				}  else if ( isset( $_GET['experiment_id'] ) ) {
+					$id = intval( $_GET['experiment_id'] );
+				} else if ( isset( $_POST['experiment_id'] ) ) {
+					$id = intval( $_POST['experiment_id'] );
+				}
 
 				$experiment = new BURST_EXPERIMENT( $id );
+				error_log(print_r($experiment, true));
 				$value  = ! empty( $experiment->{$fieldname} )
 					? $experiment->{$fieldname} : false;
 

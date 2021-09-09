@@ -5,7 +5,7 @@ $this->steps = array(
 		array(
             STEP_SELECT => array(
 				"id"    => "select",
-				"title" => __( "Create experiment", 'burst' ),
+				"title" => __( "Setup", 'burst' ),
 			),
 
 			STEP_METRICS => array(
@@ -22,7 +22,7 @@ $this->steps = array(
 			),
 			STEP_START    => array(
 				"id"    => "start",
-				"title" => __( "Start experiment", 'burst' ),
+				"title" => __( "Start", 'burst' ),
 				'intro' =>
 					'<h1>' . _x( "Get ready to finish your configuration.",
 						'intro menu', 'burst' ) . '</h1>' .

@@ -13,19 +13,20 @@ $this->fields = $this->fields + array(
         'required' => true,
     ),
 
-    'duplicate_or_choose_existing' => array(
-        'step'     => STEP_SELECT,
-        'section'  => 1,
-        'source'      => 'experiment',
-        'type'               => 'radio',
-        'label'              => '<span class="burst-experiment-dot variant">'. __( "Variant" , 'burst' ).'</span>',
-        'options' => array(
-            'duplicate'       => __( "Duplicate this page and edit", 'burst' ),
-            'existing-page'  => __( "Choose existing page", 'burst' ),
+        'control_id' => array(
+            'step'     => STEP_SELECT,
+            'section'  => 1,
+            'source'      => 'experiment',
+            'type'               => 'select2',
+            'query_settings'	 => array(
+                'post_type' 	=> 'any', //burst_get_current_post_type();
+                'post_status' 	=> burst_get_all_post_statuses( array('publish') ),
+                //'post__not_in' 	=> array( burst_get_current_post_id() ),
+            ),
+            'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
+                'burst' ),
+            'required' => true,
         ),
-        'default' => 'duplicate',
-        'required' => true,
-    ),
 
     'variant_id' => array(
         'step'     => STEP_SELECT,
@@ -33,20 +34,17 @@ $this->fields = $this->fields + array(
         'source'      => 'experiment',
         'type'               => 'select2',
         'query_settings'	 => array(
-            'post_type' 	=> burst_get_current_post_type(), //get_current_post_type();
+            'post_type' 	=> 'any', //burst_get_current_post_type();
             'post_status' 	=> burst_get_all_post_statuses( array('publish') ),
-            'post__not_in' 	=> array( burst_get_current_post_id() ),
+            //'post__not_in' 	=> array( burst_get_current_post_id() ),
         ),
         'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
             'burst' ),
-        'condition' => array(
-            'duplicate_or_choose_existing' => 'existing-page',
-        ),
         'required' => true,
     ),
 
     'goal' => array(
-        'step'     => STEP_SELECT,
+        'step'     => STEP_METRICS,
         'section'  => 1,
         'source'      => 'experiment',
         'type'        => 'radio',
@@ -61,7 +59,7 @@ $this->fields = $this->fields + array(
     ),
 
     'goal_identifier' => array(
-        'step'     => STEP_SELECT,
+        'step'     => STEP_METRICS,
         'section'  => 1,
         'source'      => 'experiment',
         'type'               => 'text',
@@ -73,7 +71,7 @@ $this->fields = $this->fields + array(
     ),
 
     'goal_id' => array(
-        'step'     => STEP_SELECT,
+        'step'     => STEP_METRICS,
         'section'  => 1,
         'source'      => 'experiment',
         'type'               => 'select2',
@@ -88,8 +86,8 @@ $this->fields = $this->fields + array(
     ),
 
     'minimum_samplesize' => array(
-        'step'     => STEP_SELECT,
-        'section'  => 1,
+        'step'     => STEP_METRICS,
+        'section'  => 2,
         'source'      => 'experiment',
         'type'               => 'radio',
         'default'            => 384,
@@ -104,8 +102,8 @@ $this->fields = $this->fields + array(
     ),
 
     'minimum_samplesize_custom' => array(
-        'step'     => STEP_SELECT,
-        'section'  => 1,
+        'step'     => STEP_METRICS,
+        'section'  => 2,
         'source'      => 'experiment',
         'type'               => 'number',
         'minimum'            => 384,
@@ -117,15 +115,16 @@ $this->fields = $this->fields + array(
 
 
 
-    // 'percentage_included' => array(
-    // 	'source'      => 'experiment',
-    // 	'step'        => 'setup',
-    // 	'type'        => 'weightslider',
-    // 	'default'	  => '100',
-    // 	'label'       => __( "Experiment weight", 'burst' ),
-    // 	'placeholder' => __( 'Percentage in numbers' ),
-    // 	'help'        => __( 'For internal use only', 'burst' ),
-    // ),
+     'percentage_included' => array(
+         'step'     => STEP_START,
+         'section'  => 1,
+         'source'      => 'experiment',
+     	'type'        => 'weightslider',
+     	'default'	  => '100',
+     	'label'       => __( "Experiment weight", 'burst' ),
+     	'placeholder' => __( 'Percentage in numbers' ),
+     	'help'        => __( 'For internal use only', 'burst' ),
+     ),
 
 );
 

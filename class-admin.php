@@ -490,46 +490,37 @@ if ( ! class_exists( "burst_admin" ) ) {
 				return;
 			}
 
-			$id = false;
-			if ( isset( $_GET['id'] ) ) {
-				$id = intval( $_GET['id'] );
-			}
-
 			ob_start();
 
-			if ( $id || ( isset( $_GET['action'] ) && $_GET['action'] == 'new' ) ) {
-                BURST::$wizard->wizard( 'experiments' , 'title weweew' );
-			} else {
+            include( dirname( __FILE__ ) . '/experiments/class-experiment-table.php' );
 
-				include( dirname( __FILE__ ) . '/experiments/class-experiment-table.php' );
+            $experiments_table = new burst_experiment_Table();
 
-				$experiments_table = new burst_experiment_Table();
+            $experiments_table->prepare_items();
 
-				$experiments_table->prepare_items();
+            ?>
 
-				?>
+            <div class="wrap experiment">
+                <h1><?php _e( "Your experiments", 'burst' ) ?>
+                    <?php do_action( 'burst_after_experiment_title' ); ?>
+                     <a href="<?php echo admin_url('admin.php?page=burst-experiment&action=new'); ?>"
+                       class="page-title-action"><?php _e('New experiment', 'burst') ?></a>
+                </h1>
 
-				<div class="wrap experiment">
-					<h1><?php _e( "Your experiments", 'burst' ) ?>
-						<?php do_action( 'burst_after_experiment_title' ); ?>
-						 <a href="<?php echo admin_url('admin.php?page=burst-experiment&action=new'); ?>"
-		                   class="page-title-action"><?php _e('New experiment', 'burst') ?></a>
-					</h1>
+                <form id="burst-experiment-filter" method="get"
+                      action="">
 
-					<form id="burst-experiment-filter" method="get"
-					      action="">
+                    <?php
+                    $experiments_table->views();
+                    $experiments_table->search_box( __( 'Search', 'burst' ),
+                        's' );
+                    $experiments_table->display();
+                    ?>
+                    <input type="hidden" name="page" value="burst-experiments"/>
+                </form>
+            </div>
+            <?php
 
-						<?php
-						$experiments_table->views();
-						$experiments_table->search_box( __( 'Search', 'burst' ),
-							's' );
-						$experiments_table->display();
-						?>
-						<input type="hidden" name="page" value="burst-experiments"/>
-					</form>
-				</div>
-				<?php
-			}
 			$html = ob_get_clean();
 			
 			$args = array(
@@ -548,14 +539,14 @@ if ( ! class_exists( "burst_admin" ) ) {
             }
 
             $id = false;
-            if ( isset( $_GET['id'] ) ) {
-                $id = intval( $_GET['id'] );
+            if ( isset( $_GET['experiment_id'] ) ) {
+                $id = intval( $_GET['experiment_id'] );
             }
-            $title = isset( $id ) ? __( 'Edit experiment', 'burst' ) : __( 'Create experiment', 'burst' );
+            $title = isset( $id ) ?  __( 'Create experiment', 'burst' ) : __( 'Edit experiment', 'burst' );
 
             ob_start();
             if ( $id || ( isset( $_GET['action'] ) && $_GET['action'] == 'new' ) ) {
-                BURST::$wizard->wizard( 'experiment' , 'title weweew' );
+                BURST::$wizard->wizard( 'experiment' , $title );
             }
             $html = ob_get_clean();
 
@@ -566,110 +557,10 @@ if ( ! class_exists( "burst_admin" ) ) {
         /**
 		 * General settings page
 		 *
-		 * @todo Settings need to be added or settings can be deleted
 		 */
 		public function settings() {
 			ob_start();
 			?>
-
-			<form class="burst-grid-container" action="" method="post" enctype="multipart/form-data">
-				<div class="burst-grid-header">
-					<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
-				</div>
-				<div class="burst-grid-content">
-					<?php
-					BURST::$field->get_fields( 'settings', 'general' );
-					?>
-				</div>
-				<div class="burst-grid-footer">
-					<?php
-					BURST::$field->save_button();
-					?>
-				</div>
-			</form>
-
-			<form class="burst-grid-container" action="" method="post" enctype="multipart/form-data">
-				<div class="burst-grid-header">
-					<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
-				</div>
-				<div class="burst-grid-content">
-					<?php
-					BURST::$field->get_fields( 'settings', 'general' );
-					?>
-				</div>
-				<div class="burst-grid-footer">
-					<?php
-					BURST::$field->save_button();
-					?>
-				</div>
-			</form>
-
-			<form class="burst-grid-container" action="" method="post" enctype="multipart/form-data">
-				<div class="burst-grid-header">
-					<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
-				</div>
-				<div class="burst-grid-content">
-					<?php
-					BURST::$field->get_fields( 'settings', 'general' );
-					?>
-				</div>
-				<div class="burst-grid-footer">
-					<?php
-					BURST::$field->save_button();
-					?>
-				</div>
-			</form>
-
-			<form class="burst-grid-container" action="" method="post" enctype="multipart/form-data">
-				<div class="burst-grid-header">
-					<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
-				</div>
-				<div class="burst-grid-content">
-					<?php
-					BURST::$field->get_fields( 'settings', 'general' );
-					?>
-				</div>
-				<div class="burst-grid-footer">
-					<?php
-					BURST::$field->save_button();
-					?>
-				</div>
-			</form>
-
-
-			<form class="burst-grid-container" action="" method="post" enctype="multipart/form-data">
-				<div class="burst-grid-header">
-					<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
-				</div>
-				<div class="burst-grid-content">
-					<?php
-					BURST::$field->get_fields( 'settings', 'general' );
-					?>
-				</div>
-				<div class="burst-grid-footer">
-					<?php
-					BURST::$field->save_button();
-					?>
-				</div>
-			</form>
-
-
-			<form class="burst-grid-container" action="" method="post" enctype="multipart/form-data">
-				<div class="burst-grid-header">
-					<h1 class="burst-grid-title"><?php _e( "Settings" ) ?></h1>
-				</div>
-				<div class="burst-grid-content">
-					<?php
-					BURST::$field->get_fields( 'settings', 'general' );
-					?>
-				</div>
-				<div class="burst-grid-footer">
-					<?php
-					BURST::$field->save_button();
-					?>
-				</div>
-			</form>
-
 
 			<form class="burst-grid-container" action="" method="post" enctype="multipart/form-data">
 				<div class="burst-grid-header">
