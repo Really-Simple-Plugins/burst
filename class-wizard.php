@@ -26,7 +26,7 @@ if ( ! class_exists( "burst_wizard" ) ) {
 			add_action( 'burst_wizard_last_step', array( $this, 'wizard_last_step_callback' ), 10, 1 );
 
 			//link action to custom hook
-			add_action( 'burst_wizard_wizard', array( $this, 'wizard_after_step' ), 10, 1 );
+			add_action( 'burst_wizard_experiment', array( $this, 'wizard_after_step' ), 10, 1 );
 
 			//process custom hooks
 			add_action( 'admin_init', array( $this, 'process_custom_hooks' ) );
@@ -140,27 +140,6 @@ if ( ! class_exists( "burst_wizard" ) ) {
 			) {
 				$this->set_wizard_completed_once();
 			}
-
-
-			//after clicking finish, redirect to dashboard.
-			if ( isset( $_POST['burst-finish'] ) ) {
-				wp_redirect( admin_url( 'admin.php?page=BURST' ) );
-				exit();
-			}
-
-			if (isset($_POST['wizard_type']) && $_POST['wizard_type'] === 'wizard' ) {
-				$url = add_query_arg(array( 'page' => 'burst-'.sanitize_title($_POST['wizard_type']) ),  admin_url('admin.php') );
-				if (isset($_POST['step'])) {
-					$url = add_query_arg(array( 'step' => intval($_POST['step'])),  $url );
-				}
-
-				if (isset($_POST['section'])) {
-					$url = add_query_arg(array( 'section' => intval($_POST['section'])),  $url );
-				}
-				wp_redirect( $url );
-				exit();
-			}
-
 		}
 
 		/**
@@ -483,6 +462,11 @@ if ( ! class_exists( "burst_wizard" ) ) {
 
             $section = $this->section();
             $step = $this->step();
+            error_log('step: ');
+            error_log($step);
+
+            error_log('section: ');
+            error_log($section);
 
             if ($this->section_is_empty($page, $step, $section)
                 || (isset($_POST['burst-next'])

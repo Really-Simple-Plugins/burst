@@ -233,18 +233,32 @@
 
         .burst-field {
           grid-column-start: 1;
+		  padding: 5px 20px 5px 20px;
+		  background-color: white;
+			margin: 0;
 		  select {
 			font-size:13px;
 		  }
         }
+		  .burst-label{
+			  padding: 0;
+			  margin: 0;
+			  background-color: white;
+			  label{
+				  display: inline-block;
+				  padding: 20px 20px 0 20px;
+				  &:empty{
+					  padding: 0;
+					  display: none;
+				  }
+			  }
+		  }
       }
-
-
 
       .burst-section-footer {
         grid-column-start: 1;
         background-color: white;
-        padding: 40px 5px 20px 20px;
+        padding: 20px 0px 20px 20px;
         display: grid;
         align-items: center;
         grid-template-columns: 1fr auto;
@@ -2019,101 +2033,8 @@ input.current-page {
   z-index: 10;
 }
 
-.cc-window {
-  right: 1em;
-}
-
-.cc-window.cc-center {
-  transform: translate(0%, -50%);
-  left: initial;
-}
-
-.cc-window.cc-left {
-  left: initial;
-}
-
-// At cookie settings, banner center is to the right
-@keyframes slideInUpCenter {
-  from {
-    -webkit-transform: translate3d(0, 150%, 0);
-    transform: translate3d(0, 150%, 0);
-  }
-  to {
-    -webkit-transform: translate3d(0, -50%, 0);
-    transform: translate3d(0, -50%, 0);
-  }
-}
-@keyframes slideOutUpCenter {
-  to {
-    -webkit-transform: translate3d(0, 150%, 0);
-    transform: translate3d(0, 150%, 0);
-    opacity: 1;
-  }
-  from {
-    -webkit-transform: translate3d(0, -50%, 0);
-    transform: translate3d(0, -50%, 0);
-    opacity: 1;
-  }
-}
-
 .wrap {
   margin: 0;
-}
-
-#burst-proof-of-consent,
-#burst-cookie-banner {
-
-  #burst-content-area {
-    display: block;
-
-    h1 {
-      background-color: white;
-      padding: @green-gap;
-      //margin: @red-gap;
-      border-bottom: 1px solid @grey-light;
-      width: -webkit-fill-available;
-    }
-
-    input[name=burst_generate_snapshot] {
-      width: 120px;
-    }
-
-    .burst-month-select,
-    .burst-year-select,
-    #post-query-submit {
-      float: right;
-      margin-top: -50px;
-      width: 120px;
-    }
-
-    #post-query-submit {
-      margin-right: 0;
-    }
-
-    .burst-month-select {
-      margin-right: 290px;
-    }
-
-    .burst-year-select {
-      margin-right: 145px;
-    }
-
-    .tablenav {
-      display: none;
-    }
-
-    #burst-cookiestatement-snapshot-filter {
-      padding-top: @green-gap;
-    }
-
-    .wp-list-table {
-      th {
-        a {
-          padding: @red-gap;
-        }
-      }
-    }
-  }
 }
 
 //license labels

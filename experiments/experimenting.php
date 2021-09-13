@@ -46,16 +46,43 @@ if ( ! class_exists( "burst_experimenting" ) ) {
                 return;
             }
 
-			$experiment_id = isset( $_POST['experiment_id']) ? $_POST['experiment_id'] : $_GET['id'];
-            $experiment_id = intval($experiment_id);
+			$experiment_id = isset( $_POST['experiment_id']) ? intval( $_POST['experiment_id'] ) : false;
+            if ( !isset($experiment_id) ){
+                $experiment_id = isset( $_GET['experiment_id']) ? intval( $_GET['experiment_id'] ) : false;
+            }
             $control_id = isset( $_POST['burst_control_id'] ) ? $_POST['burst_control_id'] : false;
 
-            if ( isset($control_id) ) {
+            if ( isset($experiment_id) ) {
                 $experiment = new BURST_EXPERIMENT( $experiment_id );
 				$experiment->process_form( $_POST );
             } else {
-                $this->create_experiment( $control_id );
+                $experiment_id = $this->create_experiment( $control_id );
             }
+
+            //after clicking finish, redirect to dashboard.
+            if ( isset( $_POST['burst-finish'] ) ) {
+                wp_redirect( admin_url( 'admin.php?page=burst' ) );
+                exit();
+            }
+
+            $url = add_query_arg(array( 'page' => 'burst-'.sanitize_title($_POST['wizard_type']) ),  admin_url('admin.php') );
+            error_log('$experiment_id');
+            error_log($experiment_id);
+            if ( isset( $experiment_id ) ) {
+                $url = add_query_arg(array( 'experiment_id' => $experiment_id),  $url );
+            }
+            if ( isset( $_POST['step'] ) ) {
+                $url = add_query_arg(array( 'step' => intval($_POST['step'])),  $url );
+            }
+
+            if ( isset( $_POST['section'] ) ) {
+                $url = add_query_arg(array( 'section' => intval($_POST['section'])),  $url );
+            }
+
+
+            wp_redirect( $url );
+            exit();
+
 		}
 
 		/**
@@ -144,17 +171,18 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		 *
 		 * @return false|int
 		 */
-		public function create_experiment( $post_id ){
+		public function create_experiment( $post_id = false){
 			if (!burst_user_can_manage()) {
 				return false;
 			}
+            $variant_id = false;
 
-			if (!$post_id) return false;
+			//if (!$post_id) return false;
 
 			if ($_POST["burst_duplicate_or_choose_existing"] === 'duplicate') {
 				$variant_id = $this->duplicate_post($post_id);
-			} else {
-				$variant_id = intval($_POST["burst_variant_id"]);
+			} else if ( isset( $_POST["burst_variant_id"] ) ) {
+				$variant_id = intval( $_POST["burst_variant_id"] );
 				$args = array(
 					'ID'                 => $variant_id,
 					'post_status'        => 'experiment',
@@ -166,13 +194,18 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			/**
 			 * create experiment entry
 			 */
+			error_log('create experiment entry');
 			$experiment_title = !empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : __('Unnamed experiment', 'burst');
 			$experiment = new BURST_EXPERIMENT();
 			$experiment->title = $experiment_title;
 			$experiment->control_id = $post_id;
 			$experiment->variant_id = $variant_id;
 			$experiment->save();
-			return $variant_id;
+			$id = $experiment->id;
+			error_log('$id');
+			error_log($id);
+			error_log(print_r($experiment, true));
+			return $experiment->id;
 		}
 
 		/**
@@ -280,24 +313,6 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 				$localize_args
 			);
 		}
-
-        /**
-        * Generate the experiment page
-        */
-        public function experiment_page()
-        {
-            ?>
-            <div class="wrap">
-                <?php if (BURST::$license->license_is_valid()) { ?>
-                    <?php
-                    BURST::$wizard->wizard("experiments", "This is the title"); ?>
-                <?php } else {
-                    $link = '<a href="'.add_query_arg(array('page'=>'burst-settings#license'), admin_url('admin.php')).'">';
-                    cmplz_admin_notice( sprintf(__( 'Your license needs to be %sactivated%s to unlock the wizard', 'burst' ), $link, '</a>' ));
-                } ?>
-            </div>
-            <?php
-        }
 
 		/**
 		 * Load variant content by filtering the_content

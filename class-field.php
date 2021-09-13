@@ -567,7 +567,7 @@ if ( ! class_exists( "burst_field" ) ) {
 			?>
 			<?php do_action( 'burst_before_label', $args ); ?>
 
-			<p class="label"><?php echo $args['label'] ?><?php echo $this->get_help_tip_btn( $args ); ?></p>
+			<label class="label"><?php echo $args['label'] ?><?php echo $this->get_help_tip_btn( $args ); ?></label>
 
 			<?php do_action( 'burst_after_label', $args ); ?>
 			<div class="burst-validate-radio">
@@ -1325,13 +1325,18 @@ if ( ! class_exists( "burst_field" ) ) {
 				$id = false;
 
 				if ( isset( $_GET['post'] ) ) {
+				    error_log('burst_get_experiment_id_for_post');
 					$post_id = intval( $_GET['post'] );
 					$id = burst_get_experiment_id_for_post($post_id);
 				}  else if ( isset( $_GET['experiment_id'] ) ) {
 					$id = intval( $_GET['experiment_id'] );
+					error_log('get');
 				} else if ( isset( $_POST['experiment_id'] ) ) {
+				    error_log('post');
 					$id = intval( $_POST['experiment_id'] );
-				}
+				} else {
+				    error_log('niet');
+                }
 
 				$experiment = new BURST_EXPERIMENT( $id );
 				error_log(print_r($experiment, true));

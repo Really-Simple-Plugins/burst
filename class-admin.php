@@ -539,15 +539,18 @@ if ( ! class_exists( "burst_admin" ) ) {
             }
 
             $id = false;
-            if ( isset( $_GET['experiment_id'] ) ) {
-                $id = intval( $_GET['experiment_id'] );
+            if ( isset( $_POST['experiment_id'] ) ) {
+                $id = intval( $_POST['experiment_id'] );
+            }
+            if ( isset( $id ) ) {
+                $id = isset( $_GET['experiment_id'] ) ? intval( $_GET['experiment_id'] ) : false;
             }
             $title = isset( $id ) ?  __( 'Create experiment', 'burst' ) : __( 'Edit experiment', 'burst' );
 
             ob_start();
-            if ( $id || ( isset( $_GET['action'] ) && $_GET['action'] == 'new' ) ) {
-                BURST::$wizard->wizard( 'experiment' , $title );
-            }
+
+            BURST::$wizard->wizard( 'experiment' , $title );
+
             $html = ob_get_clean();
 
             echo $html;
