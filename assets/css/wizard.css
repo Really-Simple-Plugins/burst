@@ -2135,27 +2135,30 @@ input.current-page {
   left: 50%;
   min-width: 300px;
   transform: translateX(-50%);
-  border-left: 4px solid #61CE70;
   text-align: left;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.12), 0 4px 4px rgba(0, 0, 0, 0.12), 0 8px 8px rgba(0, 0, 0, 0.12), 0 16px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 0 5px 5px rgba(222, 222, 222, 0.2);
 }
 .burst-settings-saved svg {
-  color: #61CE70;
   margin: 2px 17px;
   margin-right: 7px;
-  width: 14px;
 }
-.burst-settings-saved p {
+.burst-settings-saved .burst-settings-saved__text_and_icon {
   display: flex;
   align-content: center;
   margin: 10px 0;
 }
-.burst-settings-saved p span {
+.burst-settings-saved .burst-settings-saved__text_and_icon span {
+  display: flex;
+  align-self: center;
   margin: 2px;
   margin-left: 0;
   font-size: 11.7px;
   font-weight: 400;
   color: #696969;
+}
+.burst-settings-saved .burst-settings-saved__text_and_icon div {
+  display: flex;
+  align-self: center;
 }
 .burst-settings-saved.burst-settings-saved--fade-in {
   display: block;

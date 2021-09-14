@@ -1170,6 +1170,13 @@ if ( ! class_exists( "burst_field" ) ) {
             </label>
             <?php do_action( 'burst_after_label', $args ); ?>
 
+            <div class="burst-experiment-settings-info_container control">
+                <span class="burst-experiment-dot control"></span>
+                <div class="burst-experiment-settings-info_title">
+                    <p>Control</p>
+                </div>
+            </div>
+
             <select class="burst-select2-page-field form-control" <?php if ( $args['required'] ) {
                 echo 'required';
             } ?> name="<?php echo esc_html( $fieldname ) ?>">
@@ -1214,12 +1221,6 @@ if ( ! class_exists( "burst_field" ) ) {
             </label>
             <?php do_action( 'burst_after_label', $args ); ?>
 
-            <div class="burst-experiment-settings-info_container control">
-                <span class="burst-experiment-dot control"></span>
-                <div class="burst-experiment-settings-info_title">
-                    <p>Control</p>
-                </div>
-            </div>
             <div class="burst-experiment-settings-info_container variant">
                 <span class="burst-experiment-dot variant"></span>
                 <div class="burst-experiment-settings-info_title">
