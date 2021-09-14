@@ -521,7 +521,7 @@
   padding: 10px;
   background-color: #f0f2f8;
 }
-#burst-wizard,
+.burst-wizard,
 #burst-settings {
   /* ----------- Icons ----------- */
   /* ----------- Fields ----------- */
@@ -533,100 +533,100 @@
   /* Text, Email, Select(2), Textarea Style */
   /* Placeholders */
 }
-#burst-wizard .burst-field .burst-icon,
+.burst-wizard .burst-field .burst-icon,
 #burst-settings .burst-field .burst-icon,
-#burst-wizard .burst-step .burst-icon,
+.burst-wizard .burst-step .burst-icon,
 #burst-settings .burst-step .burst-icon {
   border-radius: 50%;
 }
-#burst-wizard .burst-field .burst-icon.dashicons-before:before,
+.burst-wizard .burst-field .burst-icon.dashicons-before:before,
 #burst-settings .burst-field .burst-icon.dashicons-before:before,
-#burst-wizard .burst-step .burst-icon.dashicons-before:before,
+.burst-wizard .burst-step .burst-icon.dashicons-before:before,
 #burst-settings .burst-step .burst-icon.dashicons-before:before {
   font-size: 18px;
   height: 20px;
   width: 20px;
   margin-top: 2px;
 }
-#burst-wizard .burst-field .burst-icon.burst-empty,
+.burst-wizard .burst-field .burst-icon.burst-empty,
 #burst-settings .burst-field .burst-icon.burst-empty,
-#burst-wizard .burst-step .burst-icon.burst-empty,
+.burst-wizard .burst-step .burst-icon.burst-empty,
 #burst-settings .burst-step .burst-icon.burst-empty {
   visibility: hidden;
 }
-#burst-wizard .burst-field .burst-icon.burst-success,
+.burst-wizard .burst-field .burst-icon.burst-success,
 #burst-settings .burst-field .burst-icon.burst-success,
-#burst-wizard .burst-step .burst-icon.burst-success,
+.burst-wizard .burst-step .burst-icon.burst-success,
 #burst-settings .burst-step .burst-icon.burst-success {
   color: #333;
 }
-#burst-wizard .burst-field .burst-icon.burst-success svg,
+.burst-wizard .burst-field .burst-icon.burst-success svg,
 #burst-settings .burst-field .burst-icon.burst-success svg,
-#burst-wizard .burst-step .burst-icon.burst-success svg,
+.burst-wizard .burst-step .burst-icon.burst-success svg,
 #burst-settings .burst-step .burst-icon.burst-success svg {
   fill: #333;
   stroke: #333;
 }
-#burst-wizard .burst-field .burst-icon.burst-green,
+.burst-wizard .burst-field .burst-icon.burst-green,
 #burst-settings .burst-field .burst-icon.burst-green,
-#burst-wizard .burst-step .burst-icon.burst-green,
+.burst-wizard .burst-step .burst-icon.burst-green,
 #burst-settings .burst-step .burst-icon.burst-green {
   color: #61ce70;
 }
-#burst-wizard .burst-field .burst-icon.burst-green svg,
+.burst-wizard .burst-field .burst-icon.burst-green svg,
 #burst-settings .burst-field .burst-icon.burst-green svg,
-#burst-wizard .burst-step .burst-icon.burst-green svg,
+.burst-wizard .burst-step .burst-icon.burst-green svg,
 #burst-settings .burst-step .burst-icon.burst-green svg {
   fill: #61ce70;
   stroke: #61ce70;
 }
-#burst-wizard .burst-field .burst-icon.burst-disabled,
+.burst-wizard .burst-field .burst-icon.burst-disabled,
 #burst-settings .burst-field .burst-icon.burst-disabled,
-#burst-wizard .burst-step .burst-icon.burst-disabled,
+.burst-wizard .burst-step .burst-icon.burst-disabled,
 #burst-settings .burst-step .burst-icon.burst-disabled {
   color: #ababab;
 }
-#burst-wizard .burst-field .burst-icon.burst-disabled svg,
+.burst-wizard .burst-field .burst-icon.burst-disabled svg,
 #burst-settings .burst-field .burst-icon.burst-disabled svg,
-#burst-wizard .burst-step .burst-icon.burst-disabled svg,
+.burst-wizard .burst-step .burst-icon.burst-disabled svg,
 #burst-settings .burst-step .burst-icon.burst-disabled svg {
   fill: #ababab;
   stroke: #ababab;
 }
-#burst-wizard .burst-field .burst-icon.burst-error,
+.burst-wizard .burst-field .burst-icon.burst-error,
 #burst-settings .burst-field .burst-icon.burst-error,
-#burst-wizard .burst-step .burst-icon.burst-error,
+.burst-wizard .burst-step .burst-icon.burst-error,
 #burst-settings .burst-step .burst-icon.burst-error {
   color: #d7263d;
 }
-#burst-wizard .burst-field .burst-icon.burst-error svg,
+.burst-wizard .burst-field .burst-icon.burst-error svg,
 #burst-settings .burst-field .burst-icon.burst-error svg,
-#burst-wizard .burst-step .burst-icon.burst-error svg,
+.burst-wizard .burst-step .burst-icon.burst-error svg,
 #burst-settings .burst-step .burst-icon.burst-error svg {
   fill: #d7263d;
   stroke: #d7263d;
 }
-#burst-wizard .burst-field .burst-icon.arrow-right-alt2::before,
+.burst-wizard .burst-field .burst-icon.arrow-right-alt2::before,
 #burst-settings .burst-field .burst-icon.arrow-right-alt2::before,
-#burst-wizard .burst-step .burst-icon.arrow-right-alt2::before,
+.burst-wizard .burst-step .burst-icon.arrow-right-alt2::before,
 #burst-settings .burst-step .burst-icon.arrow-right-alt2::before {
   font-size: 17px;
 }
-#burst-wizard .burst-circle-green,
+.burst-wizard .burst-circle-green,
 #burst-settings .burst-circle-green {
   height: 12px;
   width: 12px;
   border-radius: 12px;
   background-color: #61ce70;
 }
-#burst-wizard .burst-circle-red,
+.burst-wizard .burst-circle-red,
 #burst-settings .burst-circle-red {
   height: 12px;
   width: 12px;
   border-radius: 12px;
   background-color: #d7263d;
 }
-#burst-wizard .burst-checkbox-container,
+.burst-wizard .burst-checkbox-container,
 #burst-settings .burst-checkbox-container {
   display: block;
   position: relative;
@@ -639,7 +639,7 @@
   /* Show the default checkmark when default */
   /* Disabled option */
 }
-#burst-wizard .burst-checkbox-container input,
+.burst-wizard .burst-checkbox-container input,
 #burst-settings .burst-checkbox-container input {
   position: absolute;
   opacity: 0;
@@ -647,7 +647,7 @@
   height: 0;
   width: 0;
 }
-#burst-wizard .burst-checkbox-container .checkmark,
+.burst-wizard .burst-checkbox-container .checkmark,
 #burst-settings .burst-checkbox-container .checkmark {
   position: absolute;
   top: -2px;
@@ -655,47 +655,47 @@
   height: 20px;
   width: 20px;
   border-radius: 5px;
-  border: 1px solid #dadada;
+  border: 1px solid #8c8f94;
 }
-#burst-wizard .burst-checkbox-container .checkmark svg,
+.burst-wizard .burst-checkbox-container .checkmark svg,
 #burst-settings .burst-checkbox-container .checkmark svg {
   content: "";
   position: absolute;
   display: none;
 }
-#burst-wizard .burst-checkbox-container input:checked ~ .checkmark svg,
+.burst-wizard .burst-checkbox-container input:checked ~ .checkmark svg,
 #burst-settings .burst-checkbox-container input:checked ~ .checkmark svg {
   display: block;
   fill: #61CE70;
   stroke: #61CE70;
 }
-#burst-wizard .burst-checkbox-container .checkmark svg,
+.burst-wizard .burst-checkbox-container .checkmark svg,
 #burst-settings .burst-checkbox-container .checkmark svg {
   left: 2.5px;
   top: 2px;
   width: 15px;
   height: 15px;
 }
-#burst-wizard .burst-checkbox-container .checkmark.burst-default svg,
+.burst-wizard .burst-checkbox-container .checkmark.burst-default svg,
 #burst-settings .burst-checkbox-container .checkmark.burst-default svg {
   display: block;
   fill: #eee;
   stroke: #eee;
 }
-#burst-wizard .burst-checkbox-container.burst-disabled,
+.burst-wizard .burst-checkbox-container.burst-disabled,
 #burst-settings .burst-checkbox-container.burst-disabled {
   pointer-events: none;
 }
-#burst-wizard .burst-checkbox-container.burst-disabled .checkmark,
+.burst-wizard .burst-checkbox-container.burst-disabled .checkmark,
 #burst-settings .burst-checkbox-container.burst-disabled .checkmark {
   background-color: #eee;
 }
-#burst-wizard .burst-checkbox-container.burst-disabled .checkmark svg,
+.burst-wizard .burst-checkbox-container.burst-disabled .checkmark svg,
 #burst-settings .burst-checkbox-container.burst-disabled .checkmark svg {
   stroke: #eee !important;
   fill: #eee !important;
 }
-#burst-wizard .burst-radio-container,
+.burst-wizard .burst-radio-container,
 #burst-settings .burst-radio-container {
   display: block;
   position: relative;
@@ -708,7 +708,7 @@
   /* Show the default checkmark when default */
   /* Disabled option */
 }
-#burst-wizard .burst-radio-container input,
+.burst-wizard .burst-radio-container input,
 #burst-settings .burst-radio-container input {
   position: absolute;
   opacity: 0;
@@ -716,7 +716,7 @@
   height: 0;
   width: 0;
 }
-#burst-wizard .burst-radio-container .radiobtn,
+.burst-wizard .burst-radio-container .radiobtn,
 #burst-settings .burst-radio-container .radiobtn {
   position: absolute;
   top: -2px;
@@ -724,65 +724,65 @@
   height: 20px;
   width: 20px;
   border-radius: 20px;
-  border: 1px solid #dadada;
+  border: 1px solid #8c8f94;
 }
-#burst-wizard .burst-radio-container .radiobtn.disabled,
+.burst-wizard .burst-radio-container .radiobtn.disabled,
 #burst-settings .burst-radio-container .radiobtn.disabled {
   cursor: not-allowed;
 }
-#burst-wizard .burst-radio-container .radiobtn div,
+.burst-wizard .burst-radio-container .radiobtn div,
 #burst-settings .burst-radio-container .radiobtn div {
   content: "";
   position: absolute;
   display: none;
 }
-#burst-wizard .burst-radio-container input:checked ~ .radiobtn .burst-icon,
+.burst-wizard .burst-radio-container input:checked ~ .radiobtn .burst-icon,
 #burst-settings .burst-radio-container input:checked ~ .radiobtn .burst-icon {
   display: block;
   background-color: #61CE70;
 }
-#burst-wizard .burst-radio-container .radiobtn .burst-icon,
+.burst-wizard .burst-radio-container .radiobtn .burst-icon,
 #burst-settings .burst-radio-container .radiobtn .burst-icon {
   left: 5px;
   top: 2px;
   width: 10px;
   height: 10px;
 }
-#burst-wizard .burst-radio-container .radiobtn.burst-default .burst-icon,
+.burst-wizard .burst-radio-container .radiobtn.burst-default .burst-icon,
 #burst-settings .burst-radio-container .radiobtn.burst-default .burst-icon {
   display: block;
   background-color: #eee;
 }
-#burst-wizard .burst-radio-container .radiobtn.disabled,
+.burst-wizard .burst-radio-container .radiobtn.disabled,
 #burst-settings .burst-radio-container .radiobtn.disabled {
   background-color: #eee;
 }
-#burst-wizard .burst-radio-container .radiobtn.disabled .burst-icon,
+.burst-wizard .burst-radio-container .radiobtn.disabled .burst-icon,
 #burst-settings .burst-radio-container .radiobtn.disabled .burst-icon {
   background-color: #eee !important;
 }
-#burst-wizard textarea.validation,
+.burst-wizard textarea.validation,
 #burst-settings textarea.validation,
-#burst-wizard input[type="text"].validation,
+.burst-wizard input[type="text"].validation,
 #burst-settings input[type="text"].validation,
-#burst-wizard input[type="email"].validation,
+.burst-wizard input[type="email"].validation,
 #burst-settings input[type="email"].validation,
-#burst-wizard input[type="text"].burst-valid-page,
+.burst-wizard input[type="text"].burst-valid-page,
 #burst-settings input[type="text"].burst-valid-page,
-#burst-wizard input[type="text"].burst-deleted-page,
+.burst-wizard input[type="text"].burst-deleted-page,
 #burst-settings input[type="text"].burst-deleted-page {
   position: relative;
   padding-left: 25px;
 }
-#burst-wizard textarea.validation ~ span .burst-icon,
+.burst-wizard textarea.validation ~ span .burst-icon,
 #burst-settings textarea.validation ~ span .burst-icon,
-#burst-wizard input[type="text"].validation ~ span .burst-icon,
+.burst-wizard input[type="text"].validation ~ span .burst-icon,
 #burst-settings input[type="text"].validation ~ span .burst-icon,
-#burst-wizard input[type="email"].validation ~ span .burst-icon,
+.burst-wizard input[type="email"].validation ~ span .burst-icon,
 #burst-settings input[type="email"].validation ~ span .burst-icon,
-#burst-wizard input[type="text"].burst-valid-page ~ span .burst-icon,
+.burst-wizard input[type="text"].burst-valid-page ~ span .burst-icon,
 #burst-settings input[type="text"].burst-valid-page ~ span .burst-icon,
-#burst-wizard input[type="text"].burst-deleted-page ~ span .burst-icon,
+.burst-wizard input[type="text"].burst-deleted-page ~ span .burst-icon,
 #burst-settings input[type="text"].burst-deleted-page ~ span .burst-icon {
   display: block;
   position: absolute;
@@ -790,78 +790,108 @@
   margin-top: -25px;
   z-index: 1;
 }
-#burst-wizard textarea.validation ~ span .burst-icon svg,
+.burst-wizard textarea.validation ~ span .burst-icon svg,
 #burst-settings textarea.validation ~ span .burst-icon svg,
-#burst-wizard input[type="text"].validation ~ span .burst-icon svg,
+.burst-wizard input[type="text"].validation ~ span .burst-icon svg,
 #burst-settings input[type="text"].validation ~ span .burst-icon svg,
-#burst-wizard input[type="email"].validation ~ span .burst-icon svg,
+.burst-wizard input[type="email"].validation ~ span .burst-icon svg,
 #burst-settings input[type="email"].validation ~ span .burst-icon svg,
-#burst-wizard input[type="text"].burst-valid-page ~ span .burst-icon svg,
+.burst-wizard input[type="text"].burst-valid-page ~ span .burst-icon svg,
 #burst-settings input[type="text"].burst-valid-page ~ span .burst-icon svg,
-#burst-wizard input[type="text"].burst-deleted-page ~ span .burst-icon svg,
+.burst-wizard input[type="text"].burst-deleted-page ~ span .burst-icon svg,
 #burst-settings input[type="text"].burst-deleted-page ~ span .burst-icon svg {
   width: 15px;
   height: 15px;
 }
-#burst-wizard textarea.validation:invalid ~ span .burst-icon,
+.burst-wizard textarea.validation:invalid ~ span .burst-icon,
 #burst-settings textarea.validation:invalid ~ span .burst-icon,
-#burst-wizard textarea.validation:valid ~ span .burst-icon,
+.burst-wizard textarea.validation:valid ~ span .burst-icon,
 #burst-settings textarea.validation:valid ~ span .burst-icon {
   margin-top: -143px;
 }
-#burst-wizard textarea.validation:valid ~ span .burst-failed,
+.burst-wizard textarea.validation:valid ~ span .burst-failed,
 #burst-settings textarea.validation:valid ~ span .burst-failed,
-#burst-wizard input[type="text"].validation:valid ~ span .burst-failed,
+.burst-wizard input[type="text"].validation:valid ~ span .burst-failed,
 #burst-settings input[type="text"].validation:valid ~ span .burst-failed,
-#burst-wizard input[type="email"].validation:valid ~ span .burst-failed,
+.burst-wizard input[type="email"].validation:valid ~ span .burst-failed,
 #burst-settings input[type="email"].validation:valid ~ span .burst-failed {
   display: none;
 }
-#burst-wizard textarea.validation:invalid ~ span .burst-success,
+.burst-wizard textarea.validation:invalid ~ span .burst-success,
 #burst-settings textarea.validation:invalid ~ span .burst-success,
-#burst-wizard input[type="text"].validation:invalid ~ span .burst-success,
+.burst-wizard input[type="text"].validation:invalid ~ span .burst-success,
 #burst-settings input[type="text"].validation:invalid ~ span .burst-success,
-#burst-wizard input[type="email"].validation:invalid ~ span .burst-success,
+.burst-wizard input[type="email"].validation:invalid ~ span .burst-success,
 #burst-settings input[type="email"].validation:invalid ~ span .burst-success {
   display: none;
 }
-#burst-wizard input[type="text"],
+.burst-wizard input[type="text"],
 #burst-settings input[type="text"],
-#burst-wizard input[type="email"],
+.burst-wizard input[type="email"],
 #burst-settings input[type="email"],
-#burst-wizard select,
+.burst-wizard select,
 #burst-settings select,
-#burst-wizard .select2,
+.burst-wizard .select2,
 #burst-settings .select2,
-#burst-wizard textarea,
+.burst-wizard textarea,
 #burst-settings textarea,
-#burst-wizard input[type="number"],
+.burst-wizard input[type="number"],
 #burst-settings input[type="number"] {
   margin-bottom: 2px;
 }
-#burst-wizard textarea,
+.burst-wizard textarea,
 #burst-settings textarea {
   padding: 10px;
 }
-#burst-wizard ::placeholder,
+.burst-wizard ::placeholder,
 #burst-settings ::placeholder {
-  color: #ededed;
+  color: #737373;
 }
-#burst-wizard ::placeholder,
-#burst-settings ::placeholder {
-  color: #ededed;
-}
-#burst-wizard ::-moz-placeholder,
+.burst-wizard ::-moz-placeholder,
 #burst-settings ::-moz-placeholder {
-  color: #ededed;
+  color: #737373;
 }
-#burst-wizard :-ms-input-placeholder,
+.burst-wizard :-ms-input-placeholder,
 #burst-settings :-ms-input-placeholder {
-  color: #ededed;
+  color: #737373;
 }
-#burst-wizard :-moz-placeholder,
+.burst-wizard :-moz-placeholder,
 #burst-settings :-moz-placeholder {
-  color: #ededed;
+  color: #737373;
+}
+.burst-wizard .select2-container--default .select2-selection--single .select2-selection__rendered,
+#burst-settings .select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: #737373;
+}
+.burst-wizard .burst-experiment-settings-info_container,
+#burst-settings .burst-experiment-settings-info_container {
+  display: flex;
+  margin: 6px 0;
+  font-size: 12px;
+  padding: 5px 7px;
+  border-radius: 5px;
+}
+.burst-wizard .burst-experiment-settings-info_container.control,
+#burst-settings .burst-experiment-settings-info_container.control {
+  background-color: #eaf8fe;
+  border: 1px solid #29b6f6;
+}
+.burst-wizard .burst-experiment-settings-info_container.variant,
+#burst-settings .burst-experiment-settings-info_container.variant {
+  background-color: #fefbf4;
+  border: 1px solid #f4bf3e;
+}
+.burst-wizard .burst-experiment-settings-info_container a,
+#burst-settings .burst-experiment-settings-info_container a,
+.burst-wizard .burst-experiment-settings-info_container p,
+#burst-settings .burst-experiment-settings-info_container p {
+  width: 100%;
+  margin: 0;
+}
+.burst-wizard .burst-experiment-settings-info_container p,
+#burst-settings .burst-experiment-settings-info_container p {
+  font-weight: 500;
+  font-size: 14px;
 }
 .burst-multiple-field-button-footer {
   display: flex;
@@ -1562,7 +1592,7 @@ html .mceContentBody {
 .burst-field input[type="number"],
 .burst-field input[type="password"] {
   max-width: 500px;
-  border-color: #dadada;
+  border-color: #8c8f94;
 }
 .burst-field input[type="text"]:focus,
 .burst-field input[type="email"]:focus,
@@ -1584,7 +1614,7 @@ html .mceContentBody {
 .burst-field textarea.validation:invalid,
 .burst-field textarea.validation:valid {
   background-position: 0.5% 1.5%;
-  border-color: #dadada;
+  border-color: #8c8f94;
 }
 .burst-field textarea {
   min-height: 150px;

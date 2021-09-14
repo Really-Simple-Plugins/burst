@@ -5,7 +5,12 @@ $this->steps = array(
 		array(
             STEP_SELECT => array(
 				"id"    => "select",
-				"title" => __( "Setup", 'burst' ),
+				"title" => __( "Create", 'burst' ),
+//                'sections' => array(
+//                    1 => array(
+//                        'title' => __( 'Select control and variant', 'burst' ),
+//                    ),
+//                ),
 			),
 
 			STEP_METRICS => array(
@@ -23,12 +28,17 @@ $this->steps = array(
 			STEP_START    => array(
 				"id"    => "start",
 				"title" => __( "Start", 'burst' ),
-				'intro' =>
-					'<h1>' . _x( "Get ready to finish your configuration.",
-						'intro menu', 'burst' ) . '</h1>' .
-					'<p>'
-					. _x( "Generate your documents, then you can add them to your menu directly or do it manually after the wizard is finished.",
-						'intro menu', 'burst' ) . '</p>',
+//                'sections' => array(
+//                    1 => array(
+//                        'title' => __( 'Select control and variant', 'burst' ),
+//                    ),
+//                ),
+//				'intro' =>
+//					'<h1>' . _x( "Get ready to finish your configuration.",
+//						'intro menu', 'burst' ) . '</h1>' .
+//					'<p>'
+//					. _x( "Generate your documents, then you can add them to your menu directly or do it manually after the wizard is finished.",
+//						'intro menu', 'burst' ) . '</p>',
 			),
 		),
 );

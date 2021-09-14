@@ -176,6 +176,11 @@ jQuery(document).ready(function ($) {
         });
     }
 
+    // Select/focus the searchbox when clicking on a select2 field
+    $(document).on('select2:open', () => {
+        document.querySelector('.select2-search__field').focus();
+    });
+
     $(document).on('click', '.burst-experiment-action', function (e) {
         e.preventDefault();
         var btn = $(this);

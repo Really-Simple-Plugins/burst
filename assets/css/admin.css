@@ -320,7 +320,7 @@
   width: 50%;
 }
 #burst .burst-tips-tricks-container-title {
-  border-bottom: 1px solid #DEDEDE;
+  border-bottom: 1px solid #dadada;
 }
 #burst .burst-tooltip-right,
 #burst .burst-tooltip-bottom {
@@ -401,7 +401,7 @@
   background-color: #61CE70;
 }
 #burst .burst-divider {
-  border-bottom: 1px solid #DEDEDE;
+  border-bottom: 1px solid #dadada;
   padding: 10px;
   margin: 10px;
 }
@@ -479,7 +479,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #DEDEDE;
+  border-bottom: 1px solid #dadada;
   padding: 15px 20px;
 }
 #burst #burst-content-area .burst-grid .burst-grid-header .burst-grid-title {
@@ -502,7 +502,7 @@
   min-height: 60px;
   box-sizing: border-box;
   padding: 15px 20px;
-  border-top: 1px solid #DEDEDE;
+  border-top: 1px solid #dadada;
   align-self: flex-end;
 }
 #burst .burst-button {

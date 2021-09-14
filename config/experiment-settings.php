@@ -17,7 +17,7 @@ $this->fields = $this->fields + array(
             'step'     => STEP_SELECT,
             'section'  => 1,
             'source'      => 'experiment',
-            'type'               => 'select2',
+            'type'               => 'select_control',
             'query_settings'	 => array(
                 'post_type' 	=> 'any', //burst_get_current_post_type();
                 'post_status' 	=> burst_get_all_post_statuses( array('publish') ),
@@ -32,7 +32,7 @@ $this->fields = $this->fields + array(
         'step'     => STEP_SELECT,
         'section'  => 1,
         'source'      => 'experiment',
-        'type'               => 'select2',
+        'type'               => 'select_variant',
         'query_settings'	 => array(
             'post_type' 	=> 'any', //burst_get_current_post_type();
             'post_status' 	=> burst_get_all_post_statuses( array('publish') ),
@@ -124,6 +124,7 @@ $this->fields = $this->fields + array(
      	'label'       => __( "Experiment weight", 'burst' ),
      	'placeholder' => __( 'Percentage in numbers' ),
      	'help'        => __( 'For internal use only', 'burst' ),
+         'required' => true,
      ),
 
 );

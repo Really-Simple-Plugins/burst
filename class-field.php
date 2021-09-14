@@ -995,6 +995,12 @@ if ( ! class_exists( "burst_field" ) ) {
 					case 'select2':
 						$this->select2( $args );
 						break;
+                    case 'select_control':
+                        $this->select_control( $args );
+                        break;
+                    case 'select_variant':
+                        $this->select_variant( $args );
+                        break;
 					case 'colorpicker':
 						$this->colorpicker( $args );
 						break;
@@ -1143,6 +1149,107 @@ if ( ! class_exists( "burst_field" ) ) {
 			<?php do_action( 'burst_after_field', $args ); ?>
 			<?php
 		}
+
+        public
+        function select_control(
+            $args
+        ) {
+            $fieldname = 'burst_' . $args['fieldname'];
+
+            $value = $this->get_value( $args['fieldname'], $args['default'] );
+            if ( ! $this->show_field( $args ) ) {
+                return;
+            }
+            $query_settings = json_encode($args['query_settings']);
+            echo '<script> var '. $fieldname .'_query_settings = '. $query_settings .';</script>';
+
+            ?>
+            <?php do_action( 'burst_before_label', $args ); ?>
+            <label
+                    for="<?php echo esc_html( $fieldname ) ?>"><?php echo esc_html( $args['label'] ) ?><?php //echo $this->get_help_tip_btn( $args ); ?>
+            </label>
+            <?php do_action( 'burst_after_label', $args ); ?>
+
+            <select class="burst-select2-page-field form-control" <?php if ( $args['required'] ) {
+                echo 'required';
+            } ?> name="<?php echo esc_html( $fieldname ) ?>">
+                <?php if ($value) {
+                    $post = get_post($value);
+                    if($post){ ?>
+                        <option value="<?=$value?>">
+                            <?php echo $post->post_title ?></option>
+
+                    <?php }
+
+                } else { ?>
+                    <option value="">
+                        <?php _e( "Choose an option",
+                            'burst' ) ?></option>
+                <?php } ?>
+
+            </select>
+
+
+            <?php do_action( 'burst_after_field', $args ); ?>
+            <?php
+        }
+
+        public
+        function select_variant(
+            $args
+        ) {
+            $fieldname = 'burst_' . $args['fieldname'];
+
+            $value = $this->get_value( $args['fieldname'], $args['default'] );
+            if ( ! $this->show_field( $args ) ) {
+                return;
+            }
+            $query_settings = json_encode($args['query_settings']);
+            echo '<script> var '. $fieldname .'_query_settings = '. $query_settings .';</script>';
+
+            ?>
+            <?php do_action( 'burst_before_label', $args ); ?>
+            <label
+                    for="<?php echo esc_html( $fieldname ) ?>"><?php echo esc_html( $args['label'] ) ?><?php //echo $this->get_help_tip_btn( $args ); ?>
+            </label>
+            <?php do_action( 'burst_after_label', $args ); ?>
+
+            <div class="burst-experiment-settings-info_container control">
+                <span class="burst-experiment-dot control"></span>
+                <div class="burst-experiment-settings-info_title">
+                    <p>Control</p>
+                </div>
+            </div>
+            <div class="burst-experiment-settings-info_container variant">
+                <span class="burst-experiment-dot variant"></span>
+                <div class="burst-experiment-settings-info_title">
+                    <p>Variant</p>
+                </div>
+            </div>
+
+            <select class="burst-select2-page-field form-control" <?php if ( $args['required'] ) {
+                echo 'required';
+            } ?> name="<?php echo esc_html( $fieldname ) ?>">
+                <?php if ($value) {
+                    $post = get_post($value);
+                    if($post){ ?>
+                        <option value="<?=$value?>">
+                            <?php echo $post->post_title ?></option>
+
+                    <?php }
+
+                } else { ?>
+                    <option value="">
+                        <?php _e( "Choose an option",
+                            'burst' ) ?></option>
+                <?php } ?>
+
+            </select>
+
+
+            <?php do_action( 'burst_after_field', $args ); ?>
+            <?php
+        }
 
 
 		public
