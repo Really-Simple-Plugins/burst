@@ -87,7 +87,6 @@ $this->fields = $this->fields + array(
         'condition' => array(
             'goal' => 'visit',
         ),
-        'required' => true,
     ),
 
     'goal_woocommerce' => array(
@@ -104,7 +103,6 @@ $this->fields = $this->fields + array(
         'condition' => array(
             'goal' => 'woocommerce',
         ),
-        'required' => true,
     ),
 
     'goal_woocommerce_product' => array(
@@ -120,7 +118,6 @@ $this->fields = $this->fields + array(
         'condition' => array(
             'goal' => 'woocommerce',
         ),
-        'required' => true,
     ),
 
     'duration' => array(
@@ -129,7 +126,6 @@ $this->fields = $this->fields + array(
         'source'      => 'experiment',
         'label'       => __( "Duration", 'burst' ),
         'type'               => 'date',
-        'required' => true,
     ),
 
     'minimum_samplesize' => array(
@@ -171,7 +167,6 @@ $this->fields = $this->fields + array(
      	'label'       => __( "Experiment weight", 'burst' ),
      	'placeholder' => __( 'Percentage in numbers' ),
      	'help'        => __( 'For internal use only', 'burst' ),
-         'required' => true,
      ),
 
 );

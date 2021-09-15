@@ -37,7 +37,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		public function process_burst_experiment()
 		{
 			if (!burst_user_can_manage()) return;
-			if ($_GET['page'] !== 'burst-experiment') return;
+			if (isset($_GET['page']) && $_GET['page'] !== 'burst-experiment') return;
             //when clicking to the last page, or clicking finish, run the finish sequence.
             if ( ( isset( $_POST['burst-finish'] ) || isset( $_POST['burst-next'] ) || isset( $_POST['burst-save'] ) ) ){
                 if ( ! isset( $_POST['burst_nonce'] ) || ! wp_verify_nonce( $_POST['burst_nonce'], 'burst_save' ) ) {
@@ -52,7 +52,6 @@ if ( ! class_exists( "burst_experimenting" ) ) {
                 $experiment_id = isset( $_GET['experiment_id']) ? intval( $_GET['experiment_id'] ) : false;
             }
             $control_id = isset( $_POST['burst_control_id'] ) ? $_POST['burst_control_id'] : false;
-            error_log(print_r($_POST, true));
             if ( $experiment_id ) {
                 $experiment = new BURST_EXPERIMENT( $experiment_id );
 				$experiment->process_form( $_POST );
@@ -193,17 +192,13 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			/**
 			 * create experiment entry
 			 */
-			error_log('create experiment entry');
 			$experiment_title = !empty($_POST['burst_title']) ? sanitize_text_field($_POST['burst_title']) : __('Unnamed experiment', 'burst');
 			$experiment = new BURST_EXPERIMENT();
 			$experiment->title = $experiment_title;
 			$experiment->control_id = $post_id;
 			$experiment->variant_id = $variant_id;
 			$experiment->save();
-			$id = $experiment->id;
-			error_log('$id');
-			error_log($id);
-			error_log(print_r($experiment, true));
+
 			return $experiment->id;
 		}
 
@@ -324,6 +319,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			global $post;
 			$experiment = new BURST_EXPERIMENT(false, $post->ID );
 			if ($experiment->status !== 'active') return $content;
+			error_log('load_experiment_content');
 			error_log(print_r($experiment, true));
 			//when this page is a goal
 			if ( $experiment->goal_id == $post->ID ) {

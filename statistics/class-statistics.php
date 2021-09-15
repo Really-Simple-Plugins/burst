@@ -127,7 +127,6 @@ if ( ! class_exists( "burst_statistics" ) ) {
 			$sql = "SELECT COUNT(*) as hit_count, CONCAT(YEAR(from_unixtime(time)),'-',DAYOFYEAR(from_unixtime(time)) ) as period
 					FROM {$wpdb->prefix}burst_statistics where experiment_id = $experiment_id AND test_version='$test_version' AND conversion = 1 AND time>$start AND time<$end
 					GROUP BY CONCAT(YEAR(from_unixtime(time)),'-',DAYOFYEAR(from_unixtime(time)) ) order by period asc";
-			error_log($sql);
 			$results = $wpdb->get_results($sql);
 			$nr_of_periods = $this->get_nr_of_periods('DAY', $start, $end );
 			$end_date_days_ago = $this->nr_of_periods_ago('DAY', $end );

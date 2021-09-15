@@ -1420,28 +1420,20 @@ if ( ! class_exists( "burst_field" ) ) {
 				return false;
 			}
 
-            error_log('fields isset');
 			$source = $fields[ $fieldname ]['source'];
-			error_log($source);
 			if ( strpos( $source, 'experiment' ) !== false ) {
 				$id = false;
 
 				if ( isset( $_GET['post'] ) ) {
-				    error_log('burst_get_experiment_id_for_post');
 					$post_id = intval( $_GET['post'] );
 					$id = burst_get_experiment_id_for_post($post_id);
 				}  else if ( isset( $_GET['experiment_id'] ) ) {
 					$id = intval( $_GET['experiment_id'] );
-					error_log('get');
 				} else if ( isset( $_POST['experiment_id'] ) ) {
-				    error_log('post');
 					$id = intval( $_POST['experiment_id'] );
-				} else {
-				    error_log('niet');
-                }
+				}
 
 				$experiment = new BURST_EXPERIMENT( $id );
-				error_log(print_r($experiment, true));
 				$value  = ! empty( $experiment->{$fieldname} )
 					? $experiment->{$fieldname} : false;
 

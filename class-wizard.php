@@ -67,7 +67,6 @@ if ( ! class_exists( "burst_wizard" ) ) {
 		 * @param $page
 		 */
 		public function initialize( $page ) {
-		    error_log('initialize');
 			$this->last_section = $this->last_section( $page, $this->step() );
 			$this->page_url     = admin_url( 'admin.php?page=burst-' . $page );
 			//if a post id was passed, we copy the contents of that page to the wizard settings.
@@ -134,12 +133,12 @@ if ( ! class_exists( "burst_wizard" ) ) {
 			//BURST::$admin->reset_burst_plugin_has_new_features();
 
 			//when clicking to the last page, or clicking finish, run the finish sequence.
-			if ( isset( $_POST['burst-finish'] )
-			     || ( isset( $_POST["step"] ) && $_POST['step'] == STEP_START
-			          && isset( $_POST['burst-next'] ) )
-			) {
-				$this->set_wizard_completed_once();
-			}
+//			if ( isset( $_POST['burst-finish'] )
+//			     || ( isset( $_POST["step"] ) && $_POST['step'] == STEP_START
+//			          && isset( $_POST['burst-next'] ) )
+//			) {
+//				$this->set_wizard_completed_once();
+//			}
 		}
 
 		/**
@@ -468,10 +467,17 @@ if ( ! class_exists( "burst_wizard" ) ) {
             error_log('section: ');
             error_log($section);
 
+            error_log('section is empty');
+            error_log($this->section_is_empty($page, $step, $section));
+
+
+
+
             if ($this->section_is_empty($page, $step, $section)
                 || (isset($_POST['burst-next'])
                     && !BURST::$field->has_errors())
             ) {
+                error_log('no errors');
                 if (BURST::$config->has_sections($page, $step)
                     && ($section < $this->last_section)
                 ) {
@@ -913,11 +919,6 @@ if ( ! class_exists( "burst_wizard" ) ) {
 			return get_option( 'burst_wizard_completed_once' );
 		}
 
-
-		public function set_wizard_completed_once() {
-			update_option( 'burst_wizard_completed_once', true );
-		}
-
 		public function step( $page = false ) {
 			$step = 1;
 			if ( ! $page ) {
@@ -975,8 +976,6 @@ if ( ! class_exists( "burst_wizard" ) ) {
 		 */
 
 		public function total_steps( $page ) {
-		    error_log('page');
-		    error_log($page);
 			return count( BURST::$config->steps[ $page ] );
 		}
 
