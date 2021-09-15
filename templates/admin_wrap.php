@@ -3,6 +3,19 @@
 	<div class="burst-{page}">
 		<div id="burst-header">
 			<img src="<?php echo trailingslashit(burst_url)?>assets/images/burst-logo.svg">
+            <div class="burst-header-left">
+                <div class="burst-header-menu">
+                    <?php
+                    $burst_menus = $GLOBALS[ 'submenu' ][ 'burst' ];
+                    foreach($burst_menus as $menu){
+                        $page = $menu[2];
+                        $title = $menu[3];
+                        $url = admin_url('admin.php?page=' . $page);
+                        echo '<a href='. $url .'>'. $title .'</a>';
+                    }
+                    ?>
+                </div>
+            </div>
 			<div class="burst-header-right">
                 <?php
                 $experiments = burst_get_experiments(
