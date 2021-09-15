@@ -542,6 +542,25 @@ if ( ! function_exists( 'burst_display_experiment_status' ) ) {
 	}
 }
 
+if ( ! function_exists( 'burst_display_experiment_version' ) ) {
+
+    function burst_display_experiment_version($version = 'control') {
+
+        ob_start(); ?>
+        <div class="burst-experiment-version <?php echo $version ?>">
+            <span class="burst-experiment-dot <?php echo $version ?>"></span>
+            <div class="burst-experiment-version__title">
+                <p><?php echo $version ?></p>
+            </div>
+        </div>
+
+        <?php
+        $html = ob_get_clean();
+        echo $html;
+    }
+}
+
+
 if ( ! function_exists( 'burst_get_report_url' ) ) {
 	/**
 	 * Get the URL that leads to the dashboard and show data for the experiment ID

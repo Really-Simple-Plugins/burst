@@ -1,3 +1,22 @@
+.field-group.burst-select_control .burst-field,
+.field-group.burst-select_variant .burst-field {
+  display: flex;
+  align-items: center;
+}
+.field-group.burst-select_control .burst-field .select2-container,
+.field-group.burst-select_variant .burst-field .select2-container {
+  max-width: 300px;
+  margin: 0 15px;
+}
+.field-group.burst-select_control .burst-field .select2-container .select2-selection--single,
+.field-group.burst-select_variant .burst-field .select2-container .select2-selection--single,
+.field-group.burst-select_control .burst-field .select2-container .select2-selection__rendered,
+.field-group.burst-select_variant .burst-field .select2-container .select2-selection__rendered,
+.field-group.burst-select_control .burst-field .select2-container .select2-selection__arrow,
+.field-group.burst-select_variant .burst-field .select2-container .select2-selection__arrow {
+  height: 33px;
+  line-height: 33px;
+}
 .burst-noticed-hook-element {
   display: none;
 }
@@ -800,4 +819,31 @@ input:focus + .burst-slider {
 }
 .wp-core-ui .button.button-tertiary:hover {
   background-color: #b92538;
+}
+#burst .burst-experiment-version {
+  display: flex;
+  margin: 6px 0;
+  font-size: 12px;
+  line-height: 18px;
+  padding: 5px 7px;
+  border-radius: 5px;
+}
+#burst .burst-experiment-version.control {
+  background-color: #eaf8fe;
+  border: 1px solid #29b6f6;
+}
+#burst .burst-experiment-version.variant {
+  background-color: #fefbf4;
+  border: 1px solid #f4bf3e;
+}
+#burst .burst-experiment-version a,
+#burst .burst-experiment-version p {
+  width: 100%;
+  margin: 0;
+}
+#burst .burst-experiment-version p {
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: capitalize;
+  margin-top: 1px;
 }

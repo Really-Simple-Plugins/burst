@@ -34,7 +34,7 @@ if ( ! class_exists( "burst_admin" ) ) {
 			add_action( 'admin_init', array( $this, 'check_upgrade' ), 10, 2 );
 
 			add_action( 'admin_init', array($this, 'init_grid') );
-			add_action( 'edit_form_top', array( $this, 'add_experiment_info_below_title' ));
+//			add_action( 'edit_form_top', array( $this, 'add_experiment_info_below_title' ));
 			add_action( 'admin_init', array($this, 'hide_wordpress_and_other_plugin_notices') );
 
 			add_action( 'wp_ajax_burst_load_status_info', array( $this, 'ajax_load_status_info') );

@@ -208,15 +208,18 @@ class burst_experiment_Table extends WP_List_Table {
 		$title = ! empty( $item['title'] ) ? $item['title']
 			: '<em>' . __( 'Unnamed experiment', 'burst' )
 			  . '</em>';
+		$edit_url = admin_url('admin.php?page=burst-experiment&experiment_id=' . $item['ID'] );
+		$title = '<a class="row-title" href="'. $edit_url .'"> ' . $title .'</a>';
 		$title = apply_filters( 'burst_experiment_title', $title );
 
 		$actions = array(
-            			'delete' => '<a class="burst-experiment-action" data-action="delete" data-id="' . $item['ID']
-			                        . '" href="#">' . __( 'Delete', 'burst' )
-			                        . '</a>',
-                        'archive' => '<a class="burst-experiment-action" data-action="archive" data-id="' . $item['ID']
-                                    . '" href="#">' . __( 'Archive', 'burst' )
-                                    . '</a>'
+            'edit' => '<a href="'. $edit_url .'">' . __( 'Edit', 'burst' ) . '</a>',
+            'archive' => '<a class="burst-experiment-action" data-action="archive" data-id="' . $item['ID']
+                        . '" href="#">' . __( 'Archive', 'burst' )
+                        . '</a>',
+            'delete' => '<a class="burst-experiment-action" data-action="delete" data-id="' . $item['ID']
+                        . '" href="#">' . __( 'Delete', 'burst' )
+                        . '</a>',
 		);
 
 		return $title . $this->row_actions( $actions );

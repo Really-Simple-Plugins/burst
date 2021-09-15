@@ -37,6 +37,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		public function process_burst_experiment()
 		{
 			if (!burst_user_can_manage()) return;
+			if ($_GET['page'] !== 'burst-experiment') return;
             //when clicking to the last page, or clicking finish, run the finish sequence.
             if ( ( isset( $_POST['burst-finish'] ) || isset( $_POST['burst-next'] ) || isset( $_POST['burst-save'] ) ) ){
                 if ( ! isset( $_POST['burst_nonce'] ) || ! wp_verify_nonce( $_POST['burst_nonce'], 'burst_save' ) ) {
@@ -51,8 +52,8 @@ if ( ! class_exists( "burst_experimenting" ) ) {
                 $experiment_id = isset( $_GET['experiment_id']) ? intval( $_GET['experiment_id'] ) : false;
             }
             $control_id = isset( $_POST['burst_control_id'] ) ? $_POST['burst_control_id'] : false;
-
-            if ( isset($experiment_id) ) {
+            error_log(print_r($_POST, true));
+            if ( $experiment_id ) {
                 $experiment = new BURST_EXPERIMENT( $experiment_id );
 				$experiment->process_form( $_POST );
             } else {
@@ -66,8 +67,6 @@ if ( ! class_exists( "burst_experimenting" ) ) {
             }
 
             $url = add_query_arg(array( 'page' => 'burst-'.sanitize_title($_POST['wizard_type']) ),  admin_url('admin.php') );
-            error_log('$experiment_id');
-            error_log($experiment_id);
             if ( isset( $experiment_id ) ) {
                 $url = add_query_arg(array( 'experiment_id' => $experiment_id),  $url );
             }

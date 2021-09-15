@@ -1,5 +1,7 @@
 @import 'variables.less';
 
+@import 'input-fields.less';
+
 //wordpress inserts notices after the first h1 or h2. To prevent breaking layout we insert an empty h1 tag at the start of our page, where WP can insert the notice.
 .burst-noticed-hook-element {
   display:none;
@@ -865,4 +867,32 @@ input:focus + .burst-slider {
     &:hover{
     	background-color: #b92538;
     }
+}
+
+#burst .burst-experiment-version{
+	display: flex;
+	margin: 6px 0;
+	font-size: 12px;
+	line-height: 12px * 1.5;
+	padding: 5px 7px;
+	border-radius: 5px;
+	//flex-wrap: wrap;
+	&.control{
+		background-color: lighten(@rsp-blue, 70%, relative);
+		border: 1px solid @rsp-blue;
+	}
+	&.variant{
+		background-color: lighten(@rsp-yellow, 63%, relative);
+		border: 1px solid @rsp-yellow;
+	}
+	a, p{
+		width: 100%;
+		margin: 0;
+	}
+	p{
+		font-weight: 500;
+		font-size: 14px;
+		text-transform: capitalize;
+		margin-top: 1px;
+	}
 }

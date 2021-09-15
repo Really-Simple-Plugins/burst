@@ -13,25 +13,27 @@ $this->fields = $this->fields + array(
         'required' => true,
     ),
 
-        'control_id' => array(
-            'step'     => STEP_SELECT,
-            'section'  => 1,
-            'source'      => 'experiment',
-            'type'               => 'select_control',
-            'query_settings'	 => array(
-                'post_type' 	=> 'any', //burst_get_current_post_type();
-                'post_status' 	=> burst_get_all_post_statuses( array('publish') ),
-                //'post__not_in' 	=> array( burst_get_current_post_id() ),
-            ),
-            'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
-                'burst' ),
-            'required' => true,
+    'control_id' => array(
+        'step'     => STEP_SELECT,
+        'section'  => 1,
+        'source'      => 'experiment',
+        'label'       => __( "Which page do you want to improve?", 'burst' ),
+        'type'               => 'select_control',
+        'query_settings'	 => array(
+            'post_type' 	=> 'any', //burst_get_current_post_type();
+            'post_status' 	=> burst_get_all_post_statuses( array('publish') ),
+            //'post__not_in' 	=> array( burst_get_current_post_id() ),
         ),
+        'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
+            'burst' ),
+        'required' => true,
+    ),
 
     'variant_id' => array(
         'step'     => STEP_SELECT,
         'section'  => 1,
         'source'      => 'experiment',
+        'label'       => __( "Which page do you want to use as the variant?", 'burst' ),
         'type'               => 'select_variant',
         'query_settings'	 => array(
             'post_type' 	=> 'any', //burst_get_current_post_type();
@@ -49,11 +51,12 @@ $this->fields = $this->fields + array(
         'source'      => 'experiment',
         'type'        => 'radio',
         'options' => array(
-            'click'  => __( "Click on element", 'burst' ),
             'visit'  => __( "Page visit", 'burst' ),
+            'click'  => __( "Click on element", 'burst' ),
+            'woocommerce' => __( "Woocommerce sale", 'burst' ),
         ),
-        'label'       => __( "Goal", 'burst' ),
-        'default' => 'click-on-element',
+        'label'       => __( "Select which metric you want to improve", 'burst' ),
+        'default' => 'visit',
         'help'        => __( 'Select what metric you want to improve. For example a click on a button or a visit on a checkout page.', 'burst' ),
         'required' => true,
     ),
@@ -62,6 +65,7 @@ $this->fields = $this->fields + array(
         'step'     => STEP_METRICS,
         'section'  => 1,
         'source'      => 'experiment',
+        'label'       => __( "Page visit", 'burst' ),
         'type'               => 'text',
         'placeholder' => __( '.class or #id' ),
         'condition' => array(
@@ -74,6 +78,7 @@ $this->fields = $this->fields + array(
         'step'     => STEP_METRICS,
         'section'  => 1,
         'source'      => 'experiment',
+        'label'       => __( "Page visit", 'burst' ),
         'type'               => 'select2',
         'query_settings'	 => array(
             'post_type' 	=> 'any', //get_current_post_type();
@@ -82,6 +87,48 @@ $this->fields = $this->fields + array(
         'condition' => array(
             'goal' => 'visit',
         ),
+        'required' => true,
+    ),
+
+    'goal_woocommerce' => array(
+        'step'     => STEP_METRICS,
+        'section'  => 1,
+        'source'      => 'experiment',
+        'type'        => 'radio',
+        'options' => array(
+            'any'  => __( "Any Woocommerce sale", 'burst' ),
+            'specific'  => __( "Specific Woocommerce product", 'burst' ),
+        ),
+        'label'       => __( "Which product sales do you want to track? ", 'burst' ),
+        'default' => 'visit',
+        'condition' => array(
+            'goal' => 'woocommerce',
+        ),
+        'required' => true,
+    ),
+
+    'goal_woocommerce_product' => array(
+        'step'     => STEP_METRICS,
+        'section'  => 1,
+        'source'      => 'experiment',
+        'label'       => __( "Woocommerce sale", 'burst' ),
+        'type'               => 'select2',
+        'query_settings'	 => array(
+            'post_type' 	=> 'product', //get_current_post_type();
+            'post_status' 	=> 'publish',
+        ),
+        'condition' => array(
+            'goal' => 'woocommerce',
+        ),
+        'required' => true,
+    ),
+
+    'duration' => array(
+        'step'     => STEP_METRICS,
+        'section'  => 2,
+        'source'      => 'experiment',
+        'label'       => __( "Duration", 'burst' ),
+        'type'               => 'date',
         'required' => true,
     ),
 

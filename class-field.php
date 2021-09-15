@@ -610,7 +610,6 @@ if ( ! class_exists( "burst_field" ) ) {
 		function show_field(
 			$args
 		) {
-		    error_log('show_field');
 			$show = ( $this->condition_applies( $args, 'callback_condition' ) );
 
 			return $show;
@@ -1170,12 +1169,7 @@ if ( ! class_exists( "burst_field" ) ) {
             </label>
             <?php do_action( 'burst_after_label', $args ); ?>
 
-            <div class="burst-experiment-settings-info_container control">
-                <span class="burst-experiment-dot control"></span>
-                <div class="burst-experiment-settings-info_title">
-                    <p>Control</p>
-                </div>
-            </div>
+            <?php burst_display_experiment_version('control'); ?>
 
             <select class="burst-select2-page-field form-control" <?php if ( $args['required'] ) {
                 echo 'required';
@@ -1221,12 +1215,7 @@ if ( ! class_exists( "burst_field" ) ) {
             </label>
             <?php do_action( 'burst_after_label', $args ); ?>
 
-            <div class="burst-experiment-settings-info_container variant">
-                <span class="burst-experiment-dot variant"></span>
-                <div class="burst-experiment-settings-info_title">
-                    <p>Variant</p>
-                </div>
-            </div>
+            <?php burst_display_experiment_version('variant'); ?>
 
             <select class="burst-select2-page-field form-control" <?php if ( $args['required'] ) {
                 echo 'required';
@@ -1246,6 +1235,12 @@ if ( ! class_exists( "burst_field" ) ) {
                 <?php } ?>
 
             </select>
+            <label>
+                <input name="<?php echo 'duplicate-' . esc_html( $fieldname ) ?>"
+                       size="40" type="checkbox"
+                       value="1" >
+                Duplicate Control and assign as Variant
+            </label
 
 
             <?php do_action( 'burst_after_field', $args ); ?>
@@ -1421,7 +1416,6 @@ if ( ! class_exists( "burst_field" ) ) {
 			$fieldname, $default = ''
 		) {
 			$fields = BURST::$config->fields();
-            error_log('get value');
 			if ( ! isset( $fields[ $fieldname ] ) ) {
 				return false;
 			}

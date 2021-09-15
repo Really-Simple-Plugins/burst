@@ -638,13 +638,11 @@ if ( ! class_exists( "burst_wizard" ) ) {
             }
 
             if ( $step == $this->total_steps( $page ) && $this->all_required_fields_completed( $page )) {
-                    $args['cookie_or_finish_button'] = '<input class="button button-primary burst-finish" type="submit" name="burst-finish" value="'. __('Start experiment', 'burst') . '">';
+                    $args['finish_button'] = '<input class="button button-primary burst-finish" type="submit" name="burst-finish" value="'. __('Start experiment', 'burst') . '">';
             }
 
-            if ( ( $step > 1 || $page == 'wizard' ) && $step < $this->total_steps( $page )) {
-                if ( ! ($step == STEP_START && $section == 6) ) {
+            if ( $page == 'experiment' )  {
                     $args['save_button'] = '<input class="button button-secondary burst-save" type="submit" name="burst-save" value="'. __( "Save", 'burst' ) . '">';
-                }
             }
 
             return burst_get_template( 'wizard/content.php', $args );
