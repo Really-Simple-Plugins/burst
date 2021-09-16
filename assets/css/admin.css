@@ -94,6 +94,7 @@
 #burst #burst-header img {
   margin: auto 15px;
   padding: 20px;
+  padding-right: 0;
   width: 85px;
 }
 #burst #burst-header .burst-header-left {
@@ -105,14 +106,21 @@
 }
 #burst #burst-header .burst-header-left .burst-header-menu a {
   font-size: 14.3px;
-  padding: 32px 10px;
+  padding: 28px 15px;
   text-decoration: none;
   color: #737373;
   height: 100%;
+  border-bottom: 4px solid transparent;
+  transition: border 0.3s ease-out;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+}
+#burst #burst-header .burst-header-left .burst-header-menu a.active {
   border-bottom: 4px solid #61CE70;
+}
+#burst #burst-header .burst-header-left .burst-header-menu a:hover {
+  color: #61CE70;
 }
 #burst #burst-header .burst-header-right {
   display: flex;
@@ -866,4 +874,67 @@ input:focus + .burst-slider {
   font-size: 14px;
   text-transform: capitalize;
   margin-top: 1px;
+}
+.burst-settings-saved {
+  display: none;
+  opacity: 0;
+  top: 20px;
+  position: fixed;
+  background-color: #fff;
+  z-index: 999999;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: left;
+  box-shadow: 0 0 5px 5px rgba(222, 222, 222, 0.2);
+}
+.burst-settings-saved svg path {
+  fill: #61CE70;
+}
+.burst-settings-saved .burst-settings-saved__text_and_icon {
+  display: flex;
+  align-content: center;
+  margin: 10px 25px;
+}
+.burst-settings-saved .burst-settings-saved__text_and_icon span {
+  display: flex;
+  align-self: center;
+  font-size: 13px;
+  font-weight: 400;
+  color: #696969;
+  margin: 2px 3px;
+}
+.burst-settings-saved .burst-settings-saved__text_and_icon div {
+  display: flex;
+  align-self: center;
+}
+.burst-settings-saved.burst-settings-saved--fade-in {
+  display: block;
+  animation: fadeInFromNone 5s ease-in-out;
+}
+@keyframes fadeInFromNone {
+  0% {
+    display: none;
+    opacity: 0;
+    top: 20px;
+  }
+  5% {
+    display: block;
+    opacity: 0;
+    top: -10px;
+  }
+  15% {
+    display: block;
+    opacity: 1;
+    top: 20px;
+  }
+  90% {
+    display: block;
+    opacity: 1;
+    top: 20px;
+  }
+  100% {
+    display: none;
+    opacity: 0;
+    top: 20px;
+  }
 }

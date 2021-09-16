@@ -10,8 +10,9 @@
                     foreach($burst_menus as $menu){
                         $page = $menu[2];
                         $title = $menu[3];
+                        $active = $_GET['page'] === $page || $_GET['page'] === substr($page, 0, -1)  ? 'class="active"' : '';
                         $url = admin_url('admin.php?page=' . $page);
-                        echo '<a href='. $url .'>'. $title .'</a>';
+                        echo '<a '. $active .' href='. $url .'>'. $title .'</a>';
                     }
                     ?>
                 </div>
@@ -51,4 +52,13 @@
 			{content}
 		</div>
 	</div>
+</div>
+<?php
+error_log(print_r($_POST, true));
+$hide = isset( $_GET['burst-save']) || isset( $_POST['burst-save'] ) ? 'burst-settings-saved--fade-in': ''; ?>
+<div class="burst-settings-saved <?php echo $hide?>">
+    <div class="burst-settings-saved__text_and_icon">
+        <?php echo burst_icon('check', 'success', '', 18); ?>
+        <span><?php _e('Changes saved successfully', 'burst') ?> </span>
+    </div>
 </div>

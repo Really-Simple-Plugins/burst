@@ -9,11 +9,3 @@
         {steps}
     </div>
 </div>
-
-<?php $hide = isset( $_POST['burst-save']) ? 'burst-settings-saved--fade-in': ''; ?>
-<div class="burst-settings-saved <?php echo $hide?>">
-    <div class="burst-settings-saved__text_and_icon">
-        <?php echo burst_icon('check', 'success', '', 18); ?>
-        <span><?php _e('Changes saved successfully', 'burst') ?> </span>
-    </div>
-</div>

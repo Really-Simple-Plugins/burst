@@ -78,7 +78,7 @@ $this->fields = $this->fields + array(
         'step'     => STEP_METRICS,
         'section'  => 1,
         'source'      => 'experiment',
-        'label'       => __( "Page visit", 'burst' ),
+        'label'       => __( "Which page ", 'burst' ),
         'type'               => 'select2',
         'query_settings'	 => array(
             'post_type' 	=> 'any', //get_current_post_type();
@@ -99,7 +99,7 @@ $this->fields = $this->fields + array(
             'specific'  => __( "Specific Woocommerce product", 'burst' ),
         ),
         'label'       => __( "Which product sales do you want to track? ", 'burst' ),
-        'default' => 'visit',
+        'default' => 'any',
         'condition' => array(
             'goal' => 'woocommerce',
         ),
@@ -109,14 +109,14 @@ $this->fields = $this->fields + array(
         'step'     => STEP_METRICS,
         'section'  => 1,
         'source'      => 'experiment',
-        'label'       => __( "Woocommerce sale", 'burst' ),
+        'label'       => __( "Select the product", 'burst' ),
         'type'               => 'select2',
         'query_settings'	 => array(
             'post_type' 	=> 'product', //get_current_post_type();
             'post_status' 	=> 'publish',
         ),
         'condition' => array(
-            'goal' => 'woocommerce',
+            'goal_woocommerce' => 'specific',
         ),
     ),
 

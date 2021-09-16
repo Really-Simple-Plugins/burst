@@ -2,121 +2,120 @@ jQuery(document).ready(function ($) {
     'use strict';
 
     check_conditions();
-    $("input").change(function (e) {
+
+    $(document).on('change', 'input', function (e) {
         check_conditions();
     });
 
-    $("select").change(function (e) {
+    $(document).on('change', 'select', function (e) {
         check_conditions();
     });
 
-    $("textarea").change(function (e) {
+    $(document).on('change', 'textarea', function (e) {
         check_conditions();
     });
-
 
     /*conditional fields*/
     function check_conditions() {
         var value;
         var showIfConditionMet = true;
 
-        $(".condition-check").each(function (e) {
-            var question = 'burst_' + $(this).data("condition-question");
-            var condition_type = 'AND';
+        $(".condition-check-1").each(function (e) {
+            var i;
+            for (i = 1; i < 4; i++) {
+                var question = 'burst_' + $(this).data("condition-question-" + i);
+                var condition_type = 'AND';
 
-            if (question == undefined) return;
+                if (question == 'burst_undefined') return;
 
-            var condition_answer = $(this).data("condition-answer");
+                var condition_answer = $(this).data("condition-answer-" + i);
 
-            //remove required attribute of child, and set a class.
-            var input = $(this).find('input[type=checkbox]');
-            if (!input.length) {
-                input = $(this).find('input');
-            }
-            if (!input.length) {
-                input = $(this).find('textarea');
-            }
-            if (!input.length) {
-                input = $(this).find('select');
-            }
-
-            if (input.length && input[0].hasAttribute('required')) {
-                input.addClass('is-required');
-            }
-
-            //cast into string
-            condition_answer += "";
-
-            if (condition_answer.indexOf('NOT ') !== -1) {
-                condition_answer = condition_answer.replace('NOT ', '');
-                showIfConditionMet = false;
-            } else {
-                showIfConditionMet = true;
-            }
-            var condition_answers = [];
-            if (condition_answer.indexOf(' OR ') !== -1) {
-                condition_answers = condition_answer.split(' OR ');
-                condition_type = 'OR';
-            } else {
-                condition_answers = [condition_answer];
-            }
-
-            var container = $(this);
-            var conditionMet = false;
-            condition_answers.forEach(function (condition_answer) {
-                value = get_input_value(question);
-
-                if ($('select[name=' + question + ']').length) {
-                    value = Array($('select[name=' + question + ']').val());
+                //remove required attribute of child, and set a class.
+                var input = $(this).find('input[type=checkbox]');
+                if (!input.length) {
+                    input = $(this).find('input');
+                }
+                if (!input.length) {
+                    input = $(this).find('textarea');
+                }
+                if (!input.length) {
+                    input = $(this).find('select');
                 }
 
-                if ($("input[name='" + question + "[" + condition_answer + "]" + "']").length){
-                    if ($("input[name='" + question + "[" + condition_answer + "]" + "']").is(':checked')) {
-                        conditionMet = true;
-                        value = [];
-                    } else {
-                        conditionMet = false;
-                        value = [];
-                    }
+                if (input.length && input[0].hasAttribute('required')) {
+                    input.addClass('is-required');
                 }
 
-                if (showIfConditionMet) {
+                //cast into string
+                condition_answer += "";
 
-                    //check if the index of the value is the condition, or, if the value is the condition
-                    if (conditionMet || value.indexOf(condition_answer) != -1 || (value == condition_answer)) {
-
-                        container.removeClass("hidden");
-                        //remove required attribute of child, and set a class.
-                        if (input.hasClass('is-required')) input.prop('required', true);
-                        //prevent further checks if it's an or statement
-                        if (condition_type === 'OR') conditionMet = true;
-
-                    } else {
-                        container.addClass("hidden");
-                        if (input.hasClass('is-required')) input.prop('required', false);
-                        //prevent further checks if it's an or statement
-                        if (condition_type === 'OR') return;
-                    }
+                if (condition_answer.indexOf('NOT ') !== -1) {
+                    condition_answer = condition_answer.replace('NOT ', '');
+                    showIfConditionMet = false;
                 } else {
-
-                    if (conditionMet || value.indexOf(condition_answer) != -1 || (value == condition_answer)) {
-                        container.addClass("hidden");
-                        if (input.hasClass('is-required')) input.prop('required', false);
-
-                    } else {
-                        container.removeClass("hidden");
-                        if (input.hasClass('is-required')) input.prop('required', true);
-                    }
+                    showIfConditionMet = true;
                 }
-            });
+                var condition_answers = [];
+                if (condition_answer.indexOf(' OR ') !== -1) {
+                    condition_answers = condition_answer.split(' OR ');
+                    condition_type = 'OR';
+                } else {
+                    condition_answers = [condition_answer];
+                }
 
+                var container = $(this);
+                var conditionMet = false;
+                condition_answers.forEach(function (condition_answer) {
+                    value = get_input_value(question);
+
+                    if ($('select[name=' + question + ']').length) {
+                        value = Array($('select[name=' + question + ']').val());
+                    }
+                    if ($("input[name='" + question + "[" + condition_answer + "]" + "']").length) {
+
+                        if ($("input[name='" + question + "[" + condition_answer + "]" + "']").is(':checked')) {
+                            conditionMet = true;
+                            value = [];
+                        } else {
+                            conditionMet = false;
+                            value = [];
+                        }
+                    }
+
+                    if (showIfConditionMet) {
+                        //check if the index of the value is the condition, or, if the value is the condition
+                        if (conditionMet || value.indexOf(condition_answer) != -1 || (value == condition_answer)) {
+                            container.removeClass("burst-hidden");
+                            //remove required attribute of child, and set a class.
+                            if (input.hasClass('is-required')) input.prop('required', true);
+                            //prevent further checks if it's an or/and statement
+                            conditionMet = true;
+                        } else {
+                            container.addClass("burst-hidden");
+                            if (input.hasClass('is-required')) input.prop('required', false);
+                        }
+                    } else {
+                        if (conditionMet || value.indexOf(condition_answer) != -1 || (value == condition_answer)) {
+                            container.addClass("burst-hidden");
+                            if (input.hasClass('is-required')) input.prop('required', false);
+                        } else {
+                            container.removeClass("burst-hidden");
+                            if (input.hasClass('is-required')) input.prop('required', true);
+                            conditionMet = true;
+                        }
+                    }
+                });
+                if (!conditionMet) {
+                    break;
+                }
+            }
         });
     }
 
 
     /**
-        get checkbox values, array proof.
-    */
+     get checkbox values, array proof.
+     */
 
     function get_input_value(fieldName) {
 
@@ -140,7 +139,6 @@ jQuery(document).ready(function ($) {
         // multiple select with AJAX search
         var fieldName = $('.burst-select2-page-field').attr("name");
         var queryName = fieldName + '_query_settings';
-        console.log(queryName);
         $('.burst-select2-page-field').select2({
             ajax: {
                     url: ajaxurl, // AJAX URL is predefined in WordPress admin
@@ -156,13 +154,13 @@ jQuery(document).ready(function ($) {
                     processResults: function( data ) {
                     var options = [];
                     if ( data ) {
-     
+
                         // data is the array of arrays, and each of them contains ID and the Label of the option
                         $.each( data, function( index, text ) { // do not forget that "index" is just auto incremented value
                             options.push( { id: text[0], text: text[1]  } );
                         });
                         console.log(options);
-     
+
                     }
                     return {
                         results: options
@@ -184,7 +182,7 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.burst-experiment-action', function (e) {
         e.preventDefault();
         var btn = $(this);
-        btn.closest('tr').css('background-color', 'red');
+        btn.closest('tr').css({'background-color': '#D7263D', 'opacity': '0.80'});
         var experiment_id = btn.data('id');
         var type = btn.data('action');
         $.ajax({
@@ -198,7 +196,9 @@ jQuery(document).ready(function ($) {
             }),
             success: function (response) {
                 if (response.success) {
-                    btn.closest('tr').remove();
+                    btn.closest('tr').fadeOut(300, function() {
+                        this.remove();
+                    });
                 }
             }
         });

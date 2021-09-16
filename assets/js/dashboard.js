@@ -44,6 +44,7 @@ jQuery(document).ready(function ($) {
                 token: burst.token
             }),
             success: function (response) {
+
                 if (response.success) {
                     burstEnableStartStopBtns();
                     $('.burst-experiment-start').hide();
@@ -55,8 +56,7 @@ jQuery(document).ready(function ($) {
                     }
 
                 }
-
-            }
+            },
         });
     });
 
@@ -64,7 +64,6 @@ jQuery(document).ready(function ($) {
         $('.burst-experiment-start button').removeAttr('disabled');
         $('.burst-experiment-stop button').removeAttr('disabled');
         $('.burst_selected_experiment_id_wrapper select').removeAttr('disabled');
-        
     }
 
     function burstDisableStartStopBtns() {

@@ -76,6 +76,9 @@ if ( ! class_exists( "burst_experimenting" ) ) {
             if ( isset( $_POST['section'] ) ) {
                 $url = add_query_arg(array( 'section' => intval($_POST['section'])),  $url );
             }
+            if ( isset( $_POST['burst-save'] ) ) {
+                $url = add_query_arg(array( 'burst-save' => 1),  $url );
+            }
 
 
             wp_redirect( $url );

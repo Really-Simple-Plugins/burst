@@ -200,36 +200,52 @@ if ( ! class_exists( "burst_field" ) ) {
 			$args
 		) {
 
-			$condition          = false;
-			$condition_question = '';
-			$condition_answer   = '';
+            $condition_class    = '';
+            $condition_question = '';
+            $condition_answer   = '';
 
-			if ( ! empty( $args['condition'] ) ) {
-				$condition          = true;
-				$condition_answer   = reset( $args['condition'] );
-				$condition_question = key( $args['condition'] );
-			}
-			$condition_class = $condition ? 'condition-check' : '';
-			$hidden_class    = ( $args['hidden'] ) ? 'hidden' : '';
-			$first_class     = ( $args['first'] ) ? 'first' : '';
-			$type            = $args['type'] === 'notice' ? '' : $args['type'];
-			$cols            = $args['cols'];
-			$cols_class = $cols ? "burst-cols-$cols" : '';
+            if ( ! empty( $args['condition'] ) ) {
+                $condition_count    = 1;
+                foreach ( $args['condition'] as $question => $answer ) {
+                    $question = esc_attr( $question );
+                    $answer = esc_attr( $answer );
+                    $condition_class     .= "condition-check-{$condition_count} ";
+                    $condition_question  .= "data-condition-answer-{$condition_count}='{$answer}' ";
+                    $condition_answer    .= "data-condition-question-{$condition_count}='{$question}' ";
+                    $condition_count++;
+                }
+            }
 
-			$this->get_master_label( $args );
-	
-			echo '<div class="field-group ' . esc_attr( $args['fieldname'] . ' '
-                                            . esc_attr( $cols_class ) . ' '
-			                                            .'burst-'. $type . ' '
-			                                            . $hidden_class . ' '
-			                                            . $first_class . ' '
-			                                            . $condition_class )
-			     . '" ';
-			echo $condition ? 'data-condition-question="'
-			                  . esc_attr( $condition_question )
-			                  . '" data-condition-answer="'
-			                  . esc_attr( $condition_answer ) . '"' : '';
-			echo '><div class="burst-label">';
+            $hidden_class    = ( $args['hidden'] ) ? 'hidden' : '';
+            $burst_hidden    = $this->condition_applies( $args ) ? '' : 'burst-hidden';
+            $first_class     = ( $args['first'] ) ? 'first' : '';
+            $type            = $args['type'];
+
+            $cols_class      = isset($args['cols']) && $args['cols']  ? "burst-cols-{$args['cols']}" : '';
+            $col_class       = isset($args['col'])                    ? "burst-col-{$args['col']}" : '';
+            $colspan_class   = isset($args['colspan'])                ? "burst-colspan-{$args['colspan']}" : '';
+
+            $this->get_master_label( $args, $hidden_class . ' ' .
+                $first_class . ' ' .
+                $condition_class . ' ' .
+                $burst_hidden );
+
+            echo '<div class="field-group ' .
+                esc_attr( $args['fieldname'] . ' ' .
+                    esc_attr( $cols_class ) . ' ' .
+                    esc_attr( $col_class ) . ' ' .
+                    esc_attr( $colspan_class ) . ' ' .
+                    'burst-'. $type . ' ' .
+                    $hidden_class . ' ' .
+                    $first_class . ' ' .
+                    $condition_class . ' ' .
+                    $burst_hidden )
+                . '" ';
+
+            echo $condition_question;
+            echo $condition_answer;
+
+            echo '><div class="burst-label">';
 			
 		}
 

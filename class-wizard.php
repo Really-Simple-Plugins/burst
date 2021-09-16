@@ -568,16 +568,16 @@ if ( ! class_exists( "burst_wizard" ) ) {
 	        if ( BURST::$config->has_sections( $page, $step )) {
 
 		        for ($i = $this->first_section( $page, $step ); $i <= $this->last_section( $page, $step ); $i ++) {
-			        $icon = burst_icon('check', 'empty');
+			        $icon = burst_icon('check', 'empty', '' , 10);
 
 			        if ( $this->section_is_empty( $page, $step, $i ) ) continue;
                     if ( $i < $this->get_next_not_empty_section( $page, $step, $i ) ) continue;
 
                     $active = ( $i == $active_section ) ? 'active' : '';
                     if ( $active == 'active' ) {
-                        $icon = burst_icon('arrow-right', 'success');
+                        $icon = burst_icon('arrow-right', 'success', '', 10);
                     } else if ($this->required_fields_completed( $page, $step, $i )) {
-                    	$icon = burst_icon('check', 'success');
+                    	$icon = burst_icon('check', 'success', '', 12);
                     }
 
                     $completed = ( $this->required_fields_completed( $page, $step, $i ) ) ? "burst-done" : "burst-to-do";
@@ -676,14 +676,6 @@ if ( ! class_exists( "burst_wizard" ) ) {
 		public function enqueue_assets( $hook ) {
 
 			$minified = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
-
-			if ( strpos( $hook, 'toplevel_page_burst' ) !== false ) {
-				wp_register_style( 'burst-dashboard', burst_url . "assets/css/dashboard$minified.css", false, burst_version );
-				wp_enqueue_style( 'burst-dashboard' );
-				wp_register_style( 'burst-simple-scroll', burst_url . "assets/simple-scrollbar/simple-scrollbar$minified.css", false, burst_version );
-				wp_enqueue_style( 'burst-simple-scroll' );
-				wp_enqueue_script( 'burst-simple-scroll', burst_url . "assets/simple-scrollbar/simple-scrollbar.min.js", array( 'jquery' ), burst_version, true );
-			}
 
 
 			if ( isset($_GET['page']) && $_GET['page'] !== 'burst-experiment' ) {

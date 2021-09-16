@@ -829,43 +829,43 @@
   }
 
   /* Text & Email Validation */
-  textarea.validation,
-  input[type="text"].validation,
-  input[type="email"].validation,
-  input[type="text"].burst-valid-page,
-  input[type="text"].burst-deleted-page {
-    position: relative;
-    padding-left: 25px;
-    ~ span .burst-icon {
-      display: block;
-      position: absolute;
-      padding-left: 7px;
-      margin-top: -25px;
-      z-index: 1;
-      svg {
-        width: 15px;
-        height: 15px;
-      }
-    }
-  }
-
-  textarea.validation {
-	&:invalid ~ span .burst-icon,
-	&:valid ~ span .burst-icon {
-	  margin-top:-143px;
-	}
-  }
-
-  textarea.validation,
-  input[type="text"].validation,
-  input[type="email"].validation {
-    &:valid ~ span .burst-failed {
-      display: none;
-    }
-    &:invalid ~ span .burst-success {
-      display: none;
-    }
-  }
+  //textarea.validation,
+  //input[type="text"].validation,
+  //input[type="email"].validation,
+  //input[type="text"].burst-valid-page,
+  //input[type="text"].burst-deleted-page {
+  //  position: relative;
+  //  padding-left: 25px;
+  //  ~ span .burst-icon {
+  //    display: block;
+  //    position: absolute;
+  //    padding-left: 7px;
+  //    margin-top: -25px;
+  //    z-index: 1;
+  //    svg {
+  //      width: 15px;
+  //      height: 15px;
+  //    }
+  //  }
+  //}
+  //
+  //textarea.validation {
+	//&:invalid ~ span .burst-icon,
+	//&:valid ~ span .burst-icon {
+	//  margin-top:-143px;
+	//}
+  //}
+  //
+  //textarea.validation,
+  //input[type="text"].validation,
+  //input[type="email"].validation {
+  //  &:valid ~ span .burst-failed {
+  //    display: none;
+  //  }
+  //  &:invalid ~ span .burst-success {
+  //    display: none;
+  //  }
+  //}
 
   /* Text, Email, Select(2), Textarea Style */
 
@@ -2139,168 +2139,5 @@ input.current-page {
   to {
 	transform: rotate(360deg);
   }
-}
-// new saved dropdown
-.burst-settings-saved{
-	display: none;
-	opacity: 0;
-	top: 20px;
-	position: fixed;
-	background-color: #fff;
-	z-index: 999999;
-	left: 50%;
-	min-width: 300px;
-	transform: translateX(-50%);
-	text-align: left;
-	box-shadow: 0 0 5px 5px rgba(222, 222, 222, 0.2);
-	svg{
-		margin: 2px 17px;
-		margin-right: 7px;
-	}
-	.burst-settings-saved__text_and_icon{
-		display: flex;
-		align-content: center;
-		margin: 10px 0;
-		span{
-			display: flex;
-			align-self: center;
-			margin: 2px;
-			margin-left: 0;
-			font-size: @default-font-size * 0.9;
-			font-weight: 400;
-			color: @grey-darker;
-		}
-		div {
-			display: flex;
-			align-self: center;
-		}
-	}
-	&.burst-settings-saved--fade-in{
-		display: block;
-		-webkit-animation: fadeInFromNone 5s ease-in-out;
-		-moz-animation: fadeInFromNone 5s ease-in-out;
-		-o-animation: fadeInFromNone 5s ease-in-out;
-		animation: fadeInFromNone 5s ease-in-out;
-	}
-
-	@-webkit-keyframes fadeInFromNone {
-		0% {
-			display: none;
-			opacity: 0;
-			top: 20px;
-		}
-
-		5% {
-			display: block;
-			opacity: 0;
-			top: -10px;
-		}
-
-		15% {
-			display: block;
-			opacity: 1;
-			top: 20px;
-		}
-		90% {
-			display: block;
-			opacity: 1;
-			top: 20px;
-		}
-		100% {
-			display: none;
-			opacity: 0;
-			top: 20px;
-		}
-	}
-
-	@-moz-keyframes fadeInFromNone {
-		0% {
-			display: none;
-			opacity: 0;
-			top: 20px;
-		}
-
-		5% {
-			display: block;
-			opacity: 0;
-			top: -10px;
-		}
-
-		15% {
-			display: block;
-			opacity: 1;
-			top: 20px;
-		}
-		90% {
-			display: block;
-			opacity: 1;
-			top: 20px;
-		}
-		100% {
-			display: none;
-			opacity: 0;
-			top: 20px;
-		}
-	}
-
-	@-o-keyframes fadeInFromNone {
-		0% {
-			display: none;
-			opacity: 0;
-			top: 20px;
-		}
-
-		5% {
-			display: block;
-			opacity: 0;
-			top: -10px;
-		}
-
-		15% {
-			display: block;
-			opacity: 1;
-			top: 20px;
-		}
-		90% {
-			display: block;
-			opacity: 1;
-			top: 20px;
-		}
-		100% {
-			display: none;
-			opacity: 0;
-			top: 20px;
-		}
-	}
-
-	@keyframes fadeInFromNone {
-		0% {
-			display: none;
-			opacity: 0;
-			top: 20px;
-		}
-
-		5% {
-			display: block;
-			opacity: 0;
-			top: -10px;
-		}
-
-		15% {
-			display: block;
-			opacity: 1;
-			top: 20px;
-		}
-		90% {
-			display: block;
-			opacity: 1;
-			top: 20px;
-		}
-		100% {
-			display: none;
-			opacity: 0;
-			top: 20px;
-		}
-	}
 }
 
