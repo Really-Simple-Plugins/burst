@@ -1245,18 +1245,22 @@ if ( ! class_exists( "burst_field" ) ) {
                     <?php }
 
                 } else { ?>
-                    <option value="">
+                    <option value="0">
                         <?php _e( "Choose an option",
                             'burst' ) ?></option>
                 <?php } ?>
 
             </select>
-            <label>
-                <input name="<?php echo 'duplicate-' . esc_html( $fieldname ) ?>"
-                       size="40" type="checkbox"
-                       value="1" >
-                Duplicate Control and assign as Variant
-            </label
+            <?php if (isset($_GET['action']) && $_GET['action'] == 'new'){ ?>
+                <label>
+                    <input name="<?php echo 'duplicate_' . esc_html( $fieldname ) ?>"
+                           class = "<?php echo 'duplicate_' . esc_html( $fieldname ) ?>"
+                           size="40" type="checkbox"
+                           value="1" >
+                    Duplicate Control and assign as Variant
+                </label
+            <?php } ?>
+
 
 
             <?php do_action( 'burst_after_field', $args ); ?>

@@ -15,6 +15,19 @@ jQuery(document).ready(function ($) {
         check_conditions();
     });
 
+    $('.duplicate_burst_variant_id').change(function(){
+        console.log('change');
+        // switches the disabled attribute
+        console.log($('.duplicate_burst_variant_id:checked').val());
+        var selectField = $('select[name=burst_variant_id]');
+        if (selectField.attr('disabled')) {
+            $(selectField).removeAttr('disabled');
+        } else {
+            $(selectField).attr('disabled', 'disabled');
+        }
+
+    });
+
     /*conditional fields*/
     function check_conditions() {
         var value;

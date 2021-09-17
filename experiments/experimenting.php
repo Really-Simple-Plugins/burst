@@ -178,9 +178,10 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 			}
             $variant_id = false;
 
-			//if (!$post_id) return false;
+			error_log(print_r($_POST, true));
+			if (!$post_id) return false;
 
-			if ($_POST["burst_duplicate_or_choose_existing"] === 'duplicate') {
+			if ($_POST["duplicate_burst_variant_id"]) {
 				$variant_id = $this->duplicate_post($post_id);
 			} else if ( isset( $_POST["burst_variant_id"] ) ) {
 				$variant_id = intval( $_POST["burst_variant_id"] );

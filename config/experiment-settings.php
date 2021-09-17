@@ -98,7 +98,7 @@ $this->fields = $this->fields + array(
             'any'  => __( "Any Woocommerce sale", 'burst' ),
             'specific'  => __( "Specific Woocommerce product", 'burst' ),
         ),
-        'label'       => __( "Which product sales do you want to track? ", 'burst' ),
+        'label'       => __( "Which Woocommerce sales do you want to track? ", 'burst' ),
         'default' => 'any',
         'condition' => array(
             'goal' => 'woocommerce',
