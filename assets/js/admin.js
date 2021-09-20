@@ -152,6 +152,7 @@ jQuery(document).ready(function ($) {
         // multiple select with AJAX search
         var fieldName = $('.burst-select2-page-field').attr("name");
         var queryName = fieldName + '_query_settings';
+        console.log(queryName);
         $('.burst-select2-page-field').select2({
             ajax: {
                     url: ajaxurl, // AJAX URL is predefined in WordPress admin

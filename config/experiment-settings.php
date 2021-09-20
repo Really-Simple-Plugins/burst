@@ -66,7 +66,8 @@ $this->fields = $this->fields + array(
         'section'  => 1,
         'source'      => 'experiment',
         'label'       => __( "Page visit", 'burst' ),
-        'type'               => 'text',
+        'type'        => 'copy',
+        'copy_text' => '.burst-click',
         'placeholder' => __( '.class or #id' ),
         'condition' => array(
             'goal' => 'click',
@@ -116,6 +117,7 @@ $this->fields = $this->fields + array(
             'post_status' 	=> 'publish',
         ),
         'condition' => array(
+            'goal' => 'woocommerce',
             'goal_woocommerce' => 'specific',
         ),
     ),

@@ -943,6 +943,45 @@ if ( ! class_exists( "burst_field" ) ) {
 			<?php
 		}
 
+        public
+        function copy(
+            $args
+        ) {
+            $fieldname = 'burst_' . $args['fieldname'];
+
+            $value = $this->get_value( $args['fieldname'], $args['default'] );
+            if ( ! $this->show_field( $args ) ) {
+                return;
+            }
+            ?>
+
+            <?php do_action( 'burst_before_label', $args ); ?>
+            <label
+                    for="<?php echo $args['fieldname'] ?>"><?php echo $args['label'] ?><?php echo $this->get_help_tip_btn( $args ); ?></label>
+            <?php do_action( 'burst_after_label', $args ); ?>
+            <input <?php if ( $args['required'] ) {
+                echo 'required';
+            } ?>
+                    class="validation <?php if ( $args['required'] ) {
+                        echo 'is-required';
+                    } ?>"
+                    placeholder="<?php echo esc_html( $args['placeholder'] ) ?>"
+                    type="text"
+                    value="<?php echo esc_html( $value ) ?>"
+                    name="<?php echo esc_html( $fieldname ) ?>">
+
+            <span class="copy-container">
+                <button type="button"
+                        class="button button-small burst-copy-button"
+                        data-clipboard-text="<?php echo $args['copy_text']; ?>">
+                    <?php echo $args['copy_text'] ?>
+                </button>
+                <span class="success hidden" aria-hidden="true"><?php _e( 'Copied!' ); ?></span>
+            </span>
+            <?php do_action( 'burst_after_field', $args ); ?>
+            <?php
+        }
+
 
 		public
 		function step_has_fields(
@@ -1058,6 +1097,9 @@ if ( ! class_exists( "burst_field" ) ) {
 					case 'weightslider';
 						$this->weightslider( $args );
 						break;
+                    case 'copy':
+                        $this->copy( $args );
+                        break;
 				}
 			}
 

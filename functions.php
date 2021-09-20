@@ -280,11 +280,12 @@ function burst_get_posts_ajax_callback(){
 	    $key = sanitize_text_field($key);
 	    $value = sanitize_text_field($value);
 	    $query_settings[$key] = $value;
+	    error_log(print_r($query_settings, true));
     }
 
  	$default_args = array(
 		's'=> sanitize_text_field( $_GET['q'] ),
-		'post_type'=> 'any',
+		'post_type'=> sanitize_text_field( $query_settings['post_type']),
 		'posts_per_page' => 25
 	);
 
