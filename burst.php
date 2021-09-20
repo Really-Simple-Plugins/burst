@@ -92,7 +92,7 @@ if ( ! class_exists( 'BURST' ) ) {
 		private function setup_constants() {
 
 			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-			$plugin_data = get_plugin_data( __FILE__ );
+			$plugin_data = get_file_data( __FILE__, array( 'Version' => 'Version' ), false );
 
 			define( 'burst_url', plugin_dir_url( __FILE__ ) );
 			define( 'burst_path', plugin_dir_path( __FILE__ ) );
