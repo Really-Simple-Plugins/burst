@@ -27,20 +27,38 @@
 	} 
 	color:#333;
 }
-
+html, body{
+	font-size: 62.5%;
+}
 #burst {
+	font-size: @default-font-size;
 	padding-bottom: 20px;
 	margin: 0 0 0 -20px;
-	font-size: @default-font-size;
+
 	h1, h2, h3, h4, h5 ,h6, p{
 		color: @text-color;
 	}
-	p, label{
-		font-size: @default-font-size;;
-		font-weight: 500;
+	p {
+		font-size: @default-font-size;
+		line-height: @default-line-height;
+	}
+	a {
+		font-size: @default-font-size;
+	}
+	label {
+		font-size: 1.5rem;
+		line-height: 2.4rem;
+	}
+	input[type="checkbox"], input[type="radio"]{
+		height: 1.6rem;
+		width: 1.6rem;
+	}
+	input[type="checkbox"]:before{
+		height: 1.8rem;
+		width: 1.8rem;
 	}
 	.burst-grid-title{
-		font-size: 18px;
+		font-size: 1.8rem;
 	}
 	#burst-header {
 		display: flex;
@@ -62,7 +80,7 @@
 			.burst-header-menu{
 				margin: auto 15px;
 				a {
-					font-size: @default-font-size * 1.1;
+					font-size: 1.5rem;
 					padding: 28px 15px;
 					text-decoration: none;
 					color: @grey-dark;
@@ -158,8 +176,11 @@
 		}
 	}
 	.burst-notice {
+		font-size:1.4rem;
+		line-height: 2.1rem;
+		padding: 1rem 2rem;
 		.burst-message {
-			font-size:12px;
+
 			padding:14px 0;
 		}
 		.burst-status {
@@ -168,7 +189,7 @@
 			text-align: center;
 			border-radius: 15px;
 			padding: 4px 8px 4px 8px;
-			font-size: 12px;
+			font-size: 1.2rem;
 			font-weight: 600;
 			height: 17px;
 			line-height:17px;
@@ -192,11 +213,8 @@
 			background-color: @color-error;
 			color: #fff;
 			padding: 2px 6px;
-			font-size: 10px;
+			font-size: 1rem;
 		}
-		display:grid;
-		grid-template-columns: 70px auto 50px;
-		grid-gap:20px;
 		>div {
 			padding: 10px 0;
 		}
@@ -212,7 +230,7 @@
 			cursor:pointer;
 			.burst-close-notice-x {
 				color: #ccc;
-				font-size: 0.9em;
+				font-size: 0.9rem;
 			}
 		}
 	}
@@ -273,7 +291,7 @@
 
 	/* Notices */
 	.burst-panel {
-		font-size: 13px!important;
+		font-size: 1.3rem!important;
 		color: #383d41;
 		background-color: #F2F2F2;
 		border: 1px solid #d6d8db;
@@ -300,11 +318,11 @@
 		}
 
 		h1 {
-			font-size:22px;
+			font-size:2.2rem;
 		}
 
 		p {
-			font-size: 13px!important;
+			font-size: 1.3rem!important;
 		}
 
 		&.burst-notice {
@@ -349,6 +367,8 @@
 		flex-direction: row;
 		flex-wrap: wrap;
 		margin-bottom: 10px;
+		font-size: @default-font-size;
+		line-height: @default-line-height;
 
 		@media screen and (max-width: 480px) {
 			flex-direction: row;
@@ -367,7 +387,7 @@
 			}
 
 			.burst-bullet {
-				margin: 7px;
+				margin: 9px;
 				background-color: @grey-light;
 				float: left;
 
@@ -413,17 +433,16 @@
 		display:flex;
 		flex-wrap:wrap;
 		padding:@small-padding @small-padding;
-		div + div {
-			padding-left:@default-padding;
-		}
+		line-height: 2rem;
 	}
 
 	.burst-percentage-text-container {
 		.burst-row;
 		padding-top:@default-padding;
 		.burst-percentage-number {
-			font-size:24px;
+			font-size:2.4rem;
 			font-weight:700;
+			margin-right: 1rem;
 		}
 		.burst-percentage-text {
 			font-weight:700;
@@ -440,9 +459,6 @@
 	}
 	.burst-objective-bullets-container {
 		.burst-row;
-		.burst-column-1, .burst-column-3 {
-			width:40px;
-		}
 		.burst-column-2, .burst-column-4 {
 			flex:1;
 		}
@@ -530,7 +546,7 @@
 			align-items: center;
 			justify-content: space-between;
 			.burst-grid-title{
-				font-size: 17px;
+				font-size: 1.7rem;
 				font-weight: 600;
 				padding: 9px 0 4px 0;
 			}
@@ -577,7 +593,7 @@
   	/* tooltip styles */  	
 	.burst-tooltip{
 		font-weight: 400;
-		font-size: 13px;
+		font-size: 1.3rem;
 	  	position:relative; /* making the .tooltip span a container for the tooltip text */
 	  	margin-left: 5px;
 	  	cursor: pointer;
@@ -712,13 +728,13 @@
 	text-align: center;
     color: #fff;
     line-height: 1.45;
-    font-size: 12px;
+    font-size: 1.2rem;
 }
 .burst-experiment-dot.dot-large:before{
 	height: 23px;
 	width: 23px;
     line-height: 1.6;
-    font-size: 14px;
+    font-size: 1.4rem;
 }
 
 .burst-experiment-dot.control:before{
@@ -734,12 +750,12 @@
 	padding: 10px;
     border-radius: 5px;
     background: @grey-light;
-    font-size: 12px;
+    font-size: 1.2rem;
     font-style: italic;
 }
 .burst-accompanied-text{
 	color: @grey-dark;
-	font-size: 12px;
+	font-size: 1.2rem;
 }
 .burst-experiment-info-below-title{
 	padding: 10px 14px;
@@ -902,7 +918,7 @@ input:focus + .burst-slider {
 #burst .burst-experiment-version{
 	display: flex;
 	margin: 6px 0;
-	font-size: 12px;
+	font-size: 1.2rem;
 	line-height: 12px * 1.5;
 	padding: 5px 7px;
 	border-radius: 5px;
@@ -921,7 +937,7 @@ input:focus + .burst-slider {
 	}
 	p{
 		font-weight: 500;
-		font-size: 14px;
+		font-size: 1.4rem;
 		text-transform: capitalize;
 		margin-top: 1px;
 	}

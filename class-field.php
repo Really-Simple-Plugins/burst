@@ -287,16 +287,21 @@ if ( ! class_exists( "burst_field" ) ) {
 
 		}
 
-		public
-		function after_field(
-			$args
-		) {
-			$this->get_comment( $args );
+        public function after_field( $args ) {
 
-			echo '</div></div>';
-			
-		}
+            $this->get_comment( $args );
+            echo '</div><!--close after field-->';
+            echo '<div class="burst-help-warning-wrap">';
+            if (  isset( $args['help'] ) ) {
+                $status = isset($args['help_status']) ? $args['help_status'] : 'notice';
+                burst_sidebar_notice( wp_kses_post( $args['help'] ), $status, $args['condition'] );
+            }
 
+            do_action( 'burst_notice_' . $args['fieldname'], $args );
+
+            echo '</div>';
+            echo '</div>';
+        }
 
 		public
 		function text(
@@ -1179,7 +1184,7 @@ if ( ! class_exists( "burst_field" ) ) {
 			?>
 			<?php do_action( 'burst_before_label', $args ); ?>
 			<label
-				for="<?php echo esc_html( $fieldname ) ?>"><?php echo esc_html( $args['label'] ) ?><?php //echo $this->get_help_tip_btn( $args ); ?>
+				for="<?php echo esc_html( $fieldname ) ?>"><?php echo esc_html( $args['label'] ) ?><?php echo $this->get_help_tip_btn( $args ); ?>
 			</label>
 			<?php do_action( 'burst_after_label', $args ); ?>
 
@@ -1223,7 +1228,7 @@ if ( ! class_exists( "burst_field" ) ) {
             ?>
             <?php do_action( 'burst_before_label', $args ); ?>
             <label
-                    for="<?php echo esc_html( $fieldname ) ?>"><?php echo esc_html( $args['label'] ) ?><?php //echo $this->get_help_tip_btn( $args ); ?>
+                    for="<?php echo esc_html( $fieldname ) ?>"><?php echo esc_html( $args['label'] ) ?><?php echo $this->get_help_tip_btn( $args ); ?>
             </label>
             <?php do_action( 'burst_after_label', $args ); ?>
 
@@ -1269,7 +1274,7 @@ if ( ! class_exists( "burst_field" ) ) {
             ?>
             <?php do_action( 'burst_before_label', $args ); ?>
             <label
-                    for="<?php echo esc_html( $fieldname ) ?>"><?php echo esc_html( $args['label'] ) ?><?php //echo $this->get_help_tip_btn( $args ); ?>
+                    for="<?php echo esc_html( $fieldname ) ?>"><?php echo esc_html( $args['label'] ) ?><?php echo $this->get_help_tip_btn( $args ); ?>
             </label>
             <?php do_action( 'burst_after_label', $args ); ?>
 
@@ -1301,6 +1306,7 @@ if ( ! class_exists( "burst_field" ) ) {
                            value="1" >
                     Duplicate Control and assign as Variant
                 </label
+            </div>
             <?php } ?>
 
 
@@ -1559,9 +1565,9 @@ if ( ! class_exists( "burst_field" ) ) {
 			$args
 		) {
 			$output = '';
-			if ( isset( $args['help'] ) ) {
+			if ( isset( $args['tooltip'] ) ) {
 				$output
-					= '<span data-text="'. wp_kses_post( $args['help'] ) .'" class="burst-tooltip left"><img width="15px" src="'. trailingslashit(burst_url) .'assets/icons/question-circle-solid.svg"></span>';
+					= '<span data-text="'. wp_kses_post( $args['tooltip'] ) .'" class="burst-tooltip left"><img width="15px" src="'. trailingslashit(burst_url) .'assets/icons/question-circle-solid.svg"></span>';
 			}
 
 			return $output;

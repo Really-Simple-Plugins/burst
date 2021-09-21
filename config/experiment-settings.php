@@ -9,7 +9,7 @@ $this->fields = $this->fields + array(
         'type'        => 'text',
         'label'       => __( "Experiment name", 'burst' ),
         'placeholder' => __( 'For example: Red vs green buttons' ),
-        'help'        => __( 'This name is for internal use only. Try to give the experiment a clear name, so you can find this test again.', 'burst' ),
+        'tooltip'        => __( 'This name is for internal use only. Try to give the experiment a clear name, so you can find this test again.', 'burst' ),
         'required' => true,
     ),
 
@@ -65,7 +65,7 @@ $this->fields = $this->fields + array(
         'step'     => STEP_METRICS,
         'section'  => 1,
         'source'      => 'experiment',
-        'label'       => __( "Page visit", 'burst' ),
+        'label'       => __( "Add as a class to the button(s) you want to track", 'burst' ),
         'type'        => 'copy',
         'copy_text' => '.burst-click',
         'placeholder' => __( '.class or #id' ),
@@ -79,7 +79,7 @@ $this->fields = $this->fields + array(
         'step'     => STEP_METRICS,
         'section'  => 1,
         'source'      => 'experiment',
-        'label'       => __( "Which page ", 'burst' ),
+        'label'       => __( "Which page do you want as a goal?", 'burst' ),
         'type'               => 'select2',
         'query_settings'	 => array(
             'post_type' 	=> 'any', //get_current_post_type();

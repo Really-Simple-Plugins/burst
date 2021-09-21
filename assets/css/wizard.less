@@ -57,7 +57,7 @@
     padding: @green-gap;
     border-bottom: 1px solid @border-color;
     display: flex;
-	font-size:17px;
+	font-size:1.7rem;
 	font-weight:600;
     justify-content: space-between;
     align-content: center;
@@ -71,7 +71,7 @@
 
   .burst-wizard-subtitle h2 {
     margin: @green-gap @green-gap 0 @green-gap;
-    font-size: 14px;
+    font-size: 1.4rem;
   }
 
   .burst-wizard-menu {
@@ -107,7 +107,8 @@
           text-decoration: none;
           width: calc(100% - (@green-gap + @green-gap));
           h2 {
-            font-size: 15px;
+            font-size: 1.6rem;
+			  line-height: 2rem;
 			font-weight:500;
             margin: 0;
           }
@@ -147,7 +148,8 @@
           text-decoration: none;
           padding: 3px 5px;
           h3 {
-            font-size: 13px;
+            font-size: 1.3rem;
+			  line-height: 1.6rem;
             font-weight: 400;
             margin: 0;
           }
@@ -191,7 +193,7 @@
 
 	.burst-form {
       display: grid;
-	  grid-template-columns: auto 325px !important;
+	  grid-template-columns: 1fr minmax(325px, 350px) !important;
       grid-column-gap: @red-gap;
 	  .burst-wizard-intro, .burst-field, .burst-section-content-title-header, .burst-section-footer {
 		.box-shadow-left;
@@ -228,7 +230,7 @@
       .field-group {
         grid-column: span 2;
         display: grid;
-        grid-template-columns: auto 325px;
+        grid-template-columns: 1fr minmax(325px, 350px);
         grid-column-gap: @red-gap;
 
         .burst-field {
@@ -237,7 +239,7 @@
 		  background-color: white;
 			margin: 0;
 		  select {
-			font-size:13px;
+			font-size:1.3rem;
 		  }
         }
 		  .burst-label{
@@ -388,7 +390,7 @@
 	  .field-group {
 		grid-column: span 2;
 		display: grid;
-		grid-template-columns: auto 325px;
+		grid-template-columns: 1fr minmax(325px, 350px);
 		grid-column-gap: 15px;
 		&.burst-colspan-1 {
 		  grid-column: span 1;
@@ -420,12 +422,12 @@
 		grid-column: span 2;
 		margin: 0;
 		padding: @green-gap @green-gap 0 @green-gap;
-		font-size: 18px;
+		font-size: 1.8rem;
 	  }
 
 	  .burst-sublabel label {
 		color: darkgrey;
-		font-size: 13px;
+		font-size: 1.3rem;
 	  }
 
 	  label .burst-icon {
@@ -510,7 +512,7 @@
 		  .burst-grid-controls {
 			margin: auto 0;
 			select {
-			  font-size:13px;
+			  font-size:1.3rem;
 			}
 		  }
 
@@ -524,7 +526,7 @@
 			  border-bottom:1px solid @grey-light;
 			}
 			.burst-settings-title {
-			  font-size:17px;
+			  font-size:1.7rem;
 			  font-weight:600;
 			}
 		  }
@@ -605,7 +607,7 @@
   .burst-cookies-table {
     h2 {
       font-weight: normal;
-      font-size: 15px;
+      font-size: 1.5rem;
     }
     .burst-cookies-table-body {
       border-radius: 5px;
@@ -626,7 +628,7 @@
   .burst-field .burst-icon, .burst-step .burst-icon {
 	border-radius: 50%;
 	&.dashicons-before:before {
-	  font-size:18px;
+	  font-size:1.8rem;
 	  height:20px;
 	  width:20px;
 	  margin-top:2px;
@@ -667,7 +669,7 @@
     }
 
     &.arrow-right-alt2::before {
-      font-size: 17px;
+      font-size: 1.7rem;
     }
   }
 
@@ -987,7 +989,7 @@ a:active, a:hover {
 }
 
 a.button.burst-open-modal {
-  font-size: 9px;
+  font-size: 0.9rem;
   line-height: 13px;
   height: 15px;
   min-height: 15px;
@@ -1002,7 +1004,7 @@ a.button.burst-open-modal {
 }
 
 #burst_language {
-  font-size: 15px;
+  font-size: 1.5rem;
 
   &.burst_cookie_language_selector {
 	margin-bottom: 0;
@@ -1045,7 +1047,7 @@ a.button.burst-open-modal {
   }
 
   .burst-service-divider {
-	font-size: 14px;
+	font-size: 1.4rem;
 	margin-bottom: 10px;
   }
 
@@ -1151,13 +1153,13 @@ a.button.burst-open-modal {
   }
 
   h1 {
-	font-size: 22px;
+	font-size: 2.2rem;
   }
 
-  font-size: 13px !important;
+  font-size: 1.3rem !important;
 
   p {
-	font-size: 13px !important;
+	font-size: 1.3rem !important;
   }
 
   color: #383d41;
@@ -1318,7 +1320,7 @@ input:focus + .burst-slider {
 
   p {
 	border-radius: 0px;
-	font-size: 16px;
+	font-size: 1.6rem;
 	background-color: @brand-primary;
 	color: white;
 	position: relative;
@@ -1345,7 +1347,7 @@ html .mceContentBody {
 }
 
 .burst-comment {
-	font-size:12px;
+	font-size: 1.2rem;
   	margin-top: 5px;
 }
 
@@ -1396,7 +1398,7 @@ html .mceContentBody {
   }
 
   label {
-    font-size: 13px;
+    font-size: 1.3rem;
   }
 
   .field-group {
@@ -1410,7 +1412,7 @@ html .mceContentBody {
       //margin-bottom: 10px;
       label {
 		display:flex;
-		font-size:15px;
+		font-size:1.5rem;
         font-weight: 500;
 		cursor: default;
       }
@@ -1495,7 +1497,7 @@ html .mceContentBody {
 	.burst-master-label h2 {
       margin: 0;
 	  padding: @green-gap @green-gap 0 0;
-	  font-size: 18px;
+	  font-size: 1.8rem;
       background-color: white;
 	}
 
@@ -1517,7 +1519,7 @@ html .mceContentBody {
 	.burst-menu-item.active {
 	  i {
 		color: black;
-		font-size: 1.35em;
+		font-size: 1.35rem;
 		float: left;
 	  }
 
@@ -1532,12 +1534,12 @@ html .mceContentBody {
 	.burst-done a {
 	  text-decoration: none;
 	  color: white;
-	  font-size: 14px;
+	  font-size: 1.4rem;
 	}
 
 	.burst-to-do a {
 	  color: white;
-	  font-size: 14px;
+	  font-size: 1.4rem;
 	  text-decoration: none;
 	  opacity: 0.6;
 	}
@@ -1595,7 +1597,7 @@ html .mceContentBody {
 	content: "\2022";
 	text-indent: -9999px;
 	border-radius: 50px;
-	font-size: 24px;
+	font-size: 2.4rem;
 	width: 6px;
 	height: 6px;
 	margin: 4px;
@@ -1638,7 +1640,7 @@ a.burst.button, button.burst.button, input.burst.button {
   .fa-angle-right {
 	font-weight: 900;
 	position: absolute;
-	font-size: 1.8em;
+	font-size: 1.8rem;
 	margin-top: 1px;
 	margin-left: 5px;
   }
@@ -1659,8 +1661,8 @@ a.burst.button, button.burst.button, input.burst.button {
   .burst-dashboard-title {
 	padding-top: 22px;
 	font-weight: 600;
-	font-size: 24px;
-	line-height: 30px;
+	font-size: 2.4rem;
+	line-height: 3rem;
 	margin-bottom: 20px;
 	@media screen and (max-width: 720px) {
 	  padding-bottom: 0px;
@@ -1726,7 +1728,7 @@ a.burst.button, button.burst.button, input.burst.button {
 
   .burst-dashboard-item .burst-top h1 {
 	font-weight: 600;
-	font-size: 2.5em;
+	font-size: 2.5rem;
 	padding: 25px;
   }
 
@@ -1741,7 +1743,7 @@ a.burst.button, button.burst.button, input.burst.button {
 	.burst-logo {
 	  display: flex;
 	  align-items: center;
-	  font-size: 1.5em;
+	  font-size: 1.5rem;
 	  font-weight: 600;
 	}
 
@@ -1755,7 +1757,7 @@ a.burst.button, button.burst.button, input.burst.button {
 	  align-items: center;
 	  margin-top: 35px;
 	  grid-area: text-completed;
-	  font-size: 24px;
+	  font-size: 2.4rem;
 	  color: white;
 	  @media screen and (max-width: 720px) {
 		button {
@@ -1768,7 +1770,7 @@ a.burst.button, button.burst.button, input.burst.button {
 	padding: 10px;
 
 	.burst-dashboard-info {
-	  font-size: 19px;
+	  font-size: 1.9rem;
 	  font-weight: bold;
 	  padding-top: 20px;
 	  padding-bottom: 10px;
@@ -1806,7 +1808,7 @@ a.burst.button, button.burst.button, input.burst.button {
 
 		.burst-dashboard-top-text {
 		  display: inline-grid;
-		  font-size: 18px;
+		  font-size: 1.8rem;
 		  line-height: 22px;
 		  max-width: 60%;
 		  float: left;
@@ -1898,7 +1900,7 @@ a.burst.button, button.burst.button, input.burst.button {
 
 		.fa-plus {
 		  color: @brand-primary;
-		  font-size: 1.5em;
+		  font-size: 1.5rem;
 		}
 	  }
 
@@ -1906,7 +1908,7 @@ a.burst.button, button.burst.button, input.burst.button {
 		color: white;
 		background-color: black;
 		min-height: 70px;
-		font-size: 14px;
+		font-size: 1.4rem;
 
 		div {
 		  margin-bottom: 10px;
@@ -1947,14 +1949,14 @@ a.burst.button, button.burst.button, input.burst.button {
 		  margin-top: 9px;
 		  margin-left: 9px;
 		  font-weight: 900;
-		  font-size: 1.2em;
+		  font-size: 1.2rem;
 		  margin-right: 35px;
 		}
 
 		.burst-footer-description {
 		  width: 70%;
 		  margin-left: 9px;
-		  font-size: 0.8em;
+		  font-size: 0.8rem;
 		  display: flex;
 		}
 
@@ -1967,7 +1969,7 @@ a.burst.button, button.burst.button, input.burst.button {
 		  float: right;
 
 		  .fa-angle-right {
-			font-size: 1.5em;
+			font-size: 1.5rem;
 			vertical-align: middle;
 			margin-left: 2px;
 		  }
@@ -2057,7 +2059,7 @@ input.current-page {
 	  text-align: center;
 	  border-radius: 15px;
 	  padding: 4px 8px 4px 8px;
-	  font-size: 0.8em;
+	  font-size: 0.8rem;
 	  font-weight: 600;
 	  height: 17px;
 	  line-height: 17px;
@@ -2083,61 +2085,3 @@ input.current-page {
 
   }
 }
-#burst-conclusion{
-  background: @grey-lighter;
-  padding: 10px 15px;
-  margin: 10px 0 10px 0;
-  .burst-conclusion__list{
-	font-size: 0.9rem;
-	font-weight: 600;
-	li{
-	  display: flex;
-	  align-items: start;
-	  margin: 15px 0;
-	  p:not(:first-child), .burst-conclusion__check--check-text, .burst-conclusion__check--report-text{
-		margin-top: 0;
-		margin-bottom: 0;
-	  }
-	  &:before{
-		content: "";
-		display:block;
-		height:1rem;
-		width:1rem;
-		min-width:1rem;
-
-		background-size: 1rem 1rem;
-		background-repeat: no-repeat;
-		margin-right: 10px;
-		margin-top: 1px;
-	  }
-	  &.icon-loading:before{
-		background-image: url('data:image/svg+xml;utf8,<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="spinner" class="svg-inline--fa fa-spinner fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="%23333" d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z"></path></svg>');
-
-		// spinning animation
-		animation-name: rotate-s-loader;
-		animation-iteration-count: infinite;
-		animation-duration: 1s;
-		animation-timing-function: ease-in-out;
-		position: relative;
-	  }
-	  &.icon-success:before {
-		background-image: url('data:image/svg+xml;utf8,<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check-circle" class="svg-inline--fa fa-check-circle fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="%2322932e" d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"></path></svg>' );
-	  }
-	  &.icon-error:before {
-		background-image: url('data:image/svg+xml;utf8,<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="exclamation-circle" class="svg-inline--fa fa-exclamation-circle fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="%23D7263D" d="M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zm-248 50c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"></path></svg>' );
-	  }
-	  &.icon-warning:before {
-		background-image: url('data:image/svg+xml;utf8,<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="exclamation-triangle" class="svg-inline--fa fa-exclamation-triangle fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="%23f39c12" d="M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"></path></svg>' );
-	  }
-	}
-  }
-}
-@keyframes rotate-s-loader {
-  from {
-	transform: rotate(0);
-  }
-  to {
-	transform: rotate(360deg);
-  }
-}
-
