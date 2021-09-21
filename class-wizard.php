@@ -96,11 +96,11 @@ if ( ! class_exists( "burst_wizard" ) ) {
 
 			if ( ! $this->all_required_fields_completed( 'experiment' ) ) {
                 echo '<div class="burst-wizard-intro">';
-				_e( "Not all required fields are completed yet. Please check the steps to complete all required questions", 'burst' );
+				_e( "Not all required fields are completed yet. Please check the steps to complete all required questions before you can start the experiment.", 'burst' );
                 echo '</div>';
 			} else {
 			    echo '<div class="burst-wizard-intro">';
-				printf( '<p>' . __( "Click '%s' to complete the configuration. You can come back to change your configuration at any time.", 'burst' ). '</p>',
+				printf( '<p>' . __( "Click '%s' to start the experiment. Opsomming van wat er gaat gebeuren.", 'burst' ). '</p>',
 					__( "Start experiment", 'burst' ) );
                 echo '</div>';
 			}
@@ -609,7 +609,6 @@ if ( ! class_exists( "burst_wizard" ) ) {
 				'section' => $section,
 				'save_as_notice' => '',
 				'learn_notice' => '',
-				'cookie_or_finish_button' => '',
 				'previous_button' => '',
 				'next_button' => '',
 				'save_button' => '',
@@ -641,10 +640,8 @@ if ( ! class_exists( "burst_wizard" ) ) {
 
             if ( $step < $this->total_steps( $page ) ) {
                 $args['next_button'] = '<input class="button button-primary burst-next" type="submit" name="burst-next" value="'. __( "Save and continue", 'burst' ) . '">';
-            }
-
-            if ( $step == $this->total_steps( $page ) && $this->all_required_fields_completed( $page )) {
-                    $args['finish_button'] = '<input class="button button-primary burst-finish" type="submit" name="burst-finish" value="'. __('Start experiment', 'burst') . '">';
+            } else if ( $step == $this->total_steps( $page ) && $this->all_required_fields_completed( $page )) {
+                $args['next_button'] = '<input class="button button-primary burst-finish" type="submit" name="burst-finish" value="'. __('Start experiment', 'burst') . '">';
             }
 
             if ( $page == 'experiment' )  {

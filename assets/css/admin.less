@@ -30,6 +30,10 @@
 html, body{
 	font-size: 62.5%;
 }
+#wpbody-content{
+	font-size: 1.4rem;
+	line-height: 1.6rem;
+}
 #burst {
 	font-size: @default-font-size;
 	padding-bottom: 20px;
@@ -41,6 +45,7 @@ html, body{
 	p {
 		font-size: @default-font-size;
 		line-height: @default-line-height;
+		max-width: 60ch;
 	}
 	a {
 		font-size: @default-font-size;
@@ -132,7 +137,7 @@ html, body{
   		.burst-field{
   			margin-bottom: @default-margin;
   			input[type="text"]{
-  				width: 100%;
+
   			}
   		}
   		&.first .burst-label{
@@ -176,9 +181,9 @@ html, body{
 		}
 	}
 	.burst-notice {
-		font-size:1.4rem;
-		line-height: 2.1rem;
-		padding: 1rem 2rem;
+		font-size:1.2rem;
+		line-height: 1.8rem;
+		padding: 1rem 1.5rem;
 		.burst-message {
 
 			padding:14px 0;

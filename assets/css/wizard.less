@@ -32,12 +32,12 @@
   &:after {
 	content: " ";
 	position: absolute;
-	left: -15px;
-	top: calc( 50% - 15px );
-	border-top: 15px solid transparent;
-	border-right: 15px solid black;
+	left: -13px;
+	top: calc( 50% - 11px );
+	border-top: 11px solid transparent;
+	border-right: 13px solid black;
 	border-left: none;
-	border-bottom: 15px solid transparent;
+	border-bottom: 11px solid transparent;
   }
 }
 @media only screen and (max-width: 1400px) {
@@ -1349,6 +1349,7 @@ html .mceContentBody {
 .burst-comment {
 	font-size: 1.2rem;
   	margin-top: 5px;
+	max-width: 60ch;
 }
 
 .burst-cookie-field {
@@ -1575,7 +1576,7 @@ html .mceContentBody {
 	}
   }
   input[type="text"], input[type="email"], input[type="password"], .burst-border-width-wrap input[type="number"], .burst-border-radius-wrap input[type="number"] {
-	width: 100%;
+	//width: 100%;
   }
 
   select {

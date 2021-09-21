@@ -22,7 +22,6 @@
                 {previous_button}
                 {save_button}
                 {next_button}
-                {cookie_or_finish_button}
             </div>
         </div>
 

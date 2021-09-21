@@ -22,12 +22,12 @@
 .burst-pointer:after {
   content: " ";
   position: absolute;
-  left: -15px;
-  top: calc(50% - 15px);
-  border-top: 15px solid transparent;
-  border-right: 15px solid black;
+  left: -13px;
+  top: calc(50% - 11px);
+  border-top: 11px solid transparent;
+  border-right: 13px solid black;
   border-left: none;
-  border-bottom: 15px solid transparent;
+  border-bottom: 11px solid transparent;
 }
 @media only screen and (max-width: 1400px) {
   #burst-content-area {
@@ -826,12 +826,12 @@
 .burst-help-warning-wrap .burst-help-modal:after {
   content: " ";
   position: absolute;
-  left: -15px;
-  top: calc(50% - 15px);
-  border-top: 15px solid transparent;
-  border-right: 15px solid black;
+  left: -13px;
+  top: calc(50% - 11px);
+  border-top: 11px solid transparent;
+  border-right: 13px solid black;
   border-left: none;
-  border-bottom: 15px solid transparent;
+  border-bottom: 11px solid transparent;
 }
 .burst-help-warning-wrap .burst-help-modal.burst-notice {
   background-color: #61CE70;
@@ -1051,12 +1051,12 @@ a.button.burst-open-modal {
 .burst-panel.burst-warning:after {
   content: " ";
   position: absolute;
-  left: -15px;
-  top: calc(50% - 15px);
-  border-top: 15px solid transparent;
-  border-right: 15px solid black;
+  left: -13px;
+  top: calc(50% - 11px);
+  border-top: 11px solid transparent;
+  border-right: 13px solid black;
   border-left: none;
-  border-bottom: 15px solid transparent;
+  border-bottom: 11px solid transparent;
 }
 .burst-panel.burst-warning:after {
   border-right: 15px solid #29b6f6;
@@ -1180,6 +1180,7 @@ html .mceContentBody {
 .burst-comment {
   font-size: 1.2rem;
   margin-top: 5px;
+  max-width: 60ch;
 }
 .burst-cookie-field .burst-cookie-header {
   border-bottom: 1px solid #b6b7b8;
@@ -1507,13 +1508,6 @@ html .mceContentBody {
 .burst-field input[type="number"]:focus,
 .burst-field input[type="password"]:focus {
   border-color: initial;
-}
-.burst-field input[type="text"],
-.burst-field input[type="email"],
-.burst-field input[type="password"],
-.burst-field .burst-border-width-wrap input[type="number"],
-.burst-field .burst-border-radius-wrap input[type="number"] {
-  width: 100%;
 }
 .burst-field select {
   border-color: #F1F1F1;

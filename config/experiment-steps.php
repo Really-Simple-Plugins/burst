@@ -22,23 +22,13 @@ $this->steps = array(
                     ),
                     2 => array(
                         'title' => __( 'Duration and significance', 'burst' ),
+                        'intro' => '<p>'. __('Burst will help you find the best settings for your experiment. Fast experimenting comes at the cost of less accurate data. But obtaining accurate data is time consuming. Choose your battles wisely! ;) ', 'burst') .'</p>',
                     ),
                 ),
 			),
 			STEP_START    => array(
 				"id"    => "start",
 				"title" => __( "Start", 'burst' ),
-//                'sections' => array(
-//                    1 => array(
-//                        'title' => __( 'Select control and variant', 'burst' ),
-//                    ),
-//                ),
-//				'intro' =>
-//					'<h1>' . _x( "Get ready to finish your configuration.",
-//						'intro menu', 'burst' ) . '</h1>' .
-//					'<p>'
-//					. _x( "Generate your documents, then you can add them to your menu directly or do it manually after the wizard is finished.",
-//						'intro menu', 'burst' ) . '</p>',
 			),
 		),
 );

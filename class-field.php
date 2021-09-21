@@ -279,7 +279,7 @@ if ( ! class_exists( "burst_field" ) ) {
 		function after_label(
 			$args
 		) {
-	
+
 			echo '</div><div class="burst-field">';
 			
 
@@ -967,19 +967,17 @@ if ( ! class_exists( "burst_field" ) ) {
             <input <?php if ( $args['required'] ) {
                 echo 'required';
             } ?>
-                    class="validation <?php if ( $args['required'] ) {
-                        echo 'is-required';
-                    } ?>"
                     placeholder="<?php echo esc_html( $args['placeholder'] ) ?>"
                     type="text"
-                    value="<?php echo esc_html( $value ) ?>"
-                    name="<?php echo esc_html( $fieldname ) ?>">
+                    value="<?php echo esc_html( $args['copy_text'] ) ?>"
+                    name="<?php echo esc_html( $fieldname ) ?>"
+                    disabled>
 
             <span class="copy-container">
                 <button type="button"
-                        class="button button-small burst-copy-button"
+                        class="button button-medium burst-copy-button"
                         data-clipboard-text="<?php echo $args['copy_text']; ?>">
-                    <?php echo $args['copy_text'] ?>
+                    <?php _e('Copy', 'burst') ?>
                 </button>
                 <span class="success hidden" aria-hidden="true"><?php _e( 'Copied!' ); ?></span>
             </span>

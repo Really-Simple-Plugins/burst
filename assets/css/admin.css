@@ -51,6 +51,10 @@ html,
 body {
   font-size: 62.5%;
 }
+#wpbody-content {
+  font-size: 1.4rem;
+  line-height: 1.6rem;
+}
 #burst {
   font-size: 1.4rem;
   padding-bottom: 20px;
@@ -89,6 +93,7 @@ body {
 #burst p {
   font-size: 1.4rem;
   line-height: 2.1rem;
+  max-width: 60ch;
 }
 #burst a {
   font-size: 1.4rem;
@@ -176,9 +181,6 @@ body {
 #burst .field-group .burst-field {
   margin-bottom: 15px;
 }
-#burst .field-group .burst-field input[type="text"] {
-  width: 100%;
-}
 #burst .field-group.first .burst-label {
   padding-top: 0;
 }
@@ -208,9 +210,9 @@ body {
   min-height: 46px;
 }
 #burst .burst-notice {
-  font-size: 1.4rem;
-  line-height: 2.1rem;
-  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  line-height: 1.8rem;
+  padding: 1rem 1.5rem;
 }
 #burst .burst-notice .burst-message {
   padding: 14px 0;
