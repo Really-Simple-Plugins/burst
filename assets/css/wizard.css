@@ -1,3 +1,36 @@
+html,
+body {
+  font-size: 62.5%;
+  box-sizing: border-box;
+}
+#wpbody-content {
+  font-size: 1.4rem;
+  line-height: 1.6rem;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ol,
+ul,
+div,
+span {
+  margin: 0;
+  padding: 0;
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
 .box-shadow-top {
   box-shadow: 0 -5px 5px -5px rgba(222, 222, 222, 0.2);
 }
@@ -9,9 +42,6 @@
 }
 .box-shadow-left {
   box-shadow: -5px 0 5px -5px rgba(222, 222, 222, 0.2);
-}
-.all {
-  box-shadow: 0 0 5px #333;
 }
 /**
 * class to add a triangle pointer to each div
@@ -31,7 +61,7 @@
 }
 @media only screen and (max-width: 1400px) {
   #burst-content-area {
-    grid-template-columns: 24% auto!important;
+    grid-template-columns: 24% auto !important;
   }
 }
 #burst-content-area {
@@ -123,7 +153,7 @@
   color: #c6c6c6;
 }
 #burst-content-area .burst-wizard-menu .burst-step .burst-section a:visited h3 {
-  color: initial ;
+  color: initial;
 }
 #burst-content-area .burst-wizard-menu .burst-step .burst-section a h3 {
   font-size: 1.3rem;
@@ -263,57 +293,6 @@
   color: #fff;
   border-color: #f39c12;
 }
-#burst-content-area .burst-section-content .burst-scroll .upload_button {
-  margin-right: 15px;
-  width: 100px;
-  height: 30px;
-}
-#burst-content-area .burst-section-content .burst-scroll input[name="burst_import_settings"] {
-  width: 100px;
-  height: 30px;
-  padding-left: 15px;
-}
-#burst-content-area .burst-section-content .burst-scroll .burst-file-chosen {
-  padding-top: 20px;
-  padding-left: 20px;
-}
-#burst-content-area .burst-section-content .burst-scroll .burst-cols-2 .burst-field {
-  display: grid;
-  grid-template-columns: 33% 33%;
-  grid-column-gap: 20px;
-}
-#burst-content-area .burst-section-content .burst-scroll .burst-cols-2 .burst-field .burst-label {
-  grid-column: span 2;
-}
-#burst-content-area .burst-section-content .burst-scroll .burst-cols-3 .burst-field {
-  display: grid;
-  grid-template-columns: 33% 33% 33%;
-  grid-column-gap: 20px;
-}
-#burst-content-area .burst-section-content .burst-scroll .burst-cols-3 .burst-field .burst-label {
-  grid-column: span 3;
-}
-#burst-content-area .burst-section-content .burst-scroll .burst-borderradius.burst-cols-5 .burst-field,
-#burst-content-area .burst-section-content .burst-scroll .burst-borderwidth.burst-cols-5 .burst-field {
-  display: grid;
-  grid-template-columns: 50px 50px 50px 50px 50px;
-  grid-column-gap: 10px;
-}
-#burst-content-area .burst-section-content .burst-scroll .burst-borderradius.burst-cols-5 .burst-field .burst-label,
-#burst-content-area .burst-section-content .burst-scroll .burst-borderwidth.burst-cols-5 .burst-field .burst-label {
-  grid-column: span 5;
-}
-#burst-content-area .burst-section-content .burst-scroll .burst-border-input-type-wrap {
-  display: grid;
-  grid-template-rows: 16px 16px;
-  padding-top: 16px;
-}
-#burst-content-area .burst-section-content .burst-scroll .burst-border-input-type-wrap .burst-grey {
-  color: darkgrey;
-}
-#burst-content-area .burst-section-content .burst-scroll .burst-border-input-type-wrap span {
-  cursor: pointer;
-}
 #burst-content-area .burst-section-content .burst-scroll select {
   width: 100%;
 }
@@ -342,34 +321,11 @@
 #burst-content-area .burst-section-content .burst-scroll .burst-borderwidth {
   grid-column: span 1;
 }
-#burst-content-area .burst-section-content .burst-scroll .burst-master-label h2 {
-  grid-column: span 2;
-  margin: 0;
-  padding: 20px 20px 0 20px;
-  font-size: 1.8rem;
-}
-#burst-content-area .burst-section-content .burst-scroll .burst-sublabel label {
-  color: darkgrey;
-  font-size: 1.3rem;
-}
 #burst-content-area .burst-section-content .burst-scroll label .burst-icon {
   display: inline;
 }
 #burst-content-area .burst-section-content .burst-scroll .burst-switch {
   margin-top: 0;
-}
-#burst-content-area .burst-section-content .burst-scroll .wp-picker-input-wrap:not(.hidden) {
-  display: block;
-  position: absolute;
-  z-index: 10;
-}
-#burst-content-area .burst-section-content .burst-scroll .wp-picker-holder {
-  position: absolute;
-  top: 132px;
-  z-index: 10;
-}
-#burst-content-area .burst-section-content .burst-scroll .wp-picker-clear {
-  position: absolute;
 }
 #burst-content-area .burst-section-content .burst-scroll .burst-grid-controls .burst-field {
   padding: 0;
