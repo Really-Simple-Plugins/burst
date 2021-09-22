@@ -5,7 +5,6 @@
 }
 .field-group.burst-select_control .burst-field .select2-container,
 .field-group.burst-select_variant .burst-field .select2-container {
-  max-width: 300px;
   margin: 0 15px;
 }
 .field-group.burst-select_control .burst-field .select2-container .select2-selection--single,
@@ -20,6 +19,9 @@
 .field-group.burst-select_variant label {
   margin: 0 0;
 }
+.select2-container {
+  max-width: 250px;
+}
 .select2-results__options li {
   font-size: 1.4rem !important;
 }
@@ -28,7 +30,7 @@
 }
 .burst-block {
   background: #fff;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.1), 0 4px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1), 2px 2px 2px rgba(0, 0, 0, 0.05), 0 6px 6px rgba(0, 0, 0, 0.02), 0 8px 8px rgba(0, 0, 0, 0.02);
   border-radius: 3px;
   margin: 0;
 }
@@ -117,7 +119,7 @@ body {
 #burst #burst-header {
   display: flex;
   justify-content: space-between;
-  height: 80px;
+  height: 70px;
   box-sizing: border-box;
   background-color: #fff;
 }
@@ -125,7 +127,7 @@ body {
   margin: auto 15px;
   padding: 20px;
   padding-right: 0;
-  width: 85px;
+  width: 75px;
 }
 #burst #burst-header .burst-header-left {
   display: flex;
@@ -135,8 +137,8 @@ body {
   margin: auto 15px;
 }
 #burst #burst-header .burst-header-left .burst-header-menu a {
-  font-size: 1.5rem;
-  padding: 28px 15px;
+  font-size: 1.4rem;
+  padding: 23px 15px;
   text-decoration: none;
   color: #737373;
   height: 100%;
@@ -494,7 +496,7 @@ body {
 }
 #burst #burst-content-area .burst-grid .burst-grid-container {
   background: #fff;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.1), 0 4px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1), 2px 2px 2px rgba(0, 0, 0, 0.05), 0 6px 6px rgba(0, 0, 0, 0.02), 0 8px 8px rgba(0, 0, 0, 0.02);
   border-radius: 3px;
   margin: 0;
   display: flex;
@@ -600,12 +602,14 @@ body {
   top: 50%;
   transform: translateY(-50%);
   /* basic styles */
-  width: 200px;
+  width: 40ch;
+  font-size: 1.2rem;
+  line-height: 1.8rem;
   padding: 10px;
   border-radius: 10px;
   background: #252525;
   color: #fff;
-  text-align: center;
+  text-align: left;
   display: none;
   transition: 0.3s opacity;
 }

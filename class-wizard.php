@@ -99,10 +99,28 @@ if ( ! class_exists( "burst_wizard" ) ) {
 				_e( "Not all required fields are completed yet. Please check the steps to complete all required questions before you can start the experiment.", 'burst' );
                 echo '</div>';
 			} else {
-			    echo '<div class="burst-wizard-intro">';
-				printf( '<p>' . __( "Click '%s' to start the experiment. Opsomming van wat er gaat gebeuren.", 'burst' ). '</p>',
-					__( "Start experiment", 'burst' ) );
-                echo '</div>';
+			    $experiment = new BURST_EXPERIMENT($_GET['experiment_id']);
+			    if ($experiment->status !== 'draft') {
+			        echo '<div class="burst-wizard-intro"><p>' . __('Your experiment is already completed, active or archived.', 'burst') . '</p></div>';
+                } else {
+                    $args = array(
+                        'title' => $experiment->title,
+                        'goal' => $experiment->goal,
+                        'significance' => $experiment->significance,
+
+                        'control_title' => get_the_title($experiment->control_id),
+                        'control_url' => str_replace( home_url(), "", get_permalink($experiment->control_id)),
+                        'control_edit_url' => get_edit_post_link($experiment->control_id),
+
+                        'variant_title' => get_the_title($experiment->variant_id),
+                        'variant_url' => str_replace( home_url(), "", get_permalink($experiment->variant_id)),
+                        'variant_edit_url' => get_edit_post_link($experiment->variant_id),
+
+                    );
+                    error_log(print_r($experiment, true));
+
+                    echo burst_get_template('wizard/conclusion.php', $args);
+                }
 			}
 		}
 
@@ -607,8 +625,6 @@ if ( ! class_exists( "burst_wizard" ) ) {
 				'page' => $page,
 				'step' => $step,
 				'section' => $section,
-				'save_as_notice' => '',
-				'learn_notice' => '',
 				'previous_button' => '',
 				'next_button' => '',
 				'save_button' => '',
@@ -646,6 +662,13 @@ if ( ! class_exists( "burst_wizard" ) ) {
 
             if ( $page == 'experiment' )  {
                     $args['save_button'] = '<input class="button button-secondary burst-save" type="submit" name="burst-save" value="'. __( "Save", 'burst' ) . '">';
+            }
+            if ( $step < $this->total_steps( $page ) ) {
+                $args['next_button'] = '<input class="button button-primary burst-next" type="submit" name="burst-next" value="'. __( "Save and continue", 'burst' ) . '">';
+            } else if ( $step == $this->total_steps( $page ) && $this->all_required_fields_completed( $page )) {
+                $args['next_button'] = '<input class="button button-primary burst-finish center" type="submit" name="burst-finish" value="'. __('Start experiment', 'burst') . '">';
+                $args['save_button'] = '';
+                $args['previous_button'] = '';
             }
 
             return burst_get_template( 'wizard/content.php', $args );

@@ -211,8 +211,8 @@
         background-color: white;
       }
 	  .burst-wizard-intro {
-		padding: @intro-gap;
-		background-color: #fff;
+		  padding: @intro-gap;
+		  background-color: #fff;
 	  }
 
     .burst-wizard-intro ul {
@@ -260,17 +260,17 @@
       .burst-section-footer {
         grid-column-start: 1;
         background-color: white;
-        padding: 20px 0px 20px 20px;
-        display: grid;
+        padding: 20px;
+        display: flex;
         align-items: center;
-        grid-template-columns: 1fr auto;
+		  justify-content: flex-end;
+		  & .center{
+			  margin: 0 auto;
+		  }
 
-        .burst-buttons-container {
-          grid-column-start: 2;
+
           input {
-			margin-right: @green-gap;
-
-          }
+			margin-left: @green-gap;
         }
       }
     }
@@ -1570,6 +1570,7 @@ html .mceContentBody {
   }
   input[type="text"], input[type="email"], input[type="number"], input[type="password"] {
 	max-width: 500px;
+	  min-width: 300px;
 	border-color: @input-border-color;
 	&:focus {
 	  border-color:initial;
@@ -2085,4 +2086,78 @@ input.current-page {
 	}
 
   }
+}
+#burst .burst-wizard-conclusion{
+	padding: 20px 60px 0px 60px;
+	background-color: #fff;
+
+	h1{
+		text-align: center;
+	}
+	h2{
+		font-weight: 400;
+		font-size: 1.6rem;
+		color: @grey-dark;
+		text-align: center;
+		margin: 25px 0 10px 0;
+	}
+	h3{
+		text-align: center;
+		width: 100%;
+		font-size: 1.5rem;
+		margin: 10px 0px 5px 0px
+	}
+	&__summary{
+		text-align: center;
+		display: flex;
+		flex: 1 1 0px;
+		flex-wrap: wrap;
+		justify-content: center;
+		&__control, &__variant{
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			max-width: 280px;
+			width: 50%;
+			margin: 10px;
+			background: @grey-lighter;
+			//border: @border;
+			border-radius: @border-radius;
+			padding: 15px @small-padding;
+			box-shadow: @box-shadow;
+			> p{
+				width: 100%;
+				color: @grey-dark;
+				margin-top: 0 !important;
+			}
+			.burst-experiment-version{
+				margin: 0 auto;
+				border: 0px solid transparent;
+			}
+		}
+		&__control{
+			background-color: lighten(@rsp-blue, 70%, relative);
+			border: 1px solid @rsp-blue;
+		}
+		&__variant{
+			background-color: lighten(@rsp-yellow, 63%, relative);
+			border: 1px solid @rsp-yellow;
+		}
+	}
+	&__settings{
+		display: grid;
+		grid-template-columns: [left] 50% [right] 50%;
+		width: 100%;
+		grid-gap: 10px;
+		padding-top: 0px;
+
+		&__key{
+			margin: 0 !important;
+			text-align: right;
+		}
+		&__value{
+			margin: 0 !important;
+			text-align: left;
+		}
+	}
 }

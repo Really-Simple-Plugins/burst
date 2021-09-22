@@ -61,6 +61,8 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 
             //after clicking finish, redirect to dashboard.
             if ( isset( $_POST['burst-finish'] ) ) {
+                $experiment = new BURST_EXPERIMENT( $experiment_id );
+                $experiment->start();
                 wp_redirect( admin_url( 'admin.php?page=burst' ) );
                 exit();
             }

@@ -10,19 +10,15 @@
         <div class="burst-wizard-title burst-section-content-notifications-header">
 			<?php _e("Notifications", "burst")?>
 		</div>
-	    {learn_notice}
 	    {intro}
 		{post_id}
 
 		{fields}
 
         <div class="burst-section-footer">
-            {save_as_notice}
-            <div class="burst-buttons-container">
-                {previous_button}
-                {save_button}
-                {next_button}
-            </div>
+            {previous_button}
+            {save_button}
+            {next_button}
         </div>
 
     </form>

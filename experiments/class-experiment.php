@@ -31,6 +31,7 @@ function burst_install_experiments_table() {
             `goal_identifier` varchar(255) NOT NULL,
             `goal_woocommerce` varchar(255) NOT NULL,
             `goal_woocommerce_product` varchar(255) NOT NULL,
+            `significance` int(11) NOT NULL,
             `minimum_samplesize` int(11) NOT NULL,
             `minimum_samplesize_custom` int(11) NOT NULL,
             `statistics` text NOT NULL,
@@ -59,6 +60,8 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
         public $goal_woocommerce = false;
         public $goal_identifier = '';
         public $goal_woocommerce_product = false;
+
+        public $significance = 80;
 		public $minimum_samplesize = 384;
 		public $minimum_samplesize_custom = 0;
 
@@ -206,6 +209,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
                 $this->goal_identifier 				= $experiment->goal_identifier;
                 $this->goal_woocommerce             = $experiment->goal_woocommerce;
                 $this->goal_woocommerce_product     = $experiment->goal_woocommerce_product;
+                $this->significance                 = $experiment->significance;
 				$this->minimum_samplesize 		    = $experiment->minimum_samplesize;
 				$this->minimum_samplesize_custom	= $experiment->minimum_samplesize_custom;
 
@@ -268,6 +272,7 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				'goal_id'                   => intval( $this->goal_id ),
 				'goal_woocommerce'          => sanitize_text_field( $this->goal_woocommerce ),
                 'goal_woocommerce_product'  => intval( $this->goal_woocommerce_product ),
+                'significance'              => intval( $this->significance ),
 				'minimum_samplesize'        => $this->minimum_samplesize == - 1 ? intval( $this->minimum_samplesize_custom ) : intval( $this->minimum_samplesize ),
 				'minimum_samplesize_custom' => intval( $this->minimum_samplesize_custom ),
 			);

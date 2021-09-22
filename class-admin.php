@@ -105,7 +105,7 @@ if ( ! class_exists( "burst_admin" ) ) {
                         'id'     	=> 'burst-add-experiment-'. $experiment->id,
                         'parent' 	=> 'burst-active-experiments',
                         'title'  	=> $experiment->title,
-                        'href'   	=> add_query_arg(array('post' => $experiment->control_id, 'action' => 'edit' ), admin_url( 'post.php' ) ),
+                        'href'   	=> add_query_arg(array('page' => 'burst', 'experiment_id' => $experiment->id ), admin_url( 'admin.php' ) ),
                     ) );
                 }
             }

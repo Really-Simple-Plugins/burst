@@ -24,7 +24,7 @@ $this->fields = $this->fields + array(
             'post_status' 	=> burst_get_all_post_statuses( array('publish') ),
             //'post__not_in' 	=> array( burst_get_current_post_id() ),
         ),
-        'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
+        'help'               => __( 'The Control is the page you want to improve (or compare with another page).',
             'burst' ),
         'required' => true,
     ),
@@ -40,7 +40,7 @@ $this->fields = $this->fields + array(
             'post_status' 	=> burst_get_all_post_statuses( array('publish') ),
             //'post__not_in' 	=> array( burst_get_current_post_id() ),
         ),
-        'help'               => __( 'Select the control page. The control page is the page you want to improve (or compare with another page).',
+        'help'               => __( 'The Variant is the page you think will do better than the control.',
             'burst' ),
         'required' => true,
     ),
@@ -135,7 +135,7 @@ $this->fields = $this->fields + array(
         ),
 
         'default' => 80,
-        'help'        => __( 'Select what metric you want to improve. For example a click on a button or a visit on a checkout page.', 'burst' ),
+        'help'        => __( 'Gathering accurate data is time consuming. When you do not have a lot of visitors, it is recommend to choose fast results. If you do have a lot of visitors choose whichever you want.', 'burst' ),
         'required' => true,
     ),
 
