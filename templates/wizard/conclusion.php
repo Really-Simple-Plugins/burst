@@ -26,6 +26,6 @@
         <p class="burst-wizard-conclusion__settings__value">{goal}</p>
 
         <p class="burst-wizard-conclusion__settings__key"><b>Significance:</b></p>
-        <p class="burst-wizard-conclusion__settings__value">{significance}</p>
+        <p class="burst-wizard-conclusion__settings__value">{significance}%</p>
     </div>
 </div>
