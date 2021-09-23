@@ -36,7 +36,9 @@
 			                <?php
 			                foreach ($experiments as $experiment){
 				                ?>
-	                            <option value="<?php echo $experiment->ID?>" <?php if ( $selected_experiment_id == $experiment->ID) echo 'selected'?> ><?php echo $experiment->title?></option>
+	                            <option value="<?php echo $experiment->ID?>" <?php if ( $selected_experiment_id == $experiment->ID) echo 'selected'?> >
+                                    <?php echo $experiment->title ?>: <?php echo get_the_title( $experiment->variant_id ) ?> - <?php echo get_the_title( $experiment->control_id ) ?></h5>
+                                </option>
 				                <?php
 			                }
 			                ?>

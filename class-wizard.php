@@ -175,79 +175,6 @@ if ( ! class_exists( "burst_wizard" ) ) {
 				return;
 			}
 
-			$enable_categories = false;
-			$tm_fires_scripts  = burst_get_value( 'fire_scripts_in_tagmanager' ) === 'yes' ? true : false;
-			$uses_tagmanager   = burst_get_value( 'compile_statistics' ) === 'google-tag-manager' ? true : false;
-
-			/* if tag manager fires scripts, cats should be enabled for each cookiebanner. */
-			if ( ( $fieldname === 'fire_scripts_in_tagmanager' )
-			     && $uses_tagmanager
-			     && $tm_fires_scripts
-			) {
-				$enable_categories = true;
-			}
-
-			/* if tag manager fires scripts, cats should be enabled for each cookiebanner. */
-			if ( ( $fieldname === 'consent_for_anonymous_stats' )
-			     && $fieldvalue === 'yes'
-			) {
-				$enable_categories = true;
-			}
-
-			//when ab testing is just enabled icw TM, cats should be enabled for each banner.
-			if ( ( $fieldname == 'a_b_testing' && $fieldvalue === true
-			       && $prev_value == false )
-			) {
-				if ( $uses_tagmanager && $tm_fires_scripts ) {
-					$enable_categories = true;
-				}
-			}
-
-			if ( $enable_categories ) {
-				$banners = burst_get_cookiebanners();
-				if ( ! empty( $banners ) ) {
-					foreach ( $banners as $banner ) {
-						$banner                 = new burst_COOKIEBANNER( $banner->ID );
-						$banner->use_categories = 'visible';
-						$banner->save();
-					}
-				}
-			}
-
-
-			//when region or policy generation type is changed, update cookiebanner version to ensure the changed banner is loaded
-			if ( $fieldname === 'privacy-statement' || $fieldname === 'regions'
-			     || $fieldname === 'cookie-statement'
-			) {
-				burst_update_banner_version_all_banners();
-			}
-
-			//we can check here if certain things have been updated,
-			BURST::$cookie_admin->reset_cookies_changed();
-
-			//save last changed date.
-			BURST::$cookie_admin->update_cookie_policy_date();
-
-			//if the fieldname is from the "revoke cookie consent on change" list, change the policy if it's changed
-			$fields = BURST::$config->fields;
-			$field  = $fields[ $fieldname ];
-			if ( ( $fieldvalue != $prev_value )
-			     && isset( $field['revoke_consent_onchange'] )
-			     && $field['revoke_consent_onchange']
-			) {
-				BURST::$cookie_admin->upgrade_active_policy_id();
-				if ( !get_option( 'burst_generate_new_cookiepolicy_snapshot') ) update_option( 'burst_generate_new_cookiepolicy_snapshot', time() );
-			}
-
-			if ( $fieldname === 'configuration_by_burst'
-			     || $fieldname === 'GTM_code'
-			     || $fieldname === 'matomo_url'
-			     || $fieldname === 'matomo_site_id'
-			     || $fieldname === 'UA_code'
-			) {
-				delete_option( 'burst_detected_stats_data' );
-				delete_option( 'burst_detected_stats_type' );
-			}
 		}
 
 		/**
@@ -274,64 +201,7 @@ if ( ! class_exists( "burst_wizard" ) ) {
 		 */
 
 		public function after_save_wizard_option( $fieldname, $fieldvalue, $prev_value, $type ) {
-			if ( $fieldname == 'california' || $fieldname == 'purpose_personaldata' ) {
-				add_action( 'shutdown', 'burst_update_cookie_policy_title', 12 );
-			}
 
-			if ( $fieldname === 'children-safe-harbor'
-			     && burst_get_value( 'targets-children' ) === 'no'
-			) {
-				burst_update_option( 'wizard', 'children-safe-harbor', 'no' );
-			}
-
-
-			if ( $fieldvalue === $prev_value ) {
-				return;
-			}
-
-			//keep services in sync
-			if ( $fieldname === 'socialmedia_on_site'
-			     || $fieldname === 'thirdparty_services_on_site'
-			) {
-				BURST::$cookie_admin->update_services();
-			}
-
-			//update google analytics service depending on anonymization choices
-			if ( $fieldname === 'compile_statistics'
-			     || $fieldname === 'compile_statistics_more_info'
-			     || $fieldname === 'compile_statistics_more_info_tag_manager'
-			) {
-				BURST::$cookie_admin->maybe_add_statistics_service();
-			}
-
-			$enable_categories_uk = $enable_categories_eu = false;
-			if ( $fieldname === 'compile_statistics_more_info'
-			     || $fieldname === 'compile_statistics_more_info_tag_manager'
-			) {
-				if ( BURST::$cookie_admin->cookie_warning_required_stats( 'eu' ) ) {
-					$enable_categories_eu = true;
-				}
-				if ( BURST::$cookie_admin->cookie_warning_required_stats( 'uk' ) ) {
-					$enable_categories_uk = true;
-				}
-			}
-
-			if ( $enable_categories_eu || $enable_categories_uk ) {
-				$banners = burst_get_cookiebanners();
-				if ( ! empty( $banners ) ) {
-					foreach ( $banners as $banner ) {
-						$banner = new burst_COOKIEBANNER( $banner->ID );
-						if ( $enable_categories_uk ) {
-							$banner->use_categories_optinstats = 'visible';
-						}
-						if ( $enable_categories_eu ) {
-							$banner->use_categories_optinstats = 'visible';
-						}
-						$banner->save();
-					}
-
-				}
-			}
 		}
 
 		/**

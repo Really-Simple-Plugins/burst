@@ -133,6 +133,24 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				return 'visit';
 			}
 		}
+
+        /**
+         * Sanitize the goal type
+         * @param string $str
+         *
+         * @return string
+         */
+
+        private function sanitize_date( $str ){
+
+            if ( strtotime( $str ) ) {
+                $str = strtotime( $str );
+            }
+
+            return intval($str);
+
+        }
+
 		/**
 		 * Sanitize the test type
 		 * @param string $str
@@ -256,6 +274,16 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 			$variant_url_parameter = burst_random_str('12');
 			$control_url_parameter = burst_random_str('12');
 
+			error_log('save');
+			error_log($this->date_end);
+//            if ( ! intval( $this->date_end ) ) {
+//                $dateTime = new dateTime($this->date_end);
+//                $date_end = $dateTime->getTimestamp();
+//            } else {
+                $date_end = intval( $this->date_end );
+            //}
+
+
 			$update_array = array(
 				'title'                     => sanitize_text_field( $this->title ),
 				'variant_id'                => intval( $this->variant_id ),
@@ -265,8 +293,8 @@ if ( ! class_exists( "BURST_EXPERIMENT" ) ) {
 				'status'                    => burst_sanitize_experiment_status( $this->status ),
 				'date_created'              => sanitize_text_field( $this->date_created ),
 				'date_modified'             => time(),
-				'date_started'              => sanitize_text_field( $this->date_started ),
-				'date_end'                  => sanitize_text_field( $this->date_end ),
+				'date_started'              => intval( $this->date_started ),
+				'date_end'                  => $this->sanitize_date( $this->date_end),
 				'goal'                      => $this->sanitize_goal( $this->goal ),
 				'goal_identifier'           => sanitize_text_field( $this->goal_identifier ),
 				'goal_id'                   => intval( $this->goal_id ),

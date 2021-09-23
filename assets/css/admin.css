@@ -202,6 +202,9 @@ body {
 #burst #burst-header .burst-header-right button {
   margin-left: 15px;
 }
+#burst #burst-header .burst-header-right select {
+  max-width: 60ch;
+}
 #burst #burst-content-area {
   margin: 10px;
 }

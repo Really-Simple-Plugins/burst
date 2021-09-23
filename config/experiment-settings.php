@@ -139,14 +139,14 @@ $this->fields = $this->fields + array(
         'required' => true,
     ),
 
-    'end_date' => array(
+    'date_end' => array(
         'step'     => STEP_METRICS,
         'section'  => 2,
         'source'      => 'experiment',
-        'type'        => 'text',
+        'type'        => 'date',
         'label'       => __( "When should the experiment end?", 'burst' ),
         'comment'         => __('Burst will automatically determine when an experiment is finished. Leave blank if you do not need an explicit end date.', 'burst'),
-        'default' => 'Datum moet hier komen',
+        'default' => '',
         'required' => false,
     ),
 

@@ -47,6 +47,8 @@ if ( ! class_exists( "burst_experimenting" ) ) {
                 return;
             }
 
+            error_log( print_r( $_POST, true ) );
+
 			$experiment_id = isset( $_POST['experiment_id']) ? intval( $_POST['experiment_id'] ) : false;
             if ( !isset($experiment_id) ){
                 $experiment_id = isset( $_GET['experiment_id']) ? intval( $_GET['experiment_id'] ) : false;

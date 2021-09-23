@@ -1103,6 +1103,9 @@ if ( ! class_exists( "burst_field" ) ) {
                     case 'copy':
                         $this->copy( $args );
                         break;
+                    case 'date':
+                        $this->date( $args );
+                        break;
 				}
 			}
 
@@ -1313,6 +1316,46 @@ if ( ! class_exists( "burst_field" ) ) {
             <?php
         }
 
+        public
+        function date(
+            $args
+        ) {
+            $fieldname = 'burst_' . $args['fieldname'];
+            $value = $this->get_value( $args['fieldname'], $args['default'] );
+            if ($value > 0) {
+                $date = DateTime::createFromFormat( 'U', $value);
+                $date_value = $date->format('Y-m-d');
+            } else {
+                $date_value = false;
+            }
+
+            $today = new DateTime('today');
+            $year = new DateTime('+1 year');
+
+            if ( ! $this->show_field( $args ) ) {
+                return;
+            }
+            ?>
+
+            <?php do_action( 'burst_before_label', $args ); ?>
+            <label
+                    for="<?php echo $args['fieldname'] ?>"><?php echo $args['label'] ?><?php echo $this->get_help_tip_btn( $args ); ?></label>
+            <?php do_action( 'burst_after_label', $args ); ?>
+            <input <?php if ( $args['required'] ) {
+                echo 'required';
+            } ?>
+                    class="validation <?php if ( $args['required'] ) {
+                        echo 'is-required';
+                    } ?>"
+                    placeholder="<?php echo esc_html( $args['placeholder'] ) ?>"
+                    type="date"
+                    value="<?php echo $date_value; ?>"
+                    min="<?php echo $today->format('Y-m-d'); ?>"
+                    max="<?php echo $year->format('Y-m-d'); ?>"
+                    name="<?php echo esc_html( $fieldname ) ?>">
+            <?php do_action( 'burst_after_field', $args ); ?>
+            <?php
+        }
 
 		public
 		function label(
@@ -1438,36 +1481,6 @@ if ( ! class_exists( "burst_field" ) ) {
 			<?php
 		}
 
-		public
-		function text2(
-			$args
-		) {
-			$fieldname = 'burst_' . $args['fieldname'];
-
-			$value = $this->get_value( $args['fieldname'], $args['default'] );
-			if ( ! $this->show_field( $args ) ) {
-				return;
-			}
-			?>
-
-			<?php do_action( 'burst_before_label', $args ); ?>
-			<label
-				for="<?php echo $args['fieldname'] ?>"><?php echo $args['label'] ?><?php echo $this->get_help_tip_btn( $args ); ?></label>
-			<?php do_action( 'burst_after_label', $args ); ?>
-			<input <?php if ( $args['required'] ) {
-				echo 'required';
-			} ?>
-				class="validation <?php if ( $args['required'] ) {
-					echo 'is-required';
-				} ?>"
-				placeholder="<?php echo esc_html( $args['placeholder'] ) ?>"
-				type="text"
-				value="<?php echo esc_html( $value ) ?>"
-				name="<?php echo esc_html( $fieldname ) ?>">
-			<?php do_action( 'burst_after_field', $args ); ?>
-			<?php
-		}
-
 		/**
 		 * Get value of this fieldname
 		 *
@@ -1481,6 +1494,7 @@ if ( ! class_exists( "burst_field" ) ) {
 		function get_value(
 			$fieldname, $default = ''
 		) {
+		    error_log('get value for: ' . $fieldname);
 			$fields = BURST::$config->fields();
 			if ( ! isset( $fields[ $fieldname ] ) ) {
 				return false;
@@ -1490,6 +1504,7 @@ if ( ! class_exists( "burst_field" ) ) {
 			if ( strpos( $source, 'experiment' ) !== false ) {
 				$id = false;
 
+				error_log('experiment');
 				if ( isset( $_GET['post'] ) ) {
 					$post_id = intval( $_GET['post'] );
 					$id = burst_get_experiment_id_for_post($post_id);
@@ -1500,10 +1515,12 @@ if ( ! class_exists( "burst_field" ) ) {
 				}
 
 				$experiment = new BURST_EXPERIMENT( $id );
+				error_log(print_r($experiment, true));
 				$value  = ! empty( $experiment->{$fieldname} )
 					? $experiment->{$fieldname} : false;
 
 			} else {
+                error_log('options');
 				$options = get_option( 'burst_options_' . $source );
 				$value   = isset( $options[ $fieldname ] )
 					? $options[ $fieldname ] : false;
