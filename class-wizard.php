@@ -344,21 +344,10 @@ if ( ! class_exists( "burst_wizard" ) ) {
             //lock the wizard for other users.
             $this->lock_wizard();
 
-
             $this->initialize($page);
 
             $section = $this->section();
             $step = $this->step();
-            error_log('step: ');
-            error_log($step);
-
-            error_log('section: ');
-            error_log($section);
-
-            error_log('section is empty');
-            error_log($this->section_is_empty($page, $step, $section));
-
-
 
 
             if ($this->section_is_empty($page, $step, $section)
@@ -500,7 +489,7 @@ if ( ! class_exists( "burst_wizard" ) ) {
 				'save_button' => '',
 				'intro' => $this->get_intro( $page, $step, $section ),
 				'page_url' => $this->page_url,
-				'post_id' => $this->experiment_id() ? '<input type="hidden" value="' . $this->experiment_id() . '" name="experiment_id">' : '',
+                'experiment_id' => $this->experiment_id(),
 			);
             if ( isset(BURST::$config->steps[$page][$step]['sections'][$section]['title'])) {
                 $args['title'] = BURST::$config->steps[$page][$step]['sections'][$section]['title'];

@@ -21,7 +21,7 @@ if ( ! class_exists( "burst_experimenting" ) ) {
 		    add_action( 'admin_footer-edit.php', array($this,'add_variant_status_add_in_quick_edit') );
 		    add_filter( 'display_post_states', array( $this, 'add_display_post_states' ), 10, 2 );
 		    add_action( 'wp_ajax_burst_experiment_action', array($this, 'experiment_action'));
-			add_action( 'admin_init',array( $this, 'process_burst_experiment' ) );
+			add_action( 'burst_wizard_experiment',array( $this, 'process_burst_experiment' ) );
 
 			self::$_this = $this;
 		}
@@ -73,20 +73,12 @@ if ( ! class_exists( "burst_experimenting" ) ) {
             if ( isset( $experiment_id ) ) {
                 $url = add_query_arg(array( 'experiment_id' => $experiment_id),  $url );
             }
-            if ( isset( $_POST['step'] ) ) {
-                $url = add_query_arg(array( 'step' => intval($_POST['step'])),  $url );
-            }
-
-            if ( isset( $_POST['section'] ) ) {
-                $url = add_query_arg(array( 'section' => intval($_POST['section'])),  $url );
-            }
             if ( isset( $_POST['burst-save'] ) ) {
                 $url = add_query_arg(array( 'burst-save' => 1),  $url );
             }
-
-
-            wp_redirect( $url );
-            exit();
+//
+//            wp_redirect( $url );
+//            exit();
 
 		}
 
